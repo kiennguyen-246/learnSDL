@@ -1,7 +1,7 @@
 //charButton.cpp
 #include <iostream>
 #include <sdl.h>
-#include "LButton.h"
+#include "init.h"
 
 class charButton: public LButton
 {

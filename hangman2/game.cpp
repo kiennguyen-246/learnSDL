@@ -231,7 +231,7 @@ void game::preset()
         return;
     }
 
-    if (!loadCharTexture())
+    if (!mKeyboard.loadCharTexture(mRenderer))
     {
         cout << "Loading alphabet characters texture failed.\n";
         return;
@@ -250,24 +250,7 @@ void game::preset()
     
 
     //On-screen keyboard setup
-    int charHeight = charTexture['A'].getHeight();
-    cout << charHeight << "\n";
-    int curXPos = KEYBOARD_POSITION_X;
-    int curYpos = KEYBOARD_POSITION_Y;
-
-    for (int curRow = 0; curRow < 3; curRow ++)
-    {
-        curXPos = KEYBOARD_POSITION_X;
-        for (auto ch : KEYBOARD_ROWS[curRow])
-        {
-            int ch_int = ch;
-            button[ch_int].set(curXPos, curYpos, charTexture[ch_int].getWidth(), charTexture[ch_int].getHeight());
-            curXPos += charTexture[ch_int].getWidth() + 2 * charTexture[int(' ')].getWidth();
-
-            button[ch_int].updateSymbol(ch);
-        }
-        curYpos += charHeight;
-    }
+    mKeyboard.set();
 }
 
 void game::play()
@@ -307,7 +290,7 @@ void game::play()
             else 
             {
                 for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
-                    button[buttonId].handleEvent(&curEvent, key, guessWord, isTriggered, isIn);
+                    mKeyboard.keyboardButton[buttonId].handleEvent(&curEvent, key, guessWord, isTriggered, isIn);
                 for (int curHint = 1; curHint <= 3; curHint ++)
                     hintBox[curHint].handleEvent(&curEvent, key, hintText);
             }
@@ -332,15 +315,7 @@ void game::play()
         if (livesConsumed >= 6) hintBox[3].setId(3), hintBox[3].render(mRenderer, hintBoxTexture[3]);
 
         //Render the keyboard
-        for (int curRow = 0; curRow < 3; curRow ++)
-        {
-            for (auto ch : KEYBOARD_ROWS[curRow])
-            {
-                int ch_int = ch;
-                if (!button[ch_int].isUsed()) button[ch_int].render(mRenderer, charTexture[ch_int]);
-                else button[ch_int].render(mRenderer, usedCharTexture[ch_int]);
-            }
-        }
+        mKeyboard.render(mRenderer);
 
         //Render the hint text
         if (!hintText.empty()) 

@@ -4,39 +4,7 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "hintButton.h"
-
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-
-const int HANGMAN_STATES_COUNT = 9;
-
-const std::string PATH_COMIC_FONT = "fonts/comic.ttf";
-const std::string PATH_LIKE_EMOJI = "img/likeEmoji.png";
-const std::string PATH_SUNGLASSES_EMOJI = "img/sunglasses.png";
-const std::string PATH_WHITHERAWAY_EMOJI = "img/whitheraway.png";
-const std::string PATH_YELLOWSAD_EMOJI = "img/yellowSad.png";
-const std::string PATH_SHACK = "img/shack.png";
-const std::string PATH_TROLL_HANGMAN[HANGMAN_STATES_COUNT] = 
-{
-    "img/troll0.png",
-    "img/troll1.png",
-    "img/troll2.png",
-    "img/troll3.png",
-    "img/troll4.png",
-    "img/troll5.png",
-    "img/troll6.png",
-    "img/troll7.png",
-    "img/trollIntro.png",
-};
-
-const std::string PATH_YEAHSOUND_SOUND = "sounds/yeahsound.mp3";
-const std::string PATH_WRONGANSWER_SOUND = "sounds/wrongAnswer.mp3";
-const std::string PATH_SPECTRE_SOUND = "sounds/spectre.mp3";
-const std::string PATH_ALARM_SOUND = "sounds/alarm.mp3";
-
-const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
-const SDL_Color SDL_COLOR_GRAY = {192, 192, 192};
+#include "keyboard.h"
 
 const int GUESS_WORD_POSITION_X = 500;
 const int GUESS_WORD_POSITION_Y = 100;
@@ -86,8 +54,11 @@ class game
         /// @brief The texture object of the hint line
         LTexture hintTextTexture;
 
+        /// @brief Keyboard object
+        keyboard mKeyboard;
+
         /// @brief Buttons on the on-screen keyboard
-        charButton button[128];
+        charButton keyboardButton[128];
 
         /// @brief The texture create from characters from A to Z
         LTexture charTexture[128];
