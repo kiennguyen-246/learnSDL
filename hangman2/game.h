@@ -56,15 +56,6 @@ class game
 
         /// @brief Keyboard object
         keyboard mKeyboard;
-
-        /// @brief Buttons on the on-screen keyboard
-        charButton keyboardButton[128];
-
-        /// @brief The texture create from characters from A to Z
-        LTexture charTexture[128];
-
-        /// @brief The texture create from characters from A to Z, but after used
-        LTexture usedCharTexture[128];
         
         /// @brief Texture object for the images
         LTexture sunglasses;
@@ -93,10 +84,6 @@ class game
         /// @brief Initialize SDL window, renderer, image
         /// @return 1 if successful, 0 otherwise
         bool initSDL();
-
-        /// @brief Load the texture for the on-screeen keyboard
-        /// @return 1 if successful, 0 otherwise
-        bool loadCharTexture();
 
         /// @brief Initialize the hint box texture
         /// @return 1 if successful, 0 otherwise

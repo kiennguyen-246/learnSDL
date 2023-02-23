@@ -89,34 +89,6 @@ bool game::loadHintBoxTexture()
     return 1;
 }
 
-bool game::loadCharTexture()
-{
-    //Keyboard texture
-    mFont = TTF_OpenFont(&PATH_COMIC_FONT[0], KEYBOARD_CHARACTER_FONT_SIZE);
-	if (mFont == NULL)
-	{
-		cout << "Failed to load the font. Error: " << TTF_GetError() << ".\n";
-		return 0;
-	}
-    string charList = KEYBOARD_ROWS[0] + KEYBOARD_ROWS[1] + KEYBOARD_ROWS[2] + "_ ";
-
-    for (char curChar : charList)
-    {
-        string curChar_str = "";
-        curChar_str.push_back(curChar);
-        if ((!(charTexture[int(curChar)].loadTexture(mRenderer, mFont, &curChar_str[0], SDL_COLOR_BLACK))) || 
-            (!usedCharTexture[int(curChar)].loadTexture(mRenderer, mFont, &curChar_str[0], SDL_COLOR_GRAY)))
-        {
-            cout << "Failed to render text.\n";
-            return 0;
-        }
-    }
-
-	TTF_CloseFont(mFont);
-
-    return 1;
-}
-
 bool game::loadSound()
 {
     yeahSound = Mix_LoadMUS(&PATH_YEAHSOUND_SOUND[0]);
@@ -379,9 +351,9 @@ void game::clear()
     shack.clear();
     for (int i = 0; i < HANGMAN_STATES_COUNT; i ++) trollHangman[i].clear();
     
-    for (int i = 'A'; i <= 'Z'; i ++) charTexture[i].clear();
-    charTexture[int(' ')].clear();
-    charTexture[int('_')].clear();
+    for (int i = 'A'; i <= 'Z'; i ++) mKeyboard.charTexture[i].clear();
+    mKeyboard.charTexture[int(' ')].clear();
+    mKeyboard.charTexture[int('_')].clear();
     
     Mix_FreeMusic(yeahSound);
     Mix_FreeMusic(wrongAnswer);

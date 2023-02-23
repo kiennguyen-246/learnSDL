@@ -19,6 +19,10 @@ class keyboard
         /// @brief The texture create from characters from A to Z, but after used
         LTexture usedCharTexture[128];
 
+        keyboard();
+
+        ~keyboard();
+
         /// @brief Load the texture for the on-screeen keyboard
         /// @return 1 if successful, 0 otherwise
         bool loadCharTexture(SDL_Renderer* mRenderer);
@@ -28,4 +32,6 @@ class keyboard
 
         /// @brief Render the keyboard
         void render(SDL_Renderer* renderer);
+
+        void clear();
 };

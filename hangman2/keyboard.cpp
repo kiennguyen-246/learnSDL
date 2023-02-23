@@ -10,6 +10,16 @@ const int KEYBOARD_POSITION_X = 500;
 const int KEYBOARD_POSITION_Y = 400;
 const int KEYBOARD_CHARACTER_FONT_SIZE = 48;
 
+keyboard::keyboard()
+{
+
+}
+
+keyboard::~keyboard()
+{
+    clear();
+}
+
 bool keyboard::loadCharTexture(SDL_Renderer* renderer)
 {
     TTF_Font* mFont = NULL;
@@ -70,4 +80,9 @@ void keyboard::render(SDL_Renderer* renderer)
             else keyboardButton[ch_int].render(renderer, usedCharTexture[ch_int]);
         }
     }
+}
+
+void keyboard::clear()
+{
+    for (int i = 0; i < 128; i ++) charTexture[i].clear(), usedCharTexture[i].clear();
 }
