@@ -1,14 +1,35 @@
+//game.h
 #include <iostream>
 #include <vector>
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "charButton.h"
+#include "hintButton.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
+const int HANGMAN_STATES_COUNT = 9;
+
 const std::string PATH_COMIC_FONT = "fonts/comic.ttf";
+const std::string PATH_LIKE_EMOJI = "img/likeEmoji.png";
+const std::string PATH_SUNGLASSES_EMOJI = "img/sunglasses.png";
+const std::string PATH_WHITHERAWAY_EMOJI = "img/whitheraway.png";
+const std::string PATH_YELLOWSAD_EMOJI = "img/yellowSad.png";
+const std::string PATH_SHACK = "img/shack.png";
+const std::string PATH_TROLL_HANGMAN[HANGMAN_STATES_COUNT] = 
+{
+    "img/troll0.png",
+    "img/troll1.png",
+    "img/troll2.png",
+    "img/troll3.png",
+    "img/troll4.png",
+    "img/troll5.png",
+    "img/troll6.png",
+    "img/troll7.png",
+    "img/trollIntro.png",
+};
+
 const std::string PATH_YEAHSOUND_SOUND = "sounds/yeahsound.mp3";
 const std::string PATH_WRONGANSWER_SOUND = "sounds/wrongAnswer.mp3";
 const std::string PATH_SPECTRE_SOUND = "sounds/spectre.mp3";
@@ -19,14 +40,24 @@ const SDL_Color SDL_COLOR_GRAY = {192, 192, 192};
 
 const int GUESS_WORD_POSITION_X = 500;
 const int GUESS_WORD_POSITION_Y = 100;
+const int GUESS_WORD_FONT_SIZE = 60;
 
 const int LIVES_LEFT_BOX_POS_X = 500;
 const int LIVES_LEFT_BOX_POS_Y = 320;
+const int LIVES_LEFT_BOX_FONT_SIZE = 24;
+
+const int HINT_BOX_POS_Y = 320;
+const int HINT_BOX_POS_X[4] = {0, 650, 800, 950};
+const int HINT_BOX_FONT_SIZE = 24;
 
 const std::string KEYBOARD_ROWS[3] = {"QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
 const int KEYBOARD_POSITION_X = 500;
 const int KEYBOARD_POSITION_Y = 400;
 const int KEYBOARD_CHARACTER_FONT_SIZE = 48;
+
+const int HINT_TEXT_POSITION_X = 50;
+const int HINT_TEXT_POSITION_Y = 600;
+const int HINT_TEXT_FONT_SIZE = 24;
 
 class game
 {
@@ -46,27 +77,36 @@ class game
         /// @brief The texture object of the life box
         LTexture livesLeftBoxTexture;
 
+        /// @brief Buttons to trigger hints
+        hintButton hintBox[4];
+
+        /// @brief The texture object of the hint boxes
+        LTexture hintBoxTexture[4];
+
+        /// @brief The texture object of the hint line
+        LTexture hintTextTexture;
+
+        /// @brief Buttons on the on-screen keyboard
+        charButton button[128];
+
         /// @brief The texture create from characters from A to Z
         LTexture charTexture[128];
 
         /// @brief The texture create from characters from A to Z, but after used
         LTexture usedCharTexture[128];
-
-        /// @brief Buttons on the on-screen keyboard
-        charButton button[128];
-
-        LTexture likeEmoji;
-
-        /// @brief Sound object for "yeahSound.mp3"
-        Mix_Music* yeahSound;
-
-        /// @brief Sound object for "wrongAnswer.mp3";
-        Mix_Music* wrongAnswer;
         
-        /// @brief Sound object for "spectre.mp3"
-        Mix_Music* spectre;
+        /// @brief Texture object for the images
+        LTexture sunglasses;
+        LTexture likeEmoji;
+        LTexture whitherAway;
+        LTexture yellowSad;
+        LTexture shack;
+        LTexture trollHangman[HANGMAN_STATES_COUNT];
 
-        /// @brief Sound object for "alarm.mp3"
+        /// @brief Sound object for the soundtracks
+        Mix_Music* yeahSound;
+        Mix_Music* wrongAnswer;
+        Mix_Music* spectre;
         Mix_Music* alarm;
 
         /// @brief The dictionary of the game, contains words from different difficulties
@@ -87,7 +127,13 @@ class game
         /// @return 1 if successful, 0 otherwise
         bool loadCharTexture();
 
-        bool loadLikeEmoji();
+        /// @brief Initialize the hint box texture
+        /// @return 1 if successful, 0 otherwise
+        bool loadHintBoxTexture();
+
+        /// @brief Load the images
+        /// @return 1 if successful, 0 otherwise
+        bool loadImages();
 
         /// @brief Load the sounds
         /// @return 1 if successful, 0 otherwise

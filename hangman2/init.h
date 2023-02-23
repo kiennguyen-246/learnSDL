@@ -44,23 +44,23 @@ class word
 
         /// @brief Get the key word
         /// @return A string represents the key hint
-        string getWord();
+        string getWord() const;
 
         /// @brief Get the first hint
         /// @return A string represents the first hint
-        string getHint1();
+        string getHint1() const;
 
         /// @brief Get the second hint
         /// @return A string represents the second hint
-        string getHint2();
+        string getHint2() const;
 
         /// @brief Get the third hint
         /// @return A string represents the third hint
-        string getHint3();  
+        string getHint3() const;  
 
         /// @brief Get the length of the word
         /// @return An integers represent the length of the word
-        int getLength();   
+        int getLength() const;   
 
         /// @brief Clear the word
         void clear();

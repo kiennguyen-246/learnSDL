@@ -33,27 +33,27 @@ word::~word()
     clear();
 }
 
-string word::getWord()
+string word::getWord() const
 {
     return value;
 }
 
-string word::getHint1()
+string word::getHint1() const
 {
     return hint1;
 }
 
-string word::getHint2()
+string word::getHint2() const
 {
     return hint2;
 }
 
-string word::getHint3()
+string word::getHint3() const
 {
     return hint3;
 }
 
-int word::getLength()
+int word::getLength() const
 {
     return len;
 }

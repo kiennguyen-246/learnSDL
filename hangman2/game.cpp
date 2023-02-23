@@ -64,8 +64,34 @@ bool game::initSDL()
     return 1;
 }
 
+bool game::loadHintBoxTexture()
+{
+    //Hint box texture
+    mFont = TTF_OpenFont(&PATH_COMIC_FONT[0], HINT_BOX_FONT_SIZE);
+	if (mFont == NULL)
+	{
+		cout << "Failed to load the font. Error: " << TTF_GetError() << ".\n";
+		return 0;
+	}
+
+    for (int curHint = 1; curHint <= 3; curHint ++)
+    {
+        string text = "Hint " + std::to_string(curHint);
+        if (!(hintBoxTexture[curHint].loadTexture(mRenderer, mFont, &text[0], SDL_COLOR_BLACK)))
+        {
+            cout << "Failed to render text.\n";
+            return 0;
+        }
+    }
+
+	TTF_CloseFont(mFont);
+
+    return 1;
+}
+
 bool game::loadCharTexture()
 {
+    //Keyboard texture
     mFont = TTF_OpenFont(&PATH_COMIC_FONT[0], KEYBOARD_CHARACTER_FONT_SIZE);
 	if (mFont == NULL)
 	{
@@ -123,9 +149,46 @@ bool game::loadSound()
     return 1;
 }
 
-bool game::loadLikeEmoji()
+bool game::loadImages()
 {
-    likeEmoji.loadTexture(mRenderer, "img/likeEmoji.png");
+    if (!likeEmoji.loadTexture(mRenderer, &PATH_LIKE_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!sunglasses.loadTexture(mRenderer, &PATH_SUNGLASSES_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!whitherAway.loadTexture(mRenderer, &PATH_WHITHERAWAY_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!yellowSad.loadTexture(mRenderer, &PATH_YELLOWSAD_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!shack.loadTexture(mRenderer, &PATH_SHACK[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    for (int state = 0; state < HANGMAN_STATES_COUNT; state ++)
+    {
+        if (!trollHangman[state].loadTexture(mRenderer, &PATH_TROLL_HANGMAN[state][0]))
+        {
+            cout << "Failed to load image.\n"; 
+            return 0;
+        }
+    }
     return 1;
 }
 
@@ -156,6 +219,18 @@ void game::preset()
         return;
     }
 
+    if (!loadImages())
+    {
+        cout << "Loading images failed.\n";
+        return;
+    }
+
+    if (!loadHintBoxTexture())
+    {
+        cout << "Loading hint boxes failed.\n";
+        return;
+    }
+
     if (!loadCharTexture())
     {
         cout << "Loading alphabet characters texture failed.\n";
@@ -168,8 +243,13 @@ void game::preset()
         return;
     }
 
-    loadLikeEmoji();
+    //Hint boxes setup
+    hintBox[1].set(HINT_BOX_POS_X[1], HINT_BOX_POS_Y, hintBoxTexture[1].getWidth(), hintBoxTexture[1].getHeight());
+    hintBox[2].set(HINT_BOX_POS_X[2], HINT_BOX_POS_Y, hintBoxTexture[2].getWidth(), hintBoxTexture[2].getHeight());
+    hintBox[3].set(HINT_BOX_POS_X[3], HINT_BOX_POS_Y, hintBoxTexture[3].getWidth(), hintBoxTexture[3].getHeight());
+    
 
+    //On-screen keyboard setup
     int charHeight = charTexture['A'].getHeight();
     cout << charHeight << "\n";
     int curXPos = KEYBOARD_POSITION_X;
@@ -197,16 +277,16 @@ void game::play()
     bool quit = 0;
     SDL_Event curEvent;
 
-    word key = dictionary[DIFFICULTY_EASY][randInt(0, dictionary[DIFFICULTY_EASY].size() - 1)];
+    int difficulty = randInt(1, 3);
+    word key = dictionary[difficulty][randInt(0, dictionary[difficulty].size() - 1)];
     string guessWord = "";
+    string hintText = "";
     for (int i = 0; i < key.getLength(); i ++) guessWord.push_back('_'); 
     bool isTriggered = 0;
     bool isIn = 0;
     int livesLeft = LIVES_COUNT_DEFAULT;
     int livesConsumed = 0;
     bool gameOver = 0;
-    bool correct = 0;
-    bool incorrect = 0;
     bool victory = 0;
     bool defeat = 0;
 
@@ -217,8 +297,6 @@ void game::play()
 
         if (!gameOver)
         {
-            correct = 0;
-            incorrect = 0;
             victory = 0;
             defeat = 0;
         }
@@ -230,33 +308,67 @@ void game::play()
             {
                 for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
                     button[buttonId].handleEvent(&curEvent, key, guessWord, isTriggered, isIn);
+                for (int curHint = 1; curHint <= 3; curHint ++)
+                    hintBox[curHint].handleEvent(&curEvent, key, hintText);
             }
         }
 
         SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
         SDL_RenderClear(mRenderer);
 
-        //A button is pressed
+        //Render the word need guessing
+        string spacedGuessWord = spaced(guessWord);
+        renderText(guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
+
+        //Render "Lives left" box
+        string livesLeftInfo = "Lives left: " + std::to_string(livesLeft);
+        renderText(livesLeftBoxTexture, &livesLeftInfo[0], LIVES_LEFT_BOX_POS_X, LIVES_LEFT_BOX_POS_Y, LIVES_LEFT_BOX_FONT_SIZE);
+
+        hintBoxTexture[1].render(mRenderer, 0, 0);
+
+        //Render the hint boxes
+        if (livesConsumed >= 2) hintBox[1].setId(1), hintBox[1].render(mRenderer, hintBoxTexture[1]);
+        if (livesConsumed >= 4) hintBox[2].setId(2), hintBox[2].render(mRenderer, hintBoxTexture[2]);
+        if (livesConsumed >= 6) hintBox[3].setId(3), hintBox[3].render(mRenderer, hintBoxTexture[3]);
+
+        //Render the keyboard
+        for (int curRow = 0; curRow < 3; curRow ++)
+        {
+            for (auto ch : KEYBOARD_ROWS[curRow])
+            {
+                int ch_int = ch;
+                if (!button[ch_int].isUsed()) button[ch_int].render(mRenderer, charTexture[ch_int]);
+                else button[ch_int].render(mRenderer, usedCharTexture[ch_int]);
+            }
+        }
+
+        //Render the hint text
+        if (!hintText.empty()) 
+            renderText(hintTextTexture, &hintText[0], HINT_TEXT_POSITION_X, HINT_TEXT_POSITION_Y, HINT_BOX_FONT_SIZE);
+
+        //A button on the keyboard is pressed
         if (isTriggered)
         {
+            //Correct letter provided
             if (isIn) 
             {
-                correct = 1;
                 Mix_PlayMusic(yeahSound, 0);
             }
+            //Incorrect letter provided
             else 
             {
-                incorrect = 1;
                 livesLeft --;
                 livesConsumed ++;
                 Mix_PlayMusic(wrongAnswer, 0);
             }
+            //Game ends when no lives left
             if (livesLeft == 0) 
             {
                 gameOver = 1;  
                 defeat = 1;
                 Mix_PlayMusic(alarm, -1);
             }
+            //Game ends when the word is successfully guessed
             if (guessWord.find('_') == guessWord.npos) 
             {
                 victory = 1;
@@ -269,40 +381,29 @@ void game::play()
         if (victory)
         {
             likeEmoji.render(mRenderer, 1000, 400);
+            sunglasses.render(mRenderer, 1000, 200);
         }
         //Game over
         if (defeat)
         {
-            
+            whitherAway.render(mRenderer, 1000, 200);
+            yellowSad.render(mRenderer, 1000, 400);
         } 
 
-        string livesLeftInfo = "Lives left: " + std::to_string(livesLeft);
-        renderText(livesLeftBoxTexture, &livesLeftInfo[0], LIVES_LEFT_BOX_POS_X, LIVES_LEFT_BOX_POS_Y, 24);
-
-        string spacedGuessWord = spaced(guessWord);
-        renderText(guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, 60);
-
-        for (int curRow = 0; curRow < 3; curRow ++)
-        {
-            for (auto ch : KEYBOARD_ROWS[curRow])
-            {
-                int ch_int = ch;
-                if (!button[ch_int].isUsed()) button[ch_int].render(mRenderer, charTexture[ch_int]);
-                else button[ch_int].render(mRenderer, usedCharTexture[ch_int]);
-            }
-        }
-
-        SDL_RenderPresent(mRenderer);
-        
-        
+        SDL_RenderPresent(mRenderer); 
     }
-
-    
     clear();
 }
 
 void game::clear()
 {
+    likeEmoji.clear();
+    sunglasses.clear();
+    whitherAway.clear();
+    yellowSad.clear();
+    shack.clear();
+    for (int i = 0; i < HANGMAN_STATES_COUNT; i ++) trollHangman[i].clear();
+    
     for (int i = 'A'; i <= 'Z'; i ++) charTexture[i].clear();
     charTexture[int(' ')].clear();
     charTexture[int('_')].clear();

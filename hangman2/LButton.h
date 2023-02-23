@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sdl.h>
 #include "LTexture.h"
+#include "init.h"
 
 class LButton
 {

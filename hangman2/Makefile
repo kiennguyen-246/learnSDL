@@ -1,4 +1,4 @@
-OBJS = main.cpp game.cpp LTexture.cpp LButton.cpp charButton.cpp init.cpp 
+OBJS = main.cpp game.cpp LTexture.cpp LButton.cpp charButton.cpp hintButton.cpp init.cpp 
 
 CC = g++ -std=c++17
 

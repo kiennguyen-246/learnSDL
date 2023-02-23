@@ -2,7 +2,6 @@
 #include <iostream>
 #include <sdl.h>
 #include "LButton.h"
-#include "init.h"
 
 class charButton: public LButton
 {
@@ -22,11 +21,11 @@ class charButton: public LButton
         void updateSymbol(char newSym);
         
         /// @brief Handle the cases when the mouse is in or out button
-        void handleEvent(SDL_Event* event, word& key, string& curWord, bool& isTriggered, bool& isIn);
+        void handleEvent(SDL_Event* event, const word& key, string& curWord, bool& isTriggered, bool& isIn);
 
         /// @brief Update the word
         /// @return 1 if the chosen button is in the word
-        void trigger(word& key, string& curWord, bool& isIn);
+        void trigger(const word& key, string& curWord, bool& isIn);
 
 
 };

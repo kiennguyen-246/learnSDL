@@ -18,7 +18,7 @@ void charButton::updateSymbol(char newSym)
     symbol = newSym;
 }
 
-void charButton::handleEvent(SDL_Event* event, word& key, string& curWord, bool& isTriggered, bool& isIn)
+void charButton::handleEvent(SDL_Event* event, const word& key, string& curWord, bool& isTriggered, bool& isIn)
 {
     SDL_Point pos = getPos();
     int w = getWidth();
@@ -43,7 +43,7 @@ void charButton::handleEvent(SDL_Event* event, word& key, string& curWord, bool&
     }
 }
 
-void charButton::trigger(word& key, string& curWord, bool& isIn)
+void charButton::trigger(const word& key, string& curWord, bool& isIn)
 {
     useKey();
     for (int i = 0; i < key.getLength(); i ++)
