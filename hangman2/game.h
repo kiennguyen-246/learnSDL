@@ -36,8 +36,10 @@ class game
         /// @brief Texture object for the images
         PNG_Image sunglasses;
         PNG_Image likeEmoji;
-        PNG_Image whitherAway;
+        PNG_Image zhongXina;
         PNG_Image yellowSad;
+        GIF_Image witherAway;
+        GIF_Image theRock;
 
         /// @brief Sound object for the soundtracks
         Mix_Music* yeahSound;

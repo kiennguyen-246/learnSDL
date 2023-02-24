@@ -111,13 +111,25 @@ bool game::loadImages()
         return 0;
     }
 
-    if (!whitherAway.loadTexture(mRenderer, &PATH_WHITHERAWAY_EMOJI[0]))
+    if (!zhongXina.loadTexture(mRenderer, &PATH_ZHONGXINA_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!witherAway.loadTexture(mRenderer, &PATH_WITHERAWAY_EMOJI[0]))
     {
         cout << "Failed to load image.\n"; 
         return 0;
     }
 
     if (!yellowSad.loadTexture(mRenderer, &PATH_YELLOWSAD_EMOJI[0]))
+    {
+        cout << "Failed to load image.\n"; 
+        return 0;
+    }
+
+    if (!theRock.loadTexture(mRenderer, &PATH_THEROCK[0]))
     {
         cout << "Failed to load image.\n"; 
         return 0;
@@ -150,12 +162,6 @@ void game::preset()
         return;
     }
 
-    if (!loadImages())
-    {
-        cout << "Loading images failed.\n";
-        return;
-    }
-
     if (!mHintBox.loadHintButtonTexture(mRenderer))
     {
         cout << "Loading hint boxes failed.\n";
@@ -167,6 +173,15 @@ void game::preset()
         cout << "Loading alphabet characters texture failed.\n";
         return;
     }
+
+    if (!loadImages())
+    {
+        cout << "Loading images failed.\n";
+        return;
+    }
+
+    theRock.set(FRAME_COUNT_THEROCK, FRAME_DELAY_THEROCK);
+    witherAway.set(FRAME_COUNT_WITHERAWAY_EMOJI, FRAME_DELAY_WITHERAWAY_EMOJI);
 
     if (!loadSound())
     {
@@ -190,9 +205,6 @@ void game::preset()
 void game::play()
 {
     preset();
-    
-    bool quit = 0;
-    SDL_Event curEvent;
 
     //Set the difficulty
     setDifficulty(randInt(1, 3));
@@ -207,6 +219,10 @@ void game::play()
     mLivesBox.set(difficulty);
 
     bool gameOver = 0;
+
+    bool quit = 0;
+    SDL_Event curEvent;
+    int frameCount = 0;
 
     while (!quit)
     {
@@ -278,17 +294,23 @@ void game::play()
             {
                 likeEmoji.render(mRenderer, ENDGAME_RENDER_POS_X[0], ENDGAME_RENDER_POS_Y[0]);
                 sunglasses.render(mRenderer, ENDGAME_RENDER_POS_X[1], ENDGAME_RENDER_POS_Y[1]);
+                theRock.render(mRenderer, ENDGAME_RENDER_POS_X[2], ENDGAME_RENDER_POS_Y[2], 
+                               &theRock.clips[(frameCount / FRAME_DELAY_THEROCK) % FRAME_COUNT_THEROCK]);
             }
             //Game over
             if (this->defeat())
             {
-                whitherAway.render(mRenderer, ENDGAME_RENDER_POS_X[0], ENDGAME_RENDER_POS_Y[0]);
+                zhongXina.render(mRenderer, ENDGAME_RENDER_POS_X[0], ENDGAME_RENDER_POS_Y[0]);
                 yellowSad.render(mRenderer, ENDGAME_RENDER_POS_X[1], ENDGAME_RENDER_POS_Y[1]);
+                witherAway.render(mRenderer, ENDGAME_RENDER_POS_X[2], ENDGAME_RENDER_POS_Y[2], 
+                               &witherAway.clips[(frameCount / FRAME_DELAY_WITHERAWAY_EMOJI) % FRAME_COUNT_WITHERAWAY_EMOJI]);
             } 
         }
         
-
         SDL_RenderPresent(mRenderer); 
+
+        ++frameCount;
+        if (frameCount > 1e8) frameCount = 0;
     }
     clear();
 }
@@ -297,9 +319,11 @@ void game::clear()
 {
     likeEmoji.clear();
     sunglasses.clear();
-    whitherAway.clear();
+    witherAway.clear();
     yellowSad.clear();
-    
+    theRock.clear();
+    zhongXina.clear();
+
     mKeyboard.clear();
     
     Mix_FreeMusic(yeahSound);

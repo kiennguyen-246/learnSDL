@@ -16,6 +16,8 @@ const int SCREEN_HEIGHT = 720;
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
 const SDL_Color SDL_COLOR_GRAY = {192, 192, 192};
 
+const int MAX_FRAME_COUNT = 60;
+
 enum GAME_DIFFICULTY
 {
     DIFFICULTY_NULL,
@@ -30,10 +32,15 @@ const int LIVES_COUNT_CHINA = 8;
 
 const std::string PATH_COMIC_FONT = "fonts/comic.ttf";
 const std::string PATH_LIKE_EMOJI = "img/likeEmoji.png";
-
 const std::string PATH_SUNGLASSES_EMOJI = "img/sunglasses.png";
-const std::string PATH_WHITHERAWAY_EMOJI = "img/whitheraway.png";
+const std::string PATH_THEROCK = "img/theRock.png";
+const int FRAME_COUNT_THEROCK = 9;
+const int FRAME_DELAY_THEROCK = 8;
+const std::string PATH_ZHONGXINA_EMOJI = "img/zhongXina.png";
 const std::string PATH_YELLOWSAD_EMOJI = "img/yellowSad.png";
+const std::string PATH_WITHERAWAY_EMOJI = "img/witheraway.png";
+const int FRAME_COUNT_WITHERAWAY_EMOJI = 9;
+const int FRAME_DELAY_WITHERAWAY_EMOJI = 6;
 
 const std::string PATH_YEAHSOUND_SOUND = "sounds/yeahsound.mp3";
 const std::string PATH_WRONGANSWER_SOUND = "sounds/wrongAnswer.mp3";
@@ -141,6 +148,32 @@ class LButton
 class PNG_Image: public LTexture
 {
 
+};
+
+class GIF_Image: public LTexture
+{
+    private:
+        /// @brief The number of frames
+        int frameCount;
+
+        /// @brief Delay time between the movements
+        int frameDelay;
+
+        /// @brief Frame width
+        int frameWidth;
+
+        /// @brief Frame height
+        int frameHeight;
+
+        /// @brief The current frame
+        int curFrame;
+
+    public:
+        /// @brief Clip the GIF film into parts
+        SDL_Rect clips[MAX_FRAME_COUNT];
+
+        /// @brief Setup the GIF image
+        void set(const int& __frameCount = 1, const int& __frameDelay = 4);    
 };
 
 /// @brief Get the word with a space created between the characters

@@ -180,6 +180,24 @@ void LButton::render(SDL_Renderer* renderer, LTexture& texture, SDL_Rect* clip)
     texture.render(renderer, mPos.x, mPos.y, clip);
 }
 
+void GIF_Image::set(const int& __frameCount, const int& __frameDelay)
+{
+    frameDelay = __frameDelay;
+    frameCount = __frameCount;
+
+    frameWidth = getWidth() / frameCount;
+    frameHeight = getHeight();
+
+    int curX = 0;
+    int curY = 0;
+    for (int i = 0; i < frameCount; i ++)
+    {
+        clips[i] = {curX, curY, frameWidth, frameHeight};
+        curX += frameWidth;
+    }
+        
+}
+
 string spaced(const string& __word)
 {
     string ret = "";
