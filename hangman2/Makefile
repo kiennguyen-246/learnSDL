@@ -1,4 +1,4 @@
-OBJS = main.cpp game.cpp init.cpp keyboard.cpp hintBox.cpp
+OBJS = main.cpp game.cpp init.cpp keyboard.cpp hintBox.cpp livesBox.cpp
 
 CC = g++ -std=c++17
 

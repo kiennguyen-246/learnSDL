@@ -8,7 +8,7 @@
 
 using namespace std;
 
-enum DIFFICULTY
+enum GAME_DIFFICULTY
 {
     DIFFICULTY_NULL,
     DIFFICULTY_EASY,
@@ -101,6 +101,24 @@ class word
         void clear();
 };
 
+/// @brief Dictionary class
+class dictionary
+{
+    private:
+        /// @brief The vector containing all the words in the game
+        vector <word> vWord[DIFFICULTY_COUNT];
+
+        /// @brief Size of the dictionary
+        int size[DIFFICULTY_COUNT];
+
+    public:
+        /// @brief Load words from the csv file
+        void init();
+
+        /// @brief Get a word from the dictionary
+        word getWord(const int& difficulty) const;
+};
+
 /// @brief Texture class
 class LTexture
 {
@@ -154,7 +172,6 @@ class LTexture
 
         /// @brief Destroy the LTexture object
         void clear();
-        
 };
 
 /// @brief Button class

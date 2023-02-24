@@ -4,20 +4,11 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "hintBox.h"
+#include "livesBox.h"
 
 const int GUESS_WORD_POSITION_X = 500;
 const int GUESS_WORD_POSITION_Y = 100;
 const int GUESS_WORD_FONT_SIZE = 60;
-
-const int LIVES_LEFT_BOX_POS_X = 500;
-const int LIVES_LEFT_BOX_POS_Y = 320;
-const int LIVES_LEFT_BOX_FONT_SIZE = 24;
-
-const std::string KEYBOARD_ROWS[3] = {"QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
-const int KEYBOARD_POSITION_X = 500;
-const int KEYBOARD_POSITION_Y = 400;
-const int KEYBOARD_CHARACTER_FONT_SIZE = 48;
 
 class game
 {
@@ -28,16 +19,13 @@ class game
         /// @brief The renderer
         SDL_Renderer* mRenderer;
 
-        /// @brief The font object
-        TTF_Font* mFont;
-
         /// @brief The texture object of the word need guessing
         LTexture guessWordTexture;
 
-        /// @brief The texture object of the life box
-        LTexture livesLeftBoxTexture;
+        /// @brief Lives boxes object, including lives counter
+        livesBox mLivesBox;
 
-        /// @brief Hintboxes object, including 3 hint buttons and the hint text in the bottom of the screen
+        /// @brief Hint boxes object, including 3 hint buttons and the hint text in the bottom of the screen
         hintBox mHintBox;
 
         /// @brief Keyboard object
@@ -58,7 +46,13 @@ class game
         Mix_Music* alarm;
 
         /// @brief The dictionary of the game, contains words from different difficulties
-        vector <word> dictionary[DIFFICULTY_COUNT];
+        dictionary mDictionary;
+
+        /// @brief The difficulty of the game
+        GAME_DIFFICULTY difficulty;
+
+        /// @brief Answer key of the word need guessing
+        word key;
     
     public: 
         /// @brief Constructor
@@ -78,6 +72,12 @@ class game
         /// @brief Load the sounds
         /// @return 1 if successful, 0 otherwise
         bool loadSound();
+
+        /// @brief Set the difficulty of the game
+        GAME_DIFFICULTY setDifficulty(const int& __dif);
+
+        /// @brief Game over when no lives left
+        bool defeat();
 
         /// @brief Settings before playing the game
         void preset();

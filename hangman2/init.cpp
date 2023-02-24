@@ -58,6 +58,45 @@ int word::getLength() const
     return len;
 }
 
+void dictionary::init()
+{
+    ifstream fi("dictionary.csv");
+    if (!fi.is_open()) return;
+    string line;
+    int curDifficulty = 0;
+    while(getline(fi, line))
+    {
+        optimize(line);
+
+        stringstream ssLine(line);
+        int cnt = 0;
+        string value, hint1, hint2, hint3, item;
+        while (ssLine >> item)
+        {
+            rollBack(item);
+            cnt ++;
+            if (cnt == 1) value = item;
+            if (cnt == 2) hint1 = item;
+            if (cnt == 3) hint2 = item;
+            if (cnt == 4) hint3 = item;
+        }
+        if (value[0] == 'e' || value[0] == 'n' || value[0] == 'd' || value[0] == 'c') 
+        {
+            curDifficulty++;
+            continue;
+        }
+        if (value == "word") continue;
+        vWord[curDifficulty].push_back(word(value, hint1, hint2, hint3));
+        size[curDifficulty] ++;
+    }
+}
+
+word dictionary::getWord(const int& difficulty) const
+{
+    int pos = randInt(0, vWord[difficulty].size() - 1);
+    return vWord[difficulty][pos];
+}
+
 void word::clear()
 {
     value.clear();

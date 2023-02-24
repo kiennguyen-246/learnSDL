@@ -139,10 +139,19 @@ bool game::loadImages()
     return 1;
 }
 
+GAME_DIFFICULTY game::setDifficulty(const int& __dif)
+{
+    difficulty = GAME_DIFFICULTY(__dif);
+}
+
+bool game::defeat()
+{
+    return mLivesBox.defeat();
+}
+
 void game::preset()
 {
     initRand();
-    initWords(dictionary);
     
     if (!initSDL())
     {
@@ -179,6 +188,9 @@ void game::preset()
 
     //On-screen keyboard setup
     mKeyboard.set();
+
+    //Setup the dictionary
+    mDictionary.init();
 }
 
 void game::play()
@@ -188,15 +200,20 @@ void game::play()
     bool quit = 0;
     SDL_Event curEvent;
 
-    int difficulty = randInt(1, 3);
-    word key = dictionary[difficulty][randInt(0, dictionary[difficulty].size() - 1)];
+    //Set the difficulty
+    setDifficulty(randInt(1, 3));
+
+    //Get the answer key
+    key = mDictionary.getWord(difficulty);
+
     string guessWord = "";
-    string hintText = "";
     for (int i = 0; i < key.getLength(); i ++) guessWord.push_back('_'); 
+    
+    //Set the number of lives
+    mLivesBox.set(difficulty);
+
     bool keyboardTriggered = 0;
     bool isIn = 0;
-    int livesLeft = LIVES_COUNT_DEFAULT;
-    int livesConsumed = 0;
     bool gameOver = 0;
     bool victory = 0;
     bool defeat = 0;
@@ -230,11 +247,10 @@ void game::play()
         renderText(mRenderer, guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
 
         //Render "Lives left" box
-        string livesLeftInfo = "Lives left: " + std::to_string(livesLeft);
-        renderText(mRenderer, livesLeftBoxTexture, &livesLeftInfo[0], LIVES_LEFT_BOX_POS_X, LIVES_LEFT_BOX_POS_Y, LIVES_LEFT_BOX_FONT_SIZE);
+        mLivesBox.render(mRenderer);
 
         //Render the hint boxes
-        mHintBox.renderHintBox(mRenderer, livesConsumed);
+        mHintBox.renderHintBox(mRenderer, mLivesBox.getLivesConsumed());
 
         //Render the keyboard
         mKeyboard.render(mRenderer);
@@ -253,12 +269,11 @@ void game::play()
             //Incorrect letter provided
             else 
             {
-                livesLeft --;
-                livesConsumed ++;
+                mLivesBox.consumeLife();
                 Mix_PlayMusic(wrongAnswer, 0);
             }
             //Game ends when no lives left
-            if (livesLeft == 0) 
+            if (this->defeat()) 
             {
                 gameOver = 1;  
                 defeat = 1;
