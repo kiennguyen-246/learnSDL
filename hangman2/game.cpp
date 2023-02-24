@@ -9,6 +9,7 @@
 #include "game.h"
 
 using std::cout;
+using random::randInt;
 
 game::game()
 {
@@ -151,7 +152,7 @@ bool game::defeat()
 
 void game::preset()
 {
-    initRand();
+    random::initRand();
     
     if (!initSDL())
     {
