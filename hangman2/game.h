@@ -4,7 +4,7 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "keyboard.h"
+#include "hintBox.h"
 
 const int GUESS_WORD_POSITION_X = 500;
 const int GUESS_WORD_POSITION_Y = 100;
@@ -14,18 +14,10 @@ const int LIVES_LEFT_BOX_POS_X = 500;
 const int LIVES_LEFT_BOX_POS_Y = 320;
 const int LIVES_LEFT_BOX_FONT_SIZE = 24;
 
-const int HINT_BOX_POS_Y = 320;
-const int HINT_BOX_POS_X[4] = {0, 650, 800, 950};
-const int HINT_BOX_FONT_SIZE = 24;
-
 const std::string KEYBOARD_ROWS[3] = {"QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
 const int KEYBOARD_POSITION_X = 500;
 const int KEYBOARD_POSITION_Y = 400;
 const int KEYBOARD_CHARACTER_FONT_SIZE = 48;
-
-const int HINT_TEXT_POSITION_X = 50;
-const int HINT_TEXT_POSITION_Y = 600;
-const int HINT_TEXT_FONT_SIZE = 24;
 
 class game
 {
@@ -45,14 +37,8 @@ class game
         /// @brief The texture object of the life box
         LTexture livesLeftBoxTexture;
 
-        /// @brief Buttons to trigger hints
-        hintButton hintBox[4];
-
-        /// @brief The texture object of the hint boxes
-        LTexture hintBoxTexture[4];
-
-        /// @brief The texture object of the hint line
-        LTexture hintTextTexture;
+        /// @brief Hintboxes object, including 3 hint buttons and the hint text in the bottom of the screen
+        hintBox mHintBox;
 
         /// @brief Keyboard object
         keyboard mKeyboard;
@@ -85,10 +71,6 @@ class game
         /// @return 1 if successful, 0 otherwise
         bool initSDL();
 
-        /// @brief Initialize the hint box texture
-        /// @return 1 if successful, 0 otherwise
-        bool loadHintBoxTexture();
-
         /// @brief Load the images
         /// @return 1 if successful, 0 otherwise
         bool loadImages();
@@ -96,15 +78,6 @@ class game
         /// @brief Load the sounds
         /// @return 1 if successful, 0 otherwise
         bool loadSound();
-
-        /// @brief Render some text to the screen
-        /// @param texture The LTexture object
-        /// @param x,y The render position
-        /// @param text The text being rendered, in char* form
-        /// @param fontPath Path to the font (ttf) file
-        /// @param fontSize Font size
-        /// @param textColor Text color, in SDL_Color form
-        void renderText(LTexture& texture, const char* text, const int& x, const int& y, const int& fontSize = 48, const char* fontPath = &PATH_COMIC_FONT[0], const SDL_Color& fontColor = SDL_COLOR_BLACK);
 
         /// @brief Settings before playing the game
         void preset();

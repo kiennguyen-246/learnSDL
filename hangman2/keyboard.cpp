@@ -69,6 +69,12 @@ void keyboard::set()
     }
 }
 
+void keyboard::handleEvent(SDL_Event& event, const word& key, string& guessWord, bool& isTriggered, bool& isIn)
+{
+    for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
+        keyboardButton[buttonId].handleEvent(&event, key, guessWord, isTriggered, isIn);
+}
+
 void keyboard::render(SDL_Renderer* renderer)
 {
     for (int curRow = 0; curRow < 3; curRow ++)

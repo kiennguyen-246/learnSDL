@@ -64,31 +64,6 @@ bool game::initSDL()
     return 1;
 }
 
-bool game::loadHintBoxTexture()
-{
-    //Hint box texture
-    mFont = TTF_OpenFont(&PATH_COMIC_FONT[0], HINT_BOX_FONT_SIZE);
-	if (mFont == NULL)
-	{
-		cout << "Failed to load the font. Error: " << TTF_GetError() << ".\n";
-		return 0;
-	}
-
-    for (int curHint = 1; curHint <= 3; curHint ++)
-    {
-        string text = "Hint " + std::to_string(curHint);
-        if (!(hintBoxTexture[curHint].loadTexture(mRenderer, mFont, &text[0], SDL_COLOR_BLACK)))
-        {
-            cout << "Failed to render text.\n";
-            return 0;
-        }
-    }
-
-	TTF_CloseFont(mFont);
-
-    return 1;
-}
-
 bool game::loadSound()
 {
     yeahSound = Mix_LoadMUS(&PATH_YEAHSOUND_SOUND[0]);
@@ -164,22 +139,6 @@ bool game::loadImages()
     return 1;
 }
 
-void game::renderText(LTexture& texture, const char* text, const int& x, const int& y, 
-                      const int& fontSize, const char* fontPath, const SDL_Color& fontColor)
-{
-    mFont = TTF_OpenFont(fontPath, fontSize);
-
-    if (!texture.loadTexture(mRenderer, mFont, text, fontColor)) 
-    {
-        cout << "Cannot render given text.\n";
-    }
-    else
-    {
-        texture.render(mRenderer, x, y);
-    }
-    TTF_CloseFont(mFont);
-}
-
 void game::preset()
 {
     initRand();
@@ -197,7 +156,7 @@ void game::preset()
         return;
     }
 
-    if (!loadHintBoxTexture())
+    if (!mHintBox.loadHintButtonTexture(mRenderer))
     {
         cout << "Loading hint boxes failed.\n";
         return;
@@ -216,10 +175,7 @@ void game::preset()
     }
 
     //Hint boxes setup
-    hintBox[1].set(HINT_BOX_POS_X[1], HINT_BOX_POS_Y, hintBoxTexture[1].getWidth(), hintBoxTexture[1].getHeight());
-    hintBox[2].set(HINT_BOX_POS_X[2], HINT_BOX_POS_Y, hintBoxTexture[2].getWidth(), hintBoxTexture[2].getHeight());
-    hintBox[3].set(HINT_BOX_POS_X[3], HINT_BOX_POS_Y, hintBoxTexture[3].getWidth(), hintBoxTexture[3].getHeight());
-    
+    mHintBox.setButtons();
 
     //On-screen keyboard setup
     mKeyboard.set();
@@ -261,10 +217,8 @@ void game::play()
             if (curEvent.type == SDL_QUIT) quit = 1;
             else 
             {
-                for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
-                    mKeyboard.keyboardButton[buttonId].handleEvent(&curEvent, key, guessWord, keyboardTriggered, isIn);
-                for (int curHint = 1; curHint <= 3; curHint ++)
-                    hintBox[curHint].handleEvent(&curEvent, key, hintText);
+                mKeyboard.handleEvent(curEvent, key, guessWord, keyboardTriggered, isIn);
+                mHintBox.handleEvent(curEvent, key);
             }
         }
 
@@ -273,25 +227,20 @@ void game::play()
 
         //Render the word need guessing
         string spacedGuessWord = spaced(guessWord);
-        renderText(guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
+        renderText(mRenderer, guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
 
         //Render "Lives left" box
         string livesLeftInfo = "Lives left: " + std::to_string(livesLeft);
-        renderText(livesLeftBoxTexture, &livesLeftInfo[0], LIVES_LEFT_BOX_POS_X, LIVES_LEFT_BOX_POS_Y, LIVES_LEFT_BOX_FONT_SIZE);
-
-        hintBoxTexture[1].render(mRenderer, 0, 0);
+        renderText(mRenderer, livesLeftBoxTexture, &livesLeftInfo[0], LIVES_LEFT_BOX_POS_X, LIVES_LEFT_BOX_POS_Y, LIVES_LEFT_BOX_FONT_SIZE);
 
         //Render the hint boxes
-        if (livesConsumed >= 2) hintBox[1].setId(1), hintBox[1].render(mRenderer, hintBoxTexture[1]);
-        if (livesConsumed >= 4) hintBox[2].setId(2), hintBox[2].render(mRenderer, hintBoxTexture[2]);
-        if (livesConsumed >= 6) hintBox[3].setId(3), hintBox[3].render(mRenderer, hintBoxTexture[3]);
+        mHintBox.renderHintBox(mRenderer, livesConsumed);
 
         //Render the keyboard
         mKeyboard.render(mRenderer);
 
         //Render the hint text
-        if (!hintText.empty()) 
-            renderText(hintTextTexture, &hintText[0], HINT_TEXT_POSITION_X, HINT_TEXT_POSITION_Y, HINT_BOX_FONT_SIZE);
+        mHintBox.renderHintText(mRenderer);
 
         //A button on the keyboard is pressed
         if (keyboardTriggered)

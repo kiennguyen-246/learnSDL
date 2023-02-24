@@ -388,3 +388,19 @@ void initRand()
 {
     srand(int(time(0)));
 }
+
+void renderText(SDL_Renderer* renderer, LTexture& texture, const char* text, const int& x, const int& y, 
+                      const int& fontSize, const char* fontPath, const SDL_Color& fontColor)
+{
+    TTF_Font* font = TTF_OpenFont(fontPath, fontSize);
+
+    if (!texture.loadTexture(renderer, font, text, fontColor)) 
+    {
+        cout << "Cannot render given text.\n";
+    }
+    else
+    {
+        texture.render(renderer, x, y);
+    }
+    TTF_CloseFont(font);
+}

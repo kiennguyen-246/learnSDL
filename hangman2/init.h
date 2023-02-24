@@ -253,3 +253,12 @@ int randInt(const int& lLimit, const int& rLimit);
 
 /// @brief rand() setup
 void initRand();
+
+/// @brief Render some text to the screen
+/// @param texture The LTexture object
+/// @param x,y The render position
+/// @param text The text being rendered, in char* form
+/// @param fontPath Path to the font (ttf) file
+/// @param fontSize Font size
+/// @param textColor Text color, in SDL_Color form
+void renderText(SDL_Renderer* renderer, LTexture& texture, const char* text, const int& x, const int& y, const int& fontSize = 48, const char* fontPath = &PATH_COMIC_FONT[0], const SDL_Color& fontColor = SDL_COLOR_BLACK);
