@@ -4,7 +4,7 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "init.h"
+#include "dictionary.h"
 
 class guessWord
 {

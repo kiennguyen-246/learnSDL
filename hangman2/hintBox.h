@@ -16,7 +16,7 @@ enum HINT_PROPERTIES
 };
 
 const int HINT_BOX_POS_Y = 320;
-const int HINT_BOX_POS_X[HINT_COUNT] = {0, 650, 800, 950};
+const int HINT_BOX_POS_X[HINT_COUNT] = {0, 700, 850, 1000};
 const int HINT_BOX_FONT_SIZE = 24;
 
 const int HINT_TEXT_POSITION_X = 50;

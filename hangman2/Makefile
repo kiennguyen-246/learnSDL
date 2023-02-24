@@ -1,4 +1,4 @@
-OBJS = main.cpp game.cpp init.cpp keyboard.cpp hintBox.cpp livesBox.cpp guessWord.cpp
+OBJS = main.cpp game.cpp init.cpp keyboard.cpp hintBox.cpp livesBox.cpp guessWord.cpp dictionary.cpp hangmanModel.cpp
 
 CC = g++ -std=c++17
 

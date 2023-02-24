@@ -4,7 +4,10 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "livesBox.h"
+#include "hangmanModel.h"
+
+const int ENDGAME_RENDER_POS_X[3] = {1000, 1000, 500};
+const int ENDGAME_RENDER_POS_Y[3] = {400, 150, 400};
 
 class game
 {
@@ -14,9 +17,6 @@ class game
 
         /// @brief The renderer
         SDL_Renderer* mRenderer;
-
-        /// @brief The texture object of the word need guessing
-        LTexture guessWordTexture;
 
         /// @brief Hidden word object
         guessWord mGuessWord;
@@ -29,14 +29,15 @@ class game
 
         /// @brief Keyboard object
         keyboard mKeyboard;
+
+        /// @brief The hangman model object
+        hangmanModel mHangmanModel;
         
         /// @brief Texture object for the images
-        LTexture sunglasses;
-        LTexture likeEmoji;
-        LTexture whitherAway;
-        LTexture yellowSad;
-        LTexture shack;
-        LTexture trollHangman[HANGMAN_STATES_COUNT];
+        PNG_Image sunglasses;
+        PNG_Image likeEmoji;
+        PNG_Image whitherAway;
+        PNG_Image yellowSad;
 
         /// @brief Sound object for the soundtracks
         Mix_Music* yeahSound;

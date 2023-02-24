@@ -122,21 +122,6 @@ bool game::loadImages()
         cout << "Failed to load image.\n"; 
         return 0;
     }
-
-    if (!shack.loadTexture(mRenderer, &PATH_SHACK[0]))
-    {
-        cout << "Failed to load image.\n"; 
-        return 0;
-    }
-
-    for (int state = 0; state < HANGMAN_STATES_COUNT; state ++)
-    {
-        if (!trollHangman[state].loadTexture(mRenderer, &PATH_TROLL_HANGMAN[state][0]))
-        {
-            cout << "Failed to load image.\n"; 
-            return 0;
-        }
-    }
     return 1;
 }
 
@@ -197,6 +182,9 @@ void game::preset()
 
     //Setup the dictionary
     mDictionary.init();
+
+    //Setup the hangman model
+    mHangmanModel.init(mRenderer);
 }
 
 void game::play()
@@ -253,6 +241,8 @@ void game::play()
         //Render the hint text
         mHintBox.renderHintText(mRenderer);
 
+        mHangmanModel.render(mRenderer, mLivesBox.getLivesConsumed());
+
         //A button on the keyboard is pressed
         if (keyboardTriggered)
         {
@@ -286,14 +276,14 @@ void game::play()
             //Victory
             if (this->victory())
             {
-                likeEmoji.render(mRenderer, 1000, 400);
-                sunglasses.render(mRenderer, 1000, 200);
+                likeEmoji.render(mRenderer, ENDGAME_RENDER_POS_X[0], ENDGAME_RENDER_POS_Y[0]);
+                sunglasses.render(mRenderer, ENDGAME_RENDER_POS_X[1], ENDGAME_RENDER_POS_Y[1]);
             }
             //Game over
             if (this->defeat())
             {
-                whitherAway.render(mRenderer, 1000, 200);
-                yellowSad.render(mRenderer, 1000, 400);
+                whitherAway.render(mRenderer, ENDGAME_RENDER_POS_X[0], ENDGAME_RENDER_POS_Y[0]);
+                yellowSad.render(mRenderer, ENDGAME_RENDER_POS_X[1], ENDGAME_RENDER_POS_Y[1]);
             } 
         }
         
@@ -309,8 +299,6 @@ void game::clear()
     sunglasses.clear();
     whitherAway.clear();
     yellowSad.clear();
-    shack.clear();
-    for (int i = 0; i < HANGMAN_STATES_COUNT; i ++) trollHangman[i].clear();
     
     mKeyboard.clear();
     
