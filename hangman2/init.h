@@ -186,6 +186,53 @@ class LButton
         void render(SDL_Renderer* renderer, LTexture& texture, SDL_Rect* clip = NULL);
 };
 
+/// @brief Class for keys on the on-screen keyboard
+class charButton: public LButton
+{
+    private:
+        bool __isUsed;
+        char symbol;
+
+    public: 
+        /// @brief Check if the button is clicked before
+        bool isUsed();
+
+        /// @brief Use the button and change __isUsed to 1
+        void useKey();
+
+        /// @brief Update the symbol of the button, 
+        /// @param newSym The new symbol, can be uppercase letters or _
+        void updateSymbol(char newSym);
+        
+        /// @brief Handle the cases when the mouse is in or out button
+        void handleEvent(SDL_Event* event, const word& key, string& curWord, bool& isTriggered, bool& isIn);
+
+        /// @brief Update the word
+        /// @return 1 if the chosen button is in the word
+        void trigger(const word& key, string& curWord, bool& isIn);
+};
+
+/// @brief Class for the hint buttons
+class hintButton: public LButton
+{
+    private:
+        /// @brief Index of the button, can be 1, 2 or 3
+        int id;
+    
+    public:
+        /// @brief Default constructor
+        hintButton();
+
+        /// @brief Set up the index for the button
+        void setId(const int& newId);
+
+        /// @brief Handke SDL_Event's
+        void handleEvent(SDL_Event* event, const word& __word, std::string& hint);
+
+        /// @brief After clicking
+        void trigger(const word& __word, string& hint);
+};
+
 /// Replace ';' to ',', set ',' as delimiter
 void optimize(string& line);
 

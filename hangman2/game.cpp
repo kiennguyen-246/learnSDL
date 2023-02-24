@@ -187,7 +187,7 @@ void game::preset()
     
     if (!initSDL())
     {
-        cout << "Initialization failed.\n";
+        cout << "SDL initialization failed.\n";
         return;
     }
 
@@ -237,7 +237,7 @@ void game::play()
     string guessWord = "";
     string hintText = "";
     for (int i = 0; i < key.getLength(); i ++) guessWord.push_back('_'); 
-    bool isTriggered = 0;
+    bool keyboardTriggered = 0;
     bool isIn = 0;
     int livesLeft = LIVES_COUNT_DEFAULT;
     int livesConsumed = 0;
@@ -247,7 +247,7 @@ void game::play()
 
     while (!quit)
     {
-        isTriggered = 0;
+        keyboardTriggered = 0;
         isIn = 0;
 
         if (!gameOver)
@@ -262,7 +262,7 @@ void game::play()
             else 
             {
                 for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
-                    mKeyboard.keyboardButton[buttonId].handleEvent(&curEvent, key, guessWord, isTriggered, isIn);
+                    mKeyboard.keyboardButton[buttonId].handleEvent(&curEvent, key, guessWord, keyboardTriggered, isIn);
                 for (int curHint = 1; curHint <= 3; curHint ++)
                     hintBox[curHint].handleEvent(&curEvent, key, hintText);
             }
@@ -294,7 +294,7 @@ void game::play()
             renderText(hintTextTexture, &hintText[0], HINT_TEXT_POSITION_X, HINT_TEXT_POSITION_Y, HINT_BOX_FONT_SIZE);
 
         //A button on the keyboard is pressed
-        if (isTriggered)
+        if (keyboardTriggered)
         {
             //Correct letter provided
             if (isIn) 
@@ -351,9 +351,7 @@ void game::clear()
     shack.clear();
     for (int i = 0; i < HANGMAN_STATES_COUNT; i ++) trollHangman[i].clear();
     
-    for (int i = 'A'; i <= 'Z'; i ++) mKeyboard.charTexture[i].clear();
-    mKeyboard.charTexture[int(' ')].clear();
-    mKeyboard.charTexture[int('_')].clear();
+    mKeyboard.clear();
     
     Mix_FreeMusic(yeahSound);
     Mix_FreeMusic(wrongAnswer);
