@@ -6,10 +6,6 @@
 #include <SDL_ttf.h>
 #include "livesBox.h"
 
-const int GUESS_WORD_POSITION_X = 500;
-const int GUESS_WORD_POSITION_Y = 100;
-const int GUESS_WORD_FONT_SIZE = 60;
-
 class game
 {
     private:
@@ -21,6 +17,9 @@ class game
 
         /// @brief The texture object of the word need guessing
         LTexture guessWordTexture;
+
+        /// @brief Hidden word object
+        guessWord mGuessWord;
 
         /// @brief Lives boxes object, including lives counter
         livesBox mLivesBox;
@@ -75,6 +74,9 @@ class game
 
         /// @brief Set the difficulty of the game
         GAME_DIFFICULTY setDifficulty(const int& __dif);
+
+        /// @brief Game over when no spaces left
+        bool victory();
 
         /// @brief Game over when no lives left
         bool defeat();

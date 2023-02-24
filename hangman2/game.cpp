@@ -145,6 +145,11 @@ GAME_DIFFICULTY game::setDifficulty(const int& __dif)
     difficulty = GAME_DIFFICULTY(__dif);
 }
 
+bool game::victory()
+{
+    return mGuessWord.victory();
+}
+
 bool game::defeat()
 {
     return mLivesBox.defeat();
@@ -207,35 +212,25 @@ void game::play()
     //Get the answer key
     key = mDictionary.getWord(difficulty);
 
-    string guessWord = "";
-    for (int i = 0; i < key.getLength(); i ++) guessWord.push_back('_'); 
+    //Hidden word setup
+    mGuessWord.init(key);
     
     //Set the number of lives
     mLivesBox.set(difficulty);
 
-    bool keyboardTriggered = 0;
-    bool isIn = 0;
     bool gameOver = 0;
-    bool victory = 0;
-    bool defeat = 0;
 
     while (!quit)
     {
-        keyboardTriggered = 0;
-        isIn = 0;
-
-        if (!gameOver)
-        {
-            victory = 0;
-            defeat = 0;
-        }
+        bool keyboardTriggered = 0;
+        bool isIn = 0;
         
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
             else 
             {
-                mKeyboard.handleEvent(curEvent, key, guessWord, keyboardTriggered, isIn);
+                mKeyboard.handleEvent(curEvent, key, mGuessWord, keyboardTriggered, isIn);
                 mHintBox.handleEvent(curEvent, key);
             }
         }
@@ -244,8 +239,7 @@ void game::play()
         SDL_RenderClear(mRenderer);
 
         //Render the word need guessing
-        string spacedGuessWord = spaced(guessWord);
-        renderText(mRenderer, guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
+        mGuessWord.render(mRenderer);
 
         //Render "Lives left" box
         mLivesBox.render(mRenderer);
@@ -277,30 +271,32 @@ void game::play()
             if (this->defeat()) 
             {
                 gameOver = 1;  
-                defeat = 1;
                 Mix_PlayMusic(alarm, -1);
             }
             //Game ends when the word is successfully guessed
-            if (guessWord.find('_') == guessWord.npos) 
+            if (this->victory()) 
             {
-                victory = 1;
                 gameOver = 1;
                 Mix_PlayMusic(spectre, -1);
             }
         }
 
-        //Victory
-        if (victory)
+        if (gameOver)
         {
-            likeEmoji.render(mRenderer, 1000, 400);
-            sunglasses.render(mRenderer, 1000, 200);
+            //Victory
+            if (this->victory())
+            {
+                likeEmoji.render(mRenderer, 1000, 400);
+                sunglasses.render(mRenderer, 1000, 200);
+            }
+            //Game over
+            if (this->defeat())
+            {
+                whitherAway.render(mRenderer, 1000, 200);
+                yellowSad.render(mRenderer, 1000, 400);
+            } 
         }
-        //Game over
-        if (defeat)
-        {
-            whitherAway.render(mRenderer, 1000, 200);
-            yellowSad.render(mRenderer, 1000, 400);
-        } 
+        
 
         SDL_RenderPresent(mRenderer); 
     }

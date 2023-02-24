@@ -10,6 +10,58 @@ const int KEYBOARD_POSITION_X = 500;
 const int KEYBOARD_POSITION_Y = 400;
 const int KEYBOARD_CHARACTER_FONT_SIZE = 48;
 
+bool charButton::isUsed()
+{
+    return __isUsed;
+}
+
+void charButton::useKey()
+{
+    __isUsed = 1;
+}
+
+void charButton::updateSymbol(char newSym)
+{
+    symbol = newSym;
+}
+
+void charButton::handleEvent(SDL_Event* event, const word& key, guessWord& curGuessWord, bool& isTriggered, bool& isIn)
+{
+    SDL_Point pos = getPos();
+    int w = getWidth();
+    int h = getHeight();
+
+    
+    if (event->type == SDL_MOUSEMOTION || event->type == SDL_MOUSEBUTTONUP || event->type == SDL_MOUSEBUTTONDOWN)
+    {
+        int x = 0, y = 0;
+        SDL_GetMouseState(&x, &y);
+
+        bool inside = 1;
+
+        if (x < pos.x || x > pos.x + w || y < pos.y || y > pos.y + h) inside = 0;
+
+        if (!isUsed() && inside && event->type == SDL_MOUSEBUTTONDOWN) 
+        {
+            trigger(key, curGuessWord, isIn);
+            isTriggered = 1;
+        }
+        
+    }
+}
+
+void charButton::trigger(const word& key, guessWord& curGuessWord, bool& isIn)
+{
+    useKey();
+    for (int i = 0; i < key.getLength(); i ++)
+        if (key.getWord()[i] == symbol)
+        {
+            curGuessWord.updateChar(i, symbol);
+            isIn = 1;
+        } 
+    return;
+}
+
 keyboard::keyboard()
 {
 
@@ -69,10 +121,10 @@ void keyboard::set()
     }
 }
 
-void keyboard::handleEvent(SDL_Event& event, const word& key, string& guessWord, bool& isTriggered, bool& isIn)
+void keyboard::handleEvent(SDL_Event& event, const word& key, guessWord& curGuessWord, bool& isTriggered, bool& isIn)
 {
     for (int buttonId = 'A'; buttonId <= 'Z'; buttonId ++)
-        keyboardButton[buttonId].handleEvent(&event, key, guessWord, isTriggered, isIn);
+        keyboardButton[buttonId].handleEvent(&event, key, curGuessWord, isTriggered, isIn);
 }
 
 void keyboard::render(SDL_Renderer* renderer)
