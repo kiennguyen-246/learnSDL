@@ -6,13 +6,6 @@
 #include <SDL_ttf.h>
 #include "playgamePage.h"
 
-const int STARTPAGE_TITLE_RENDER_POS_X = 400;
-const int STARTPAGE_TITLE_RENDER_POS_Y = 100;
-const int STARTPAGE_TITLE_FONT_SIZE = 90;
-
-const int ENDGAME_RENDER_POS_X[3] = {1000, 1000, 500};
-const int ENDGAME_RENDER_POS_Y[3] = {400, 150, 400};
-
 class game
 {
     private:
@@ -22,8 +15,7 @@ class game
         /// @brief The renderer
         SDL_Renderer* mRenderer;
 
-        /// @brief The title of the startpage
-        LTexture startPageTitle;
+        startPage mStartPage;
 
         /// @brief Class for the main page of the game
         playgamePage mPlaygamePage;

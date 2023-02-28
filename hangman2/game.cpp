@@ -75,13 +75,24 @@ void game::preset()
         return;
     }
 
+    mStartPage.preset(mWindow, mRenderer);
     mPlaygamePage.preset(mWindow, mRenderer);
 }
 
-
 void game::play()
 {
-    mPlaygamePage.startPlaygamePage();
+    START_PAGE_STATUS status = START_PAGE_NULL;
+    mStartPage.startStartPage(status);
+    switch(status)
+    {
+        case START_PAGE_PLAY:
+            mPlaygamePage.startPlaygamePage();
+            break;
+
+        default:
+            break;
+    }
+    
     clear();
 }
 

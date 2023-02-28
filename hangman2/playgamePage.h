@@ -4,7 +4,7 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "hangmanModel.h"
+#include "startPage.h"
 
 class playgamePage 
 {
