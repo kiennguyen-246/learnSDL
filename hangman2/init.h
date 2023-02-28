@@ -15,6 +15,7 @@ const int SCREEN_HEIGHT = 720;
 
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
 const SDL_Color SDL_COLOR_GRAY = {192, 192, 192};
+const SDL_Color SDL_COLOR_RED = {255, 0, 0};
 
 const int MAX_FRAME_COUNT = 60;
 
@@ -24,13 +25,14 @@ enum GAME_DIFFICULTY
     DIFFICULTY_EASY,
     DIFFICULTY_NORMAL,
     DIFFICULTY_DIFFICULT,
-    DIFFICLUTY_CHINA,
+    DIFFICULTY_CHINA,
     DIFFICULTY_COUNT
 };
 const int LIVES_COUNT_DEFAULT = 7;
 const int LIVES_COUNT_CHINA = 8;
 
 const std::string PATH_COMIC_FONT = "fonts/comic.ttf";
+const std::string PATH_COMIC_FONT_BOLD = "fonts/comicbd.ttf";
 const std::string PATH_LIKE_EMOJI = "img/likeEmoji.png";
 const std::string PATH_SUNGLASSES_EMOJI = "img/sunglasses.png";
 const std::string PATH_THEROCK = "img/theRock.png";
@@ -100,16 +102,10 @@ class LTexture
         /// @param mRenderer SDL_Renderer
         /// @param x,y 2 integers, represent the upper left position
         /// @param clip SDL_Rect, represent the part of the texture to be render. NULL means all.
-        void render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip = NULL);
-
-        /// @brief Render the texture on the window
-        /// @param mRenderer SDL_Renderer
-        /// @param x,y 2 integers, represent the upper left position
-        /// @param clip SDL_Rect, represent the part of the texture to be render. NULL means all.
         /// @param angle Rotation angle
         /// @param center Rotation center
         /// @param flip Flip flag
-        void render(SDL_Renderer* mRenderer, int& x, int& y, SDL_Rect* clip = NULL, const double& angle = 0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip = NULL, const double& angle = 0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// @brief Destroy the LTexture object
         void clear();

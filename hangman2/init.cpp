@@ -116,18 +116,7 @@ bool LTexture::loadTexture(SDL_Renderer* mRenderer, TTF_Font* mFont, const char*
 
 }
 
-void LTexture::render(SDL_Renderer* mRenderer, const int &x, const int &y, SDL_Rect* clip)
-{
-    SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    if (clip != NULL)
-    {
-        renderQuad.h = clip->h;
-        renderQuad.w = clip->w;
-    }
-    SDL_RenderCopy(mRenderer, mTexture, clip, &renderQuad);
-}
-
-void LTexture::render(SDL_Renderer* mRenderer, int& x, int& y, SDL_Rect* clip, const double& angle, SDL_Point* center, SDL_RendererFlip flip)
+void LTexture::render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip, const double& angle, SDL_Point* center, SDL_RendererFlip flip)
 {
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
     if (clip != NULL)

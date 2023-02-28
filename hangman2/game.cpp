@@ -76,6 +76,7 @@ void game::preset()
     }
 
     mStartPage.preset(mWindow, mRenderer);
+    mChooseDifficultyPage.preset(mWindow, mRenderer);
     mPlaygamePage.preset(mWindow, mRenderer);
 }
 
@@ -86,9 +87,12 @@ void game::play()
     switch(status)
     {
         case START_PAGE_PLAY:
-            mPlaygamePage.startPlaygamePage();
+        {
+            GAME_DIFFICULTY difficulty = DIFFICULTY_NULL;
+            mChooseDifficultyPage.startChooseDifficultyPage(difficulty);
+            mPlaygamePage.startPlaygamePage(difficulty);
             break;
-
+        }
         default:
             break;
     }

@@ -14,8 +14,12 @@ class game
 
         /// @brief The renderer
         SDL_Renderer* mRenderer;
-
+        
+        /// @brief Class for the starting page of the game
         startPage mStartPage;
+
+        /// @brief Class for the choosing difficulty page of the game
+        chooseDifficultyPage mChooseDifficultyPage;
 
         /// @brief Class for the main page of the game
         playgamePage mPlaygamePage;
@@ -33,9 +37,6 @@ class game
 
         /// @brief Settings before playing the game
         void preset();
-
-        /// @brief The startpage of the game
-        // void startPage();
 
         /// @brief The main gameplay
         void play();

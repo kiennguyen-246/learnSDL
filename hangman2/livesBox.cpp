@@ -19,7 +19,7 @@ livesBox::~livesBox()
 
 void livesBox::set(const int& difficulty)
 {
-    livesLeft = LIVES_COUNT_DEFAULT;
+    livesLeft = (difficulty != DIFFICULTY_CHINA ? LIVES_COUNT_DEFAULT: LIVES_COUNT_CHINA);
 }
 
 bool livesBox::defeat() const

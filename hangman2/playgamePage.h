@@ -4,7 +4,7 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "startPage.h"
+#include "chooseDifficultyPage.h"
 
 class playgamePage 
 {
@@ -81,7 +81,7 @@ class playgamePage
         void preset(SDL_Window* window, SDL_Renderer* renderer);
 
         /// @brief The main gameplay
-        void startPlaygamePage();
+        void startPlaygamePage(const GAME_DIFFICULTY& difficulty);
 
         /// @brief Cleanup
         void clear();

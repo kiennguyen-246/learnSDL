@@ -43,7 +43,20 @@ bool guessWord::victory() const
 void guessWord::render(SDL_Renderer* renderer)
 {
     string spacedGuessWord = spaced(value);
-    renderText(renderer, guessWordTexture, &spacedGuessWord[0], GUESS_WORD_POSITION_X, GUESS_WORD_POSITION_Y, GUESS_WORD_FONT_SIZE);
+    int curRenderPosX = GUESS_WORD_POSITION_X;
+    int curRenderPosY = GUESS_WORD_POSITION_Y;
+    std::string curRenderText = "";
+    for (auto &ch: spacedGuessWord)
+    {
+        curRenderText.push_back(ch);
+        if (curRenderText.length() == GUESS_WORD_LINE_LENGTH_LIMIT)
+        {
+            renderText(renderer, guessWordTexture, &curRenderText[0], curRenderPosX, curRenderPosY, GUESS_WORD_FONT_SIZE);
+            curRenderPosY += guessWordTexture.getHeight();
+            curRenderText.clear();
+        }
+    }
+    renderText(renderer, guessWordTexture, &curRenderText[0], curRenderPosX, curRenderPosY, GUESS_WORD_FONT_SIZE);
 }
 
 void guessWord::clear()

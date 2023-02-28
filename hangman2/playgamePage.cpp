@@ -157,10 +157,10 @@ void playgamePage::preset(SDL_Window* window, SDL_Renderer* renderer)
     mHangmanModel.init(mRenderer);
 }
 
-void playgamePage::startPlaygamePage()
+void playgamePage::startPlaygamePage(const GAME_DIFFICULTY& difficulty)
 {
     //Set the difficulty
-    setDifficulty(randInt(1, 3));
+    setDifficulty(difficulty);
 
     //Get the answer key
     key = mDictionary.getWord(difficulty);

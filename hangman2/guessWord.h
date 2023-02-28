@@ -6,6 +6,8 @@
 #include <SDL_ttf.h>
 #include "dictionary.h"
 
+const int GUESS_WORD_LINE_LENGTH_LIMIT = 26;
+
 class guessWord
 {
     private:

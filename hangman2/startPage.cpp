@@ -53,6 +53,7 @@ startPage::startPage(/* args */)
 
 startPage::~startPage()
 {
+    clear();
 }
 
 void startPage::preset(SDL_Window* window, SDL_Renderer* renderer)
@@ -61,6 +62,8 @@ void startPage::preset(SDL_Window* window, SDL_Renderer* renderer)
     mRenderer = renderer;
 
     mStartButton.init(mRenderer);
+
+    trollIntro.loadTexture(mRenderer, &PATH_TROLL_INTRO[0]);
 }
 
 void startPage::startStartPage(START_PAGE_STATUS& returnStatus)
@@ -92,9 +95,12 @@ void startPage::startStartPage(START_PAGE_STATUS& returnStatus)
         SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
         SDL_RenderClear(mRenderer);
 
-        renderText(mRenderer, titleTexture, "HANGMAN", START_PAGE_TITLE_RENDER_POS_X, START_PAGE_TITLE_RENDER_POS_Y, START_PAGE_TITLE_FONT_SIZE);
+        renderText(mRenderer, titleTexture, "HANGMAN", START_PAGE_TITLE_RENDER_POS_X, START_PAGE_TITLE_RENDER_POS_Y, START_PAGE_TITLE_FONT_SIZE, &PATH_COMIC_FONT_BOLD[0]);
         
         mStartButton.render(mRenderer, mStartButton.sprite);
+
+        trollIntro.render(mRenderer, TROLL_INTRO_1_POS_X, TROLL_INTRO_1_POS_y);
+        trollIntro.render(mRenderer, TROLL_INTRO_2_POS_X, TROLL_INTRO_2_POS_y, NULL, 0, NULL, SDL_FLIP_HORIZONTAL);
 
         SDL_RenderPresent(mRenderer); 
 

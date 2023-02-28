@@ -23,6 +23,13 @@ const int START_BUTTON_POS_X = 550;
 const int START_BUTTON_POS_Y = 300;
 const int START_BUTTON_FONT_SIZE = 60;
 
+const int TROLL_INTRO_1_POS_X = 100;
+const int TROLL_INTRO_1_POS_y = 170;
+const int TROLL_INTRO_2_POS_X = 900;
+const int TROLL_INTRO_2_POS_y = 170;
+const std::string PATH_TROLL_INTRO = "img/trollIntro.png";
+
+
 class startButton: public LButton
 {
     public:
@@ -54,6 +61,9 @@ class startPage
 
         /// @brief The START button
         startButton mStartButton;
+
+        /// @brief The 2 intro images
+        LTexture trollIntro;
 
     public:
         /// @brief Default constructor
