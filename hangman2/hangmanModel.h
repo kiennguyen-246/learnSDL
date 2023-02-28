@@ -1,4 +1,7 @@
 // hangmanModel.h
+#ifndef HANGMAN_MODEL_H
+#define HANGMAN_MODEL_H
+
 #include <iostream>
 #include <vector>
 #include <sdl.h>
@@ -54,3 +57,5 @@ class hangmanModel
         void clear();
 
 };
+
+#endif

@@ -7,7 +7,7 @@
 #include <SDL_mixer.h>
 #include "init.h"
 
-const std::string PATH_DICTIONARY = "dictionary.csv";
+const std::string PATH_DICTIONARY = "data/dictionary.csv";
 
 /// @brief Word class, including the word itself, the hints for guessing
 class word

@@ -4,7 +4,11 @@
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "hangmanModel.h"
+#include "playgamePage.h"
+
+const int STARTPAGE_TITLE_RENDER_POS_X = 400;
+const int STARTPAGE_TITLE_RENDER_POS_Y = 100;
+const int STARTPAGE_TITLE_FONT_SIZE = 90;
 
 const int ENDGAME_RENDER_POS_X[3] = {1000, 1000, 500};
 const int ENDGAME_RENDER_POS_Y[3] = {400, 150, 400};
@@ -18,43 +22,11 @@ class game
         /// @brief The renderer
         SDL_Renderer* mRenderer;
 
-        /// @brief Hidden word object
-        guessWord mGuessWord;
+        /// @brief The title of the startpage
+        LTexture startPageTitle;
 
-        /// @brief Lives boxes object, including lives counter
-        livesBox mLivesBox;
-
-        /// @brief Hint boxes object, including 3 hint buttons and the hint text in the bottom of the screen
-        hintBox mHintBox;
-
-        /// @brief Keyboard object
-        keyboard mKeyboard;
-
-        /// @brief The hangman model object
-        hangmanModel mHangmanModel;
-        
-        /// @brief Texture object for the images
-        PNG_Image sunglasses;
-        PNG_Image likeEmoji;
-        PNG_Image zhongXina;
-        PNG_Image yellowSad;
-        GIF_Image witherAway;
-        GIF_Image theRock;
-
-        /// @brief Sound object for the soundtracks
-        Mix_Music* yeahSound;
-        Mix_Music* wrongAnswer;
-        Mix_Music* spectre;
-        Mix_Music* alarm;
-
-        /// @brief The dictionary of the game, contains words from different difficulties
-        dictionary mDictionary;
-
-        /// @brief The difficulty of the game
-        GAME_DIFFICULTY difficulty;
-
-        /// @brief Answer key of the word need guessing
-        word key;
+        /// @brief Class for the main page of the game
+        playgamePage mPlaygamePage;
     
     public: 
         /// @brief Constructor
@@ -67,25 +39,11 @@ class game
         /// @return 1 if successful, 0 otherwise
         bool initSDL();
 
-        /// @brief Load the images
-        /// @return 1 if successful, 0 otherwise
-        bool loadImages();
-
-        /// @brief Load the sounds
-        /// @return 1 if successful, 0 otherwise
-        bool loadSound();
-
-        /// @brief Set the difficulty of the game
-        GAME_DIFFICULTY setDifficulty(const int& __dif);
-
-        /// @brief Game over when no spaces left
-        bool victory();
-
-        /// @brief Game over when no lives left
-        bool defeat();
-
         /// @brief Settings before playing the game
         void preset();
+
+        /// @brief The startpage of the game
+        // void startPage();
 
         /// @brief The main gameplay
         void play();
