@@ -45,6 +45,9 @@ class startButton: public LButton
         /// @brief Change the return status of the page to determine what the next page is
         /// @param returnStatus See the enum START_PAGE_STATUS
         void trigger(START_PAGE_STATUS& returnStatus);
+
+        /// @brief Cleanup
+        void clear();
 };
 
 class startPage

@@ -20,6 +20,9 @@ class charButton: public LButton
         /// @brief Use the button and change __isUsed to 1
         void useKey();
 
+        /// @brief Reset __isUsed to 0
+        void resetKey();
+
         /// @brief Update the symbol of the button, 
         /// @param newSym The new symbol, can be uppercase letters or _
         void updateSymbol(char newSym);

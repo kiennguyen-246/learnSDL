@@ -14,6 +14,51 @@ using random::randInt;
 const int ENDGAME_RENDER_POS_X[3] = {1000, 1000, 500};
 const int ENDGAME_RENDER_POS_Y[3] = {400, 150, 400};
 
+void playAgainButton::init(SDL_Renderer* renderer)
+{
+    if (!sprite.loadTexture(renderer, &PATH_PLAY_AGAIN[0]))
+    {
+        cout << "Failed to load image.\n";
+    }
+
+    set(PLAY_AGAIN_BUTTON_POS_X, PLAY_AGAIN_BUTTON_POS_Y, sprite.getWidth(), sprite.getHeight());
+}
+
+void playAgainButton::handleEvent(SDL_Event* event, bool& isRestarted)
+{
+    SDL_Point pos = getPos();
+    int w = getWidth();
+    int h = getHeight();
+
+    
+    if (event->type == SDL_MOUSEMOTION || event->type == SDL_MOUSEBUTTONUP || event->type == SDL_MOUSEBUTTONDOWN)
+    {
+        int x = 0, y = 0;
+        SDL_GetMouseState(&x, &y);
+
+        bool inside = 1;
+
+        if (x < pos.x || x > pos.x + w || y < pos.y || y > pos.y + h) inside = 0;
+
+        if (inside && event->type == SDL_MOUSEBUTTONDOWN) 
+        {
+            trigger(isRestarted);
+        }
+        
+    }
+}
+
+void playAgainButton::trigger(bool& isRestarted)
+{
+    isRestarted = 1;
+}
+
+void playAgainButton::clear()
+{
+    sprite.clear();
+}
+
+
 playgamePage::playgamePage()
 {
     mWindow = NULL;
@@ -112,6 +157,11 @@ bool playgamePage::defeat()
     return mLivesBox.defeat();
 }
 
+bool playgamePage::playAgain()
+{
+    return isRestarted;
+}
+
 void playgamePage::preset(SDL_Window* window, SDL_Renderer* renderer)
 {
     mWindow = window;
@@ -155,10 +205,15 @@ void playgamePage::preset(SDL_Window* window, SDL_Renderer* renderer)
 
     //Setup the hangman model
     mHangmanModel.init(mRenderer);
+
+    //Setup the Play again button
+    mPlayAgainButton.init(mRenderer);
+
+    isRestarted = 0;
 }
 
 void playgamePage::startPlaygamePage(const GAME_DIFFICULTY& difficulty)
-{
+{   
     //Set the difficulty
     setDifficulty(difficulty);
 
@@ -181,19 +236,24 @@ void playgamePage::startPlaygamePage(const GAME_DIFFICULTY& difficulty)
     {
         bool keyboardTriggered = 0;
         bool isIn = 0;
+        isRestarted = 0;
         
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
             else 
             {
-                mKeyboard.handleEvent(curEvent, key, mGuessWord, keyboardTriggered, isIn);
+                if (!gameOver) mKeyboard.handleEvent(curEvent, key, mGuessWord, keyboardTriggered, isIn);
                 mHintBox.handleEvent(curEvent, key);
+                mPlayAgainButton.handleEvent(&curEvent, isRestarted);
             }
         }
 
         SDL_SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
         SDL_RenderClear(mRenderer);
+
+        //Render the Play again button
+        mPlayAgainButton.render(mRenderer, mPlayAgainButton.sprite);
 
         //Render the word need guessing
         mGuessWord.render(mRenderer);
@@ -264,6 +324,8 @@ void playgamePage::startPlaygamePage(const GAME_DIFFICULTY& difficulty)
 
         ++frameCount;
         if (frameCount > 1e8) frameCount = 0;
+
+        if (isRestarted) quit = 1;
     }
     clear();
 }
@@ -277,18 +339,19 @@ void playgamePage::clear()
     theRock.clear();
     zhongXina.clear();
 
+    mGuessWord.clear();
     mKeyboard.clear();
+    mLivesBox.clear();
+    mHintBox.clear();
+    mHangmanModel.clear();
+    mPlayAgainButton.clear();
+    mDictionary.clear();
+
+    difficulty = DIFFICULTY_NULL;
+    key.clear();
     
     Mix_FreeMusic(yeahSound);
     Mix_FreeMusic(wrongAnswer);
     Mix_FreeMusic(spectre);
     Mix_FreeMusic(alarm);
-
-    SDL_DestroyRenderer(mRenderer); mRenderer = NULL;
-    SDL_DestroyWindow(mWindow); mWindow = NULL;
-
-    IMG_Quit();
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
 }

@@ -15,5 +15,3 @@ OBJ_NAME = ..\hangman.exe
 
 all : $(OBJS)
 	$(CC) $(OBJS1) $(OBJS2) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAG) $(LINKER_FLAGS) -o $(OBJ_NAME)
-	
-	

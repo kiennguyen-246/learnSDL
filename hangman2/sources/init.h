@@ -43,6 +43,7 @@ const std::string PATH_YELLOWSAD_EMOJI = "./img/yellowSad.png";
 const std::string PATH_WITHERAWAY_EMOJI = "./img/witheraway.png";
 const int FRAME_COUNT_WITHERAWAY_EMOJI = 9;
 const int FRAME_DELAY_WITHERAWAY_EMOJI = 6;
+const std::string PATH_PLAY_AGAIN = "./img/playAgain.png";
 
 const std::string PATH_YEAHSOUND_SOUND = "./sounds/yeahsound.mp3";
 const std::string PATH_WRONGANSWER_SOUND = "./sounds/wrongAnswer.mp3";

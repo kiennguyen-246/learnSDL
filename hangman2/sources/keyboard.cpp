@@ -20,6 +20,11 @@ void charButton::useKey()
     __isUsed = 1;
 }
 
+void charButton::resetKey()
+{
+    __isUsed = 0;
+}
+
 void charButton::updateSymbol(char newSym)
 {
     symbol = newSym;
@@ -113,6 +118,7 @@ void keyboard::set()
         {
             int ch_int = ch;
             keyboardButton[ch_int].set(curXPos, curYpos, charTexture[ch_int].getWidth(), charTexture[ch_int].getHeight());
+            keyboardButton[ch_int].resetKey();
             curXPos += charTexture[ch_int].getWidth() + 2 * charTexture[int(' ')].getWidth();
 
             keyboardButton[ch_int].updateSymbol(ch);

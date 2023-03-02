@@ -20,11 +20,12 @@ livesBox::~livesBox()
 void livesBox::set(const int& difficulty)
 {
     livesLeft = (difficulty != DIFFICULTY_CHINA ? LIVES_COUNT_DEFAULT: LIVES_COUNT_CHINA);
+    livesConsumed = 0;
 }
 
 bool livesBox::defeat() const
 {
-    return (livesLeft == 0);
+    return (livesLeft <= 0);
 }
 
 void livesBox::consumeLife()

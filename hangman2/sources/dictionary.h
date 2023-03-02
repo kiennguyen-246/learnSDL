@@ -79,4 +79,7 @@ class dictionary
 
         /// @brief Get a word from the dictionary
         word getWord(const int& difficulty) const;
+        
+        /// @brief Cleanup
+        void clear();
 };

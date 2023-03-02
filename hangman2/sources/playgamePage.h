@@ -6,6 +6,30 @@
 #include <SDL_ttf.h>
 #include "chooseDifficultyPage.h"
 
+const int PLAY_AGAIN_BUTTON_POS_X = 1180;
+const int PLAY_AGAIN_BUTTON_POS_Y = 0;
+const int PLAY_AGAIN_BUTTON_FONT_SIZE = 32;
+
+class playAgainButton: public LButton
+{
+    public:
+        /// @brief Texture of the START button
+        LTexture sprite;
+
+        /// @brief Setup the button
+        void init(SDL_Renderer* renderer);
+
+        /// @brief Handle the SDL events
+        void handleEvent(SDL_Event* event, bool& isRestarted);
+
+        /// @brief Check if the game is restarted
+        /// @param isRestarted bool
+        void trigger(bool& isRestarted);
+
+        /// @brief Cleanup
+        void clear();
+};
+
 class playgamePage 
 {
     private:
@@ -29,6 +53,12 @@ class playgamePage
 
         /// @brief The hangman model object
         hangmanModel mHangmanModel;
+
+        /// @brief The "Play again" button
+        playAgainButton mPlayAgainButton;
+
+        /// @brief Check if the player wants to play again
+        bool isRestarted;
         
         /// @brief Texture object for the images
         PNG_Image sunglasses;
@@ -76,6 +106,9 @@ class playgamePage
 
         /// @brief Game over when no lives left
         bool defeat();
+
+        /// @brief Check if the player wants to play again
+        bool playAgain();
 
         /// @brief Load resources
         void preset(SDL_Window* window, SDL_Renderer* renderer);

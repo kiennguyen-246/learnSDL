@@ -47,6 +47,11 @@ void startButton::trigger(START_PAGE_STATUS& returnStatus)
     returnStatus = START_PAGE_PLAY;
 }
 
+void startButton::clear()
+{
+    sprite.clear();
+}
+
 startPage::startPage(/* args */)
 {
 }
@@ -114,5 +119,6 @@ void startPage::startStartPage(START_PAGE_STATUS& returnStatus)
 
 void startPage::clear()
 {
+    mStartButton.clear();
     titleTexture.clear();
 }

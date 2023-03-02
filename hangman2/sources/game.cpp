@@ -82,30 +82,41 @@ void game::preset()
 
 void game::play()
 {
-    START_PAGE_STATUS status = START_PAGE_NULL;
-    mStartPage.startStartPage(status);
-    switch(status)
+    bool isRestarted = 1;
+    while (isRestarted)
     {
-        case START_PAGE_PLAY:
+        mStartPage.preset(mWindow, mRenderer);
+        mChooseDifficultyPage.preset(mWindow, mRenderer);
+        mPlaygamePage.preset(mWindow, mRenderer);
+        
+        START_PAGE_STATUS status = START_PAGE_NULL;
+        mStartPage.startStartPage(status);
+        switch(status)
         {
-            GAME_DIFFICULTY difficulty = DIFFICULTY_NULL;
-            mChooseDifficultyPage.startChooseDifficultyPage(difficulty);
-            mPlaygamePage.startPlaygamePage(difficulty);
-            break;
+            case START_PAGE_PLAY:
+            {
+                GAME_DIFFICULTY difficulty = DIFFICULTY_NULL;
+                mChooseDifficultyPage.startChooseDifficultyPage(difficulty);
+                mPlaygamePage.startPlaygamePage(difficulty);
+                break;
+            }
+            default:
+                break;
         }
-        default:
-            break;
+
+        isRestarted = mPlaygamePage.playAgain();
     }
-    
     clear();
 }
 
 void game::clear()
 {
-    mPlaygamePage.clear();
-
     SDL_DestroyRenderer(mRenderer); mRenderer = NULL;
     SDL_DestroyWindow(mWindow); mWindow = NULL;
+
+    mStartPage.clear();
+    mChooseDifficultyPage.clear();
+    mPlaygamePage.clear();
 
     IMG_Quit();
     TTF_Quit();

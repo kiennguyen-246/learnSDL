@@ -122,3 +122,13 @@ word dictionary::getWord(const int& difficulty) const
     int pos = random::randInt(0, vWord[difficulty].size() - 1);
     return vWord[difficulty][pos];
 }
+
+void dictionary::clear()
+{
+    for (int i = 0; i < DIFFICULTY_COUNT; i ++) 
+    {
+        vWord[i].clear();
+        size[i] = 0;
+    }
+
+}
