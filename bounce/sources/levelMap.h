@@ -83,6 +83,9 @@ const int BRICK_TILE_WIDTH = 80;
 const int BRICK_TILE_HEIGHT = 80;
 const char BRICK_CHAR_SYMBOL = 'B';
 
+const int DIRX[] = {1, -1, 0, 0};
+const int DIRY[] = {0, 0, 1, -1};
+
 class brickTile: public gameObject
 {
 private:
@@ -103,8 +106,14 @@ private:
     /// @brief The encoded map of the level
     std::vector <std::string> charMap;
 
+    /// @brief List of objects used in the map
+    std::vector <brickTile> vBrickTiles;
+
     /// @brief The bottom left position of the current frame, in comparison with the full level map
     int curFramePosX, curFramePosY;
+
+    /// @brief Check if a brick tile is free when it is not surrounded by other bricks
+    bool isFreeBrickTile(const int& brickTileCharPosX, const int& brickTileCharPosY);
 
 public:
     levelMap(/* args */);
@@ -117,6 +126,11 @@ public:
     /// @brief Move the map horizontally
     /// @param v Velocity
     void moveX(const int& dir, const int& v);
+
+    /// @brief Get the list of objects used in the map
+    std::vector <brickTile> brickTilesList() const;
+
+    void clearBrickTilesList();
 
     int getFramePosX() const;
 

@@ -65,7 +65,7 @@ void game::preset()
         return;
     }
 
-    mSpritesheet.loadTexture(mRenderer, &SPRITESHEET_PATH[0]);
+    mSpritesheet.loadTexture(mRenderer, &SPRITESHEET_PATH[0], SDL_COLOR_MALIBU);
 }
 
 void game::play()

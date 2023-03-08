@@ -25,7 +25,7 @@ int LTexture::getHeight()
     return mHeight;
 }
 
-bool LTexture::loadTexture(SDL_Renderer* gRenderer, const char* path)
+bool LTexture::loadTexture(SDL_Renderer* gRenderer, const char* path, const SDL_Color& colorKey)
 {
     clear();
     
@@ -38,7 +38,7 @@ bool LTexture::loadTexture(SDL_Renderer* gRenderer, const char* path)
     }
     else
     {
-        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 255, 255));
+        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, colorKey.r, colorKey.g, colorKey.b));
         
         newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
         if (newTexture == NULL)
@@ -164,6 +164,12 @@ void gameObject::setPos(const std::pair <int, int>& __Pos)
     setPos(__Pos.first, __Pos.second);
 }
 
+void gameObject::setSize(const int& w, const int& h)
+{
+    mWidth = w;
+    mHeight = h;
+}
+
 int gameObject::getPosX() const
 {
     return mPosX;
@@ -177,4 +183,23 @@ int gameObject::getPosY() const
 void gameObject::setSpriteClip(LTexture& spritesheet, const int& x, const int& y, const int& w, const int& h) 
 {
     mSpriteClip = {x, y, w, h};
+}
+
+bool collideX(const gameObject& obj1, const gameObject& obj2)
+{
+    int hitbox1L = obj1.mPosX;
+    int hitbox1R = obj1.mPosX + obj1.mWidth;
+    int hitbox1D = obj1.mPosY;
+    int hitbox1U = obj1.mPosY - obj1.mHeight;
+
+    int hitbox2L = obj2.mPosX;
+    int hitbox2R = obj2.mPosX + obj2.mWidth;
+    int hitbox2D = obj2.mPosY;
+    int hitbox2U = obj2.mPosY - obj2.mHeight;
+
+    // std::cout << "Size comparison: " << hitbox1R - hitbox1L + hitbox2R - hitbox2L << " " << std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L) << "\n";
+
+    if ((hitbox1R - hitbox1L + hitbox2R - hitbox2L > std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L)) && 
+        (hitbox1D - hitbox1U + hitbox2D - hitbox2U > std::max(hitbox1D, hitbox2D) - std::min(hitbox1U, hitbox2U))) return 1;
+    return 0;
 }

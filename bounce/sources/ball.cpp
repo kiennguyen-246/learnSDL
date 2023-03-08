@@ -11,11 +11,12 @@ ball::~ball()
 {
 }
 
-void ball::setPosEx(const int& x, const int& y)
+void ball::setPosEx(const int& x, const int& y, const int& framePosX, const int& framePosY)
 {
-    setPos(x, y);
-    mRenderPosX = mPosX;
-    mRenderPosY = mPosY;
+    mRealPosX = x;
+    mRealPosY = y;
+    mPosX = mRealPosX;
+    mPosY = mRealPosY;
 }
 
 void ball::setVelocityX(const int& v)
@@ -35,16 +36,18 @@ int ball::getVelocityX() const
 
 void ball::moveX(const int& dir)
 {
-    mPosX += dir * mVelocityX;
+    mRealPosX = int((mRealPosX + 1) / mVelocityX) * mVelocityX;
+    mRealPosX += dir;
+    mRealPosX += dir * mVelocityX;
 }
 
 void ball::scaleX(const int& framePos)
 {
-    mRenderPosX = mPosX - framePos;
+    mPosX = mRealPosX - framePos;
 }
 
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    std::cout << mRenderPosX << " " << mRenderPosY << "\n";
-    spritesheet.render(renderer, mRenderPosX, mRenderPosY - SMALL_BALL_HEIGHT, &mSpriteClip);
+    // std::cout << mPosX << " " << mPosY << "\n";
+    spritesheet.render(renderer, mPosX, mPosY - SMALL_BALL_HEIGHT, &mSpriteClip);
 }

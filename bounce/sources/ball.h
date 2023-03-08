@@ -27,8 +27,8 @@ private:
     /// @brief The velocity of the ball, by X and Y
     int mVelocityX, mVelocityY;
 
-    /// @brief The render position of the ball, different from the real position
-    int mRenderPosX, mRenderPosY;
+    /// @brief The real position of the ball (in comparison with the game)
+    int mRealPosX, mRealPosY;
 
     /// @brief The acceleration of the ball by X. Assumed that aY = 0
     int mAccelerationX;
@@ -38,7 +38,7 @@ public:
     ~ball();
 
     /// @brief Set the position for the ball with some more additional settings
-    void setPosEx(const int& x, const int& y);
+    void setPosEx(const int& x, const int& y, const int& framePosX, const int& frameposY);
 
     void setVelocityX(const int& v);
 

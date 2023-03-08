@@ -23,6 +23,7 @@ const int GAMEPLAY_AREA_WIDTH = 1280;
 const int GAMEPLAY_AREA_HEIGHT = 640;
 
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
+const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
 const int ACCELERATION = 10;    //unit: pixel/(frames)^2
 
@@ -54,7 +55,7 @@ class LTexture
         /// @brief Load texture from file
         /// @param mRenderer SDL_Renderer
         /// @param path The directory of the file containing the texture
-        bool loadTexture(SDL_Renderer* mRenderer, const char* path);
+        bool loadTexture(SDL_Renderer* mRenderer, const char* path, const SDL_Color& colorKey = SDL_COLOR_BLACK);
 
         /// @brief Create texture from text
         /// @param mRenderer SDL_Renderer
@@ -128,6 +129,8 @@ public:
 
     void setPos(const std::pair <int, int>& __Pos);
 
+    void setSize(const int& w, const int& h);
+
     int getPosX() const;
 
     int getPosY() const;
@@ -137,6 +140,12 @@ public:
     void setSpriteClip(LTexture& spritesheet, const int& x, const int& y, const int& w, const int& h);
 
     virtual void render(SDL_Renderer* renderer, LTexture& spritesheet) = 0;
+
+    friend bool collideX(const gameObject& obj1, const gameObject& obj2);
 };
+
+/// @brief Check if two objects "touch" each other by their hitbox
+/// @return 1 if obj1 touches obj2, 0 otherwise
+bool collideX(const gameObject& obj1, const gameObject& obj2);
 
 #endif
