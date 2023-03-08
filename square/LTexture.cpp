@@ -1,5 +1,6 @@
 //square.cpp
 #include <iostream>
+#include <stdexcept>
 #include <sdl.h>
 #include <SDL_image.h>
 #include "LTexture.h"
@@ -37,7 +38,8 @@ bool LTexture::loadTexture(SDL_Renderer* gRenderer, char* path)
     SDL_Surface* loadedSurface = IMG_Load(path);
     if (loadedSurface == NULL)
     {
-        cout << "Unable to load " << path << ". Error: " << IMG_GetError() << ".\n";
+        // cout << "Unable to load " << path << ". Error: " << IMG_GetError() << ".\n";
+        throw 404;
         return 0;
     }
     else
