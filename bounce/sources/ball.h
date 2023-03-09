@@ -28,6 +28,7 @@ const int SMALL_BALL_HEIGHT = 80;
 const int BALL_VELOCITY_X_DEFAULT = 20;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 12;     //unit: pixel/frame
 const double BALL_ACCELERATION_Y_DEFAULT = 1.0 / 5;     //unit: pixel/(frame)^2
+const double BALL_BOUNCE_LEVEL = 3.0 / 10;      //the new velocity after a bounce
 
 class ball: public gameObject
 {
@@ -47,7 +48,7 @@ private:
     int framePassed;
 
     /// @brief Check if the ball is moving vertically
-    bool movingY;
+    bool __isAirborne;
 
 public:
     ball(/* args */);
@@ -74,7 +75,7 @@ public:
     void resetFramesPassed();
 
     /// @brief Check if the ball is moving vertically
-    bool isMovingY() const;
+    bool isAirborne() const;
 
     /// @brief Get the current velocity of the ball
     double getVelocityY() const;
@@ -88,6 +89,12 @@ public:
 
     /// @brief Move the ball vertically
     void moveY();
+
+    /// @brief Undo move vertically
+    void undoMoveY();
+
+    /// @brief Reflect the ball when hitting another block
+    void reflectY();
 
     /// @brief Scale the ball to be rendered in the screen
     void scaleY();

@@ -32,7 +32,6 @@ void ball::setVelocityX(const int& v)
 void ball::setVelocityY(const double& v)
 {
     mVelocityY = v;
-    movingY = 1;
 }
 
 int ball::getVelocityX() const
@@ -55,9 +54,12 @@ void ball::resetFramesPassed()
     framePassed = 0;
 }
 
-bool ball::isMovingY() const
+bool ball::isAirborne() const
 {
-    return movingY;
+    // Δx = v0 * t + a * (t^2) / 2 = (v - a * (t^2) / 2) * t
+    double distance = (mVelocityY - mAcceleration * framePassed / 2) * framePassed;
+    std::cout << distance << "\n";
+    return abs(distance) > 20;
 }
 
 double ball::getVelocityY() const
@@ -82,6 +84,21 @@ void ball::moveY()
     //x(t) = x(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
     mVelocityY += mAcceleration;
     mRealPosY += mVelocityY - mAcceleration / 2;
+    scaleY();
+}
+
+void ball::undoMoveY()
+{
+    mRealPosY -= mVelocityY - mAcceleration / 2;
+    mVelocityY -= mAcceleration;
+    scaleY();
+    
+}
+
+void ball::reflectY()
+{
+    mVelocityY = -mVelocityY * 3 / 10;
+    framePassed = 0;
 }
 
 void ball::scaleY()

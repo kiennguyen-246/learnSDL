@@ -69,8 +69,12 @@ void playLevel::playGame()
             }
             if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
             {
-                mBall.resetFramesPassed();
-                mBall.setVelocityY(-BALL_VELOCITY_Y_DEFAULT);
+                if (!mBall.isAirborne())
+                {
+                    mBall.resetFramesPassed();
+                    mBall.setVelocityY(-BALL_VELOCITY_Y_DEFAULT);
+                }
+                
             }
 
             // for (int i = 0; i < 20; i ++) mBall.moveX(1);
@@ -85,12 +89,14 @@ void playLevel::playGame()
         mLevelMap.clearBrickTilesList();
         mLevelMap.render(mRenderer, mSpritesheet);
 
-        if (mBall.isMovingY())
-        {
-            mBall.passFrame();
-            mBall.moveY();
-            mBall.scaleY();
-        }
+        mBall.passFrame();
+        mBall.moveY();
+        for (auto curBrickTile: mLevelMap.brickTilesList())
+            if (collide(curBrickTile, mBall)) 
+            {
+                mBall.undoMoveY();
+                mBall.reflectY();
+            }
 
         mBall.render(mRenderer, mSpritesheet);
 

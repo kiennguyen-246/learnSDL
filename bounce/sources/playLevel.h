@@ -9,6 +9,7 @@
 #define PLAYLEVEL_GUARD
 
 #include <iostream>
+#include <windows.h>
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
