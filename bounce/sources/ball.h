@@ -4,15 +4,15 @@
  * @brief This file controls the balls types of the game
  * Moving logic:
  * - After the control key is pressed, the ball moves horizontally with an accelerator of -5/64 pixel/(frames)^2
- *   Each time a key is pressed, the ball starts with a velocity of 5 pixel/frames
+ *   Each time a control key is pressed, the ball starts with a velocity of 5 pixel/frames
  *   The moving equation is X = X0 - 5 * t - (5/128) * (t^2)  (pixel)
  * 
  * - After the control key is pressed, the ball moves vertically with an accelerator of 1/5 pixel/(frames)^2
- *   Each time a key is pressed, the ball starts with a velocity of 12 pixel/frames
+ *   Each time a control key is pressed, the ball starts with a velocity of 12 pixel/frames
  *   The moving equation is Y = Y0 - 12 * t + (1/10) * (t^2)  (pixel)
  * 
- * - While moving, if the ball collides with any kind of bricks, it moves in the opposite direction
- *   with the velocity being decreased by 70%
+ * - While moving vertically, if the ball collides with any kind of bricks, it moves in the opposite direction
+ *   with the velocity being decreased by 50%. 
  */
 
 #ifndef BALL_GUARD
@@ -25,16 +25,16 @@
 #include <SDL_mixer.h>
 #include "base.h"
 
-const int SMALL_BALL_SPRITE_POS_x = 198;   //position in spritesheet
-const int SMALL_BALL_SPRITE_POS_Y = 0;
-const int SMALL_BALL_WIDTH = 80;
-const int SMALL_BALL_HEIGHT = 80;
 const double BALL_VELOCITY_X_DEFAULT = 5;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 12;     //unit: pixel/frame
 const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 64;     //unit: pixel/(frame)^2
 const double BALL_ACCELERATION_Y_DEFAULT = 1.0 / 5;     //unit: pixel/(frame)^2
 const int BALL_BOUNCE_LEVEL = 50;      //new velocity multiplier after a bounce (percent)
-// const int BALL_SINGLE_MOVE_FRAME_COUNT_X_DEFAULT = 999999;  
+
+const int SMALL_BALL_SPRITE_POS_x = 198;   //position in spritesheet
+const int SMALL_BALL_SPRITE_POS_Y = 0;
+const int SMALL_BALL_WIDTH = 80;
+const int SMALL_BALL_HEIGHT = 80;
 
 class ball: public gameObject
 {
@@ -66,7 +66,7 @@ public:
     ~ball();
 
     /// @brief Set the position for the ball with some more additional settings
-    void setPosEx(const int& x, const int& y, const int& framePosX, const int& frameposY);
+    void setPosEx(const double& x, const double& y, const double& framePosX, const double& framePosY);
 
     void setAccelerationX(const double& a);
 

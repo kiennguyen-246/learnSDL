@@ -11,12 +11,12 @@ ball::~ball()
 {
 }
 
-void ball::setPosEx(const int& x, const int& y, const int& framePosX, const int& framePosY)
+void ball::setPosEx(const double& x, const double& y, const double& framePosX, const double& framePosY)
 {
     mRealPosX = x;
     mRealPosY = y;
-    mPosX = mRealPosX;
-    mPosY = mRealPosY;
+    mPosX = mRealPosX - framePosX;
+    mPosY = mRealPosY - framePosY;
 }
 
 void ball::setAccelerationX(const double& a)
@@ -115,7 +115,6 @@ void ball::reflectX()
 void ball::scaleX(const int& framePos)
 {
     mPosX = mRealPosX - framePos;
-    // std::cout << mPosX << " ";
 }
 
 void ball::moveY()

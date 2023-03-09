@@ -42,13 +42,30 @@ bool levelMap::isFreeBrickTile(const int& brickTileCharPosX, const int& brickTil
 void levelMap::setMap(const int& id)
 {
     charMap = LEVEL_CHAR_MAP[id];
+
+    vCheckpoints.clear();
+    for (int j = 0; j < charMap.size(); j ++)
+        for (int i = 0; i < charMap[j].size(); i ++)
+        {
+            if (charMap[j][i] == 'C')
+            {
+                auto* curCheckpoint = new checkpoint;
+                curCheckpoint->init(i, j);
+                vCheckpoints.push_back(*curCheckpoint);
+            }
+            else if (charMap[j][i] == 'c')
+            {
+                auto* curCheckpoint = new checkpoint;
+                curCheckpoint->init(i, j, CHECKPOINT_HIDDEN);
+                vCheckpoints.push_back(*curCheckpoint);
+            }
+        }
+            
 }
 
 void levelMap::moveX(const double& dist)
 {
-    // curFramePosX = int((curFramePosX + 1) / dist) * dist;
     curFramePosX += dist;
-    //if (curFramePosX % TILE_WIDTH != 0) curFramePosX = int(curFramePosX / TILE_WIDTH + 1) * TILE_WIDTH;
 }
 
 int levelMap::getFramePosX() const
@@ -56,14 +73,30 @@ int levelMap::getFramePosX() const
     return curFramePosX;
 }
 
+void levelMap::setFramePos(const double& framePosX, const double& framePosY)
+{
+    curFramePosX = framePosX;
+    curFramePosY = framePosY;
+}
+
 std::vector <brickTile> levelMap::brickTilesList() const
 {
     return vBrickTiles;
 }
 
+std::vector <checkpoint> levelMap::checkpointsList() const
+{
+    return vCheckpoints;
+}
+
 void levelMap::clearBrickTilesList()
 {
     vBrickTiles.clear();
+}
+
+void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList)
+{
+    vCheckpoints = newCheckpointsList;
 }
 
 void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
@@ -72,8 +105,6 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     int curCharPosY = curFramePosY / TILE_HEIGHT;
     double remFrameX = curFramePosX - int(curFramePosX / TILE_WIDTH) * TILE_WIDTH;
     // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
-
-    // std::cout << remFrameX << "\n";
 
     int maxCharTileX = GAMEPLAY_AREA_WIDTH / TILE_WIDTH;
     int maxCharTileY = GAMEPLAY_AREA_HEIGHT / TILE_HEIGHT;
@@ -88,16 +119,23 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 curBrick->setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
                 curBrick->render(renderer, spritesheet);
 
-                // if (isFreeBrickTile(curCharPosX + i, curCharPosY + j)) vObject.push_back(*curBrick);
                 vBrickTiles.push_back(*curBrick);
             }
+            else if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_CHAR_SYMBOL || charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL)
+            {
+                int cnt = 0;
+                for (auto &curCheckpoint: vCheckpoints)
+                {
+                    if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j) continue;
+                    curCheckpoint.setPos(CHECKPOINT_WIDTH * i - int(remFrameX),
+                                         CHECKPOINT_HEIGHT * (j + 1));
+                    // if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL) 
+                    //     std::cout << cnt << " " << curCheckpoint.getState() << "\n" << curCheckpoint.getPosX() << " " << curCheckpoint.getPosY() << "\n";
+                    
+                    curCheckpoint.render(renderer, spritesheet);
+                }
+            }
+
         }
     }
-    // std::cout << "run" << "\n";
-
-    // auto* curBrick = new brickTile(-40, 720);
-    // curBrick->setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
-    // curBrick->render(renderer, spritesheet);
-
-    // std::cout << "run here\n";
 }

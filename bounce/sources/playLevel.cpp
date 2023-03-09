@@ -24,11 +24,18 @@ void playLevel::playGame()
     bool quit = 0;
     SDL_Event curEvent;
 
-    // int moveFramesLeftX = 0;
-
-    mBall.setPosEx(160, 560, 0, 0);
     mBall.setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
     mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
+
+    bool respawn = 1;
+    int lastCheckpointIndex = 0;
+    auto checkpointsList = mLevelMap.checkpointsList();
+    for (int i = 0; i < checkpointsList.size(); i ++)
+    {
+        if (checkpointsList[i].getState() == CHECKPOINT_HIDDEN) lastCheckpointIndex = i;
+    }
+    mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
+                        checkpointsList[lastCheckpointIndex].getFramePosY());
 
     while (!quit)
     {
@@ -67,6 +74,17 @@ void playLevel::playGame()
         mLevelMap.clearBrickTilesList();
         mLevelMap.render(mRenderer, mSpritesheet);
 
+        checkpointsList = mLevelMap.checkpointsList();
+        
+        if (respawn)
+        {
+            std::cout << checkpointsList[1].getPosX() << " " << checkpointsList[1].getPosY() << "\n";
+            checkpointsList[lastCheckpointIndex].spawnBall(mBall);
+            mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
+                                checkpointsList[lastCheckpointIndex].getFramePosY());
+            respawn = 0;
+        }
+
         mBall.passFrame();
 
         if (abs(mBall.getVelocityX()) > 1e-3)
@@ -74,23 +92,23 @@ void playLevel::playGame()
             double distance = mBall.moveX();
             bool blocked = 0;
             mBall.scaleX(mLevelMap.getFramePosX());
-            for (auto curBrickTile: mLevelMap.brickTilesList())
+            for (auto &curBrickTile: mLevelMap.brickTilesList())
             {
                 if (collide(curBrickTile, mBall)) 
                 {
                     mBall.undoMoveX();
                     mBall.scaleX(mLevelMap.getFramePosX());
                     blocked = 1;
+                    mBall.setVelocityX(0);
                     // mBall.reflectX();
                 }
             }
             if (!blocked) mLevelMap.moveX(distance);
         }
         
-        
         mBall.moveY();
         mBall.scaleY();
-        for (auto curBrickTile: mLevelMap.brickTilesList())
+        for (auto &curBrickTile: mLevelMap.brickTilesList())
             if (collide(curBrickTile, mBall)) 
             {
                 mBall.setCollide((mBall.getVelocityY() < 0));
@@ -98,6 +116,27 @@ void playLevel::playGame()
                 mBall.scaleY();
                 mBall.reflectY();
             }
+        
+        for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)
+        {
+            if (collide(checkpointsList[curIndex], mBall))
+            {
+                switch(checkpointsList[curIndex].getState())
+                {
+                    case CHECKPOINT_DEFAULT:
+                        checkpointsList[lastCheckpointIndex].changeState(CHECKPOINT_DELETED);
+                        checkpointsList[curIndex].changeState(CHECKPOINT_COLLECTED);
+                        lastCheckpointIndex = curIndex;
+                        
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+         
+
+        mLevelMap.updateCheckpointsList(checkpointsList);
 
         mBall.render(mRenderer, mSpritesheet);
 

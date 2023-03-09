@@ -2,6 +2,10 @@
 
 /**
  * @brief This file controls the map of the game and how it is rendered
+ * Logic:
+ * - Horizontally, the map will move along with the ball. While playing, the ball will "stand still"
+ *   at some position during the game
+ * - The map shifts up 7 brick tiles when the ball moves vertically out.
  * 
  */
 
@@ -17,6 +21,7 @@
 #include "base.h"
 #include "ball.h"
 #include "levelMap.h"
+#include "checkpoint.h"
 
 /**
  * @brief 
@@ -38,14 +43,14 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
     {""},
 
     {
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-        "BB   BBBBBB          BBB         BB         BBB                  BBB      BB  L   BB               BB         BB",
-        "BB   BBBBBB          BBB         R          BB                    BB      BB      BB               BB         BB",
-        "BB   BBBBBB   BB     BBB         +          BB         C          BB  BB  BB  BB  BB  BB           BB         BB",
-        "BB   BBBBBB   BB     BBB  BBBB  BBBB  BBBB  BB                    BB  BB  BB  BB  BB  BB       BBE-BBE-BB     BB",
-        "BB       R    BB          BB     BB     BB                            BB  R   BB  R   BB    BBTBB  C   BBTBB  G#",
-        "BB       +    BB T        BB  T     T   BB        T  T   T   T        BB  +   BB  +   BB    BBBBB      BBBBB  ##",
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"          ,
+        "     B    BB   BBBBBB          BBB         BB         BBB                  BBB      BB  L   BB               BB         BB"          ,
+        "    BB    BBc  BBBBBB          BBB         R          BB                    BB      BB      BB               BB         BB"          ,
+        "   B B    BB   BBBBBB   BB     BBB         +          BB         C          BB  BB  BB  BB  BB  BB           BB         BB"          ,
+        "  B  B    BB   BBBBBB   BB     BBB  BBBB  BBBB  BBBB  BB                    BB  BB  BB  BB  BB  BB       BBE-BBE-BB     BB"          ,
+        "     B    BB       R    BB          BB     BB     BB                            BB  R   BB  R   BB    BBTBB  C   BBTBB  G#"          ,
+        "  BBBBBBB BB       +    BB T        BB  T     T   BB        T  T   T   T        BB  +   BB  +   BB    BBBBB      BBBBB  ##"          ,
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"          ,
     },
 
     {
@@ -65,7 +70,7 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
         "                                                                                                              BB     BB   T    BB   BB"
         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBE-BB"
         "BB                    R   BB      BB     R                        BB        C           BB         BB         R   BB         BB     BB"
-        "BB                    +   BB      BB     +                        BB                    BB         BB         +   BB         BB     BB"
+        "BB       c            +   BB      BB     +                        BB                    BB         BB         +   BB         BB     BB"
         "BB             BBBBBBBBB  BB  BB         BBBBB                    BB        XZ          BB         R          BB  BB    BB   BB  BBBBB"
         "BB             BB     BB  BB  BB         BBBBB                    BB       XBBZ         BB         +          BB  BB  BBBB          BB"
         "BB             BB L           BB         BBBBB                    R       XBBBBZ        R          BB         BB      L BB          BB"
@@ -81,7 +86,10 @@ const int BRICK_TILE_SPRITE_POS_x = 170;   //position in spritesheet
 const int BRICK_TILE_SPRITE_POS_Y = 330;
 const int BRICK_TILE_WIDTH = 80;
 const int BRICK_TILE_HEIGHT = 80;
+
 const char BRICK_CHAR_SYMBOL = 'B';
+const char CHECKPOINT_CHAR_SYMBOL = 'C';
+const char CHECKPOINT_START_CHAR_SYMBOL = 'c';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -106,8 +114,11 @@ private:
     /// @brief The encoded map of the level
     std::vector <std::string> charMap;
 
-    /// @brief List of objects used in the map
+    /// @brief List of brick tiles
     std::vector <brickTile> vBrickTiles;
+
+    /// @brief List of checkpoints
+    std::vector <checkpoint> vCheckpoints;
 
     /// @brief The bottom left position of the current frame, in comparison with the full level map
     double curFramePosX, curFramePosY;
@@ -127,10 +138,18 @@ public:
     /// @param v Velocity
     void moveX(const double& dist);
 
+    /// @brief Set the bottom left position of the current frame, in comparison with the full level map
+    void setFramePos(const double& framePosX, const double& framePosY);
+
     /// @brief Get the list of objects used in the map
     std::vector <brickTile> brickTilesList() const;
 
+    /// @brief Get the list of checkpoints in the map
+    std::vector <checkpoint> checkpointsList() const;
+
     void clearBrickTilesList();
+
+    void updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList);
 
     int getFramePosX() const;
 
