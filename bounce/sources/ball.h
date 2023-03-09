@@ -33,7 +33,7 @@ const double BALL_VELOCITY_X_DEFAULT = 5;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 12;     //unit: pixel/frame
 const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 64;     //unit: pixel/(frame)^2
 const double BALL_ACCELERATION_Y_DEFAULT = 1.0 / 5;     //unit: pixel/(frame)^2
-const double BALL_BOUNCE_LEVEL = 3.0 / 10;      //the new velocity after a bounce
+const int BALL_BOUNCE_LEVEL = 50;      //new velocity multiplier after a bounce (percent)
 // const int BALL_SINGLE_MOVE_FRAME_COUNT_X_DEFAULT = 999999;  
 
 class ball: public gameObject
