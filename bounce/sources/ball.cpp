@@ -4,7 +4,7 @@
 
 ball::ball(/* args */)
 {
-    mAccelerationX = ACCELERATION;
+
 }
 
 ball::~ball()
@@ -19,19 +19,50 @@ void ball::setPosEx(const int& x, const int& y, const int& framePosX, const int&
     mPosY = mRealPosY;
 }
 
+void ball::setAccelerationY(const double& a)
+{
+    mAcceleration = a;
+}
+
 void ball::setVelocityX(const int& v)
 {
     mVelocityX = v;
 }
 
-void ball::setVelocityY(const int& v)
+void ball::setVelocityY(const double& v)
 {
     mVelocityY = v;
+    movingY = 1;
 }
 
 int ball::getVelocityX() const
 {
     return mVelocityX;
+}
+
+int ball::getFramesPassed() const
+{
+    return framePassed;
+}
+
+void ball::passFrame()
+{
+    framePassed ++;
+}
+
+void ball::resetFramesPassed()
+{
+    framePassed = 0;
+}
+
+bool ball::isMovingY() const
+{
+    return movingY;
+}
+
+double ball::getVelocityY() const
+{
+    return mVelocityY;
 }
 
 void ball::moveX(const int& dir)
@@ -46,8 +77,19 @@ void ball::scaleX(const int& framePos)
     mPosX = mRealPosX - framePos;
 }
 
+void ball::moveY()
+{
+    //x(t) = x(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
+    mVelocityY += mAcceleration;
+    mRealPosY += mVelocityY - mAcceleration / 2;
+}
+
+void ball::scaleY()
+{
+    mPosY = mRealPosY;
+}
+
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    // std::cout << mPosX << " " << mPosY << "\n";
     spritesheet.render(renderer, mPosX, mPosY - SMALL_BALL_HEIGHT, &mSpriteClip);
 }

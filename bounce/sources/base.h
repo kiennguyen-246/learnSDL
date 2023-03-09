@@ -25,8 +25,6 @@ const int GAMEPLAY_AREA_HEIGHT = 640;
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
 const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
-const int ACCELERATION = 10;    //unit: pixel/(frames)^2
-
 const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
 
 /// @brief Texture class
@@ -141,11 +139,11 @@ public:
 
     virtual void render(SDL_Renderer* renderer, LTexture& spritesheet) = 0;
 
-    friend bool collideX(const gameObject& obj1, const gameObject& obj2);
+    friend bool collide(const gameObject& obj1, const gameObject& obj2);
 };
 
 /// @brief Check if two objects "touch" each other by their hitbox
 /// @return 1 if obj1 touches obj2, 0 otherwise
-bool collideX(const gameObject& obj1, const gameObject& obj2);
+bool collide(const gameObject& obj1, const gameObject& obj2);
 
 #endif

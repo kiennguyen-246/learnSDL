@@ -185,7 +185,7 @@ void gameObject::setSpriteClip(LTexture& spritesheet, const int& x, const int& y
     mSpriteClip = {x, y, w, h};
 }
 
-bool collideX(const gameObject& obj1, const gameObject& obj2)
+bool collide(const gameObject& obj1, const gameObject& obj2)
 {
     int hitbox1L = obj1.mPosX;
     int hitbox1R = obj1.mPosX + obj1.mWidth;

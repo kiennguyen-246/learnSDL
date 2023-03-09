@@ -27,6 +27,7 @@ void playLevel::playGame()
     mBall.setPosEx(160, 560, 0, 0);
     mBall.setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
     mBall.setVelocityX(BALL_VELOCITY_X_DEFAULT);
+    mBall.setAccelerationY(BALL_ACCELERATION_Y_DEFAULT);
     mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
 
     while (!quit)
@@ -42,7 +43,7 @@ void playLevel::playGame()
                 bool blocked = 0;
                 for (auto &curBrick: mLevelMap.brickTilesList())
                 {
-                    if (collideX(curBrick, mBall) && curBrick.getPosX() < mBall.getPosX()) blocked = 1;
+                    if (collide(curBrick, mBall) && curBrick.getPosX() < mBall.getPosX()) blocked = 1;
                 }
                 if (!blocked)
                 {
@@ -51,18 +52,13 @@ void playLevel::playGame()
                     mBall.scaleX(mLevelMap.getFramePosX());
                 }
             }
-            else if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
+            if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
             {
                 // Check if the ball touch a brick
                 bool blocked = 0;
                 for (auto &curBrick: mLevelMap.brickTilesList())
                 {
-                    if (collideX(curBrick, mBall) && curBrick.getPosX() > mBall.getPosX()) blocked = 1;
-                    // if (blocked) 
-                    // {
-                    //     std::cout << mBall.getPosX() << " " << mBall.getPosY() << " ";
-                    //     std::cout << curBrick.getPosX() << " " << curBrick.getPosY() << "\n";
-                    // }
+                    if (collide(curBrick, mBall) && curBrick.getPosX() > mBall.getPosX()) blocked = 1;
                 }
                 if (!blocked)
                 {
@@ -71,18 +67,33 @@ void playLevel::playGame()
                     mBall.scaleX(mLevelMap.getFramePosX());
                 }
             }
+            if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
+            {
+                mBall.resetFramesPassed();
+                mBall.setVelocityY(-BALL_VELOCITY_Y_DEFAULT);
+            }
+
+            // for (int i = 0; i < 20; i ++) mBall.moveX(1);
+            // mBall.scaleX(0);
 
             //  std::cout << mBall.getPosX() << " " << mBall.getPosY() << "\n";
-
-            SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
-            SDL_RenderClear(mRenderer);
-
-            mLevelMap.clearBrickTilesList();
-            mLevelMap.render(mRenderer, mSpritesheet);
-
-            mBall.render(mRenderer, mSpritesheet);
-
-            SDL_RenderPresent(mRenderer);
         }
+
+        SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
+        SDL_RenderClear(mRenderer);
+
+        mLevelMap.clearBrickTilesList();
+        mLevelMap.render(mRenderer, mSpritesheet);
+
+        if (mBall.isMovingY())
+        {
+            mBall.passFrame();
+            mBall.moveY();
+            mBall.scaleY();
+        }
+
+        mBall.render(mRenderer, mSpritesheet);
+
+        SDL_RenderPresent(mRenderer);
     }
 }
