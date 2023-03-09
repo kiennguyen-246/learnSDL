@@ -44,11 +44,10 @@ void levelMap::setMap(const int& id)
     charMap = LEVEL_CHAR_MAP[id];
 }
 
-void levelMap::moveX(const int& dir, const int& v)
+void levelMap::moveX(const double& dist)
 {
-    curFramePosX = int((curFramePosX + 1) / v) * v;
-    curFramePosX += dir;
-    curFramePosX += dir * v;
+    // curFramePosX = int((curFramePosX + 1) / dist) * dist;
+    curFramePosX += dist;
     //if (curFramePosX % TILE_WIDTH != 0) curFramePosX = int(curFramePosX / TILE_WIDTH + 1) * TILE_WIDTH;
 }
 
@@ -71,8 +70,8 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
     int curCharPosX = curFramePosX / TILE_WIDTH;
     int curCharPosY = curFramePosY / TILE_HEIGHT;
-    int remFrameX = curFramePosX % TILE_WIDTH;
-    int remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
+    double remFrameX = curFramePosX - int(curFramePosX / TILE_WIDTH) * TILE_WIDTH;
+    // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
 
     // std::cout << remFrameX << "\n";
 
@@ -85,7 +84,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
         {
             if (charMap[curCharPosY + j][curCharPosX + i] == BRICK_CHAR_SYMBOL)
             {
-                auto* curBrick = new brickTile(BRICK_TILE_WIDTH * i - remFrameX, BRICK_TILE_HEIGHT * (j + 1));
+                auto* curBrick = new brickTile(BRICK_TILE_WIDTH * i - int(remFrameX), BRICK_TILE_HEIGHT * (j + 1));
                 curBrick->setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
                 curBrick->render(renderer, spritesheet);
 

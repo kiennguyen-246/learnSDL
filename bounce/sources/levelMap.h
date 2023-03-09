@@ -110,7 +110,7 @@ private:
     std::vector <brickTile> vBrickTiles;
 
     /// @brief The bottom left position of the current frame, in comparison with the full level map
-    int curFramePosX, curFramePosY;
+    double curFramePosX, curFramePosY;
 
     /// @brief Check if a brick tile is free when it is not surrounded by other bricks
     bool isFreeBrickTile(const int& brickTileCharPosX, const int& brickTileCharPosY);
@@ -125,7 +125,7 @@ public:
 
     /// @brief Move the map horizontally
     /// @param v Velocity
-    void moveX(const int& dir, const int& v);
+    void moveX(const double& dist);
 
     /// @brief Get the list of objects used in the map
     std::vector <brickTile> brickTilesList() const;

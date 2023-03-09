@@ -19,9 +19,14 @@ void ball::setPosEx(const int& x, const int& y, const int& framePosX, const int&
     mPosY = mRealPosY;
 }
 
+void ball::setAccelerationX(const double& a)
+{
+    mAccelerationX = a;
+}
+
 void ball::setAccelerationY(const double& a)
 {
-    mAcceleration = a;
+    mAccelerationY = a;
 }
 
 void ball::setVelocityX(const int& v)
@@ -34,32 +39,9 @@ void ball::setVelocityY(const double& v)
     mVelocityY = v;
 }
 
-int ball::getVelocityX() const
+double ball::getVelocityX() const
 {
     return mVelocityX;
-}
-
-int ball::getFramesPassed() const
-{
-    return framePassed;
-}
-
-void ball::passFrame()
-{
-    framePassed ++;
-}
-
-void ball::resetFramesPassed()
-{
-    framePassed = 0;
-}
-
-bool ball::isAirborne() const
-{
-    // Δx = v0 * t + a * (t^2) / 2 = (v - a * (t^2) / 2) * t
-    double distance = (mVelocityY - mAcceleration * framePassed / 2) * framePassed;
-    std::cout << distance << "\n";
-    return abs(distance) > 20;
 }
 
 double ball::getVelocityY() const
@@ -67,38 +49,92 @@ double ball::getVelocityY() const
     return mVelocityY;
 }
 
-void ball::moveX(const int& dir)
+int ball::getFramesPassedX() const
 {
-    mRealPosX = int((mRealPosX + 1) / mVelocityX) * mVelocityX;
-    mRealPosX += dir;
-    mRealPosX += dir * mVelocityX;
+    return framePassedX;
+}
+
+int ball::getFramesPassedY() const
+{
+    return framePassedY;
+}
+
+void ball::passFrame()
+{
+    framePassedX ++;
+    framePassedY ++;
+}
+
+void ball::resetFramesPassedX()
+{
+    framePassedX = 0;
+}
+
+void ball::resetFramesPassedY()
+{
+    framePassedY = 0;
+}
+
+bool ball::isAirborne() const
+{
+    // Δx = v0 * t + a * (t^2) / 2 = (v - a * (t^2) / 2) * t
+    double distance = (mVelocityY - mAccelerationY * framePassedY / 2) * framePassedY;
+    return (__lastCollideY == 1 || abs(distance) > 1);
+}
+
+void ball::setCollide(const int& collideType)
+{
+    __lastCollideY = collideType;
+}
+
+bool ball::lastCollideY() const
+{
+    return __lastCollideY;
+}
+
+double ball::moveX()
+{
+    //x(t) = x(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
+    mVelocityX += mAccelerationX;
+    mRealPosX += mVelocityX - mAccelerationX / 2;
+    return mVelocityX - mAccelerationX / 2;
+}
+
+void ball::undoMoveX()
+{
+    mRealPosX -= mVelocityX - mAccelerationX / 2;
+    mVelocityX -= mAccelerationX;
+}
+
+void ball::reflectX()
+{
+    mVelocityX = -mVelocityX * 3 / 10;
+    framePassedX = 0;
 }
 
 void ball::scaleX(const int& framePos)
 {
     mPosX = mRealPosX - framePos;
+    // std::cout << mPosX << " ";
 }
 
 void ball::moveY()
 {
-    //x(t) = x(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
-    mVelocityY += mAcceleration;
-    mRealPosY += mVelocityY - mAcceleration / 2;
-    scaleY();
+    //y(t) = y(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
+    mVelocityY += mAccelerationY;
+    mRealPosY += mVelocityY - mAccelerationY / 2;
 }
 
 void ball::undoMoveY()
 {
-    mRealPosY -= mVelocityY - mAcceleration / 2;
-    mVelocityY -= mAcceleration;
-    scaleY();
-    
+    mRealPosY -= mVelocityY - mAccelerationY / 2;
+    mVelocityY -= mAccelerationY;
 }
 
 void ball::reflectY()
 {
     mVelocityY = -mVelocityY * 3 / 10;
-    framePassed = 0;
+    framePassedY = 0;
 }
 
 void ball::scaleY()
