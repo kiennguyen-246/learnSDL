@@ -105,6 +105,8 @@ void playLevel::playGame()
     auto portalsList = mLevelMap.portalsList();
     portalsLeft = portalsList.size();
 
+    auto curFinishLine = mLevelMap.getFinishLine();
+
     while (!quit)
     {
         while (SDL_PollEvent(&curEvent) != 0)
@@ -139,11 +141,6 @@ void playLevel::playGame()
         SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
         SDL_RenderClear(mRenderer);
 
-        mLevelMap.render(mRenderer, mSpritesheet);
-
-        checkpointsList = mLevelMap.checkpointsList();
-        portalsList = mLevelMap.portalsList();
-        
         if (respawn)
         {
             SDL_Delay(200);
@@ -152,6 +149,12 @@ void playLevel::playGame()
                                 checkpointsList[lastCheckpointIndex].getFramePosY());
             respawn = 0;
         }
+
+        mLevelMap.render(mRenderer, mSpritesheet);
+
+        checkpointsList = mLevelMap.checkpointsList();
+        portalsList = mLevelMap.portalsList();
+        curFinishLine = mLevelMap.getFinishLine();
 
         mBall.passFrame();
 
@@ -172,6 +175,17 @@ void playLevel::playGame()
                     mBall.setVelocityX(0);
                     // mBall.reflectX();
                 }
+
+            }
+            if (collide(curFinishLine, mBall))
+            {
+                if (!curFinishLine.checkIsOpen())
+                {
+                    mBall.undoMoveX();
+                    mBall.scaleX(mLevelMap.getFramePosX());
+                    blocked = 1;
+                    mBall.setVelocityX(0);
+                }
             }
             if (!blocked) mLevelMap.moveX(distance);
         }
@@ -190,6 +204,16 @@ void playLevel::playGame()
                 mBall.reflectY();
             }
         }
+        if (collide(curFinishLine, mBall))
+        {
+            if (!curFinishLine.checkIsOpen())
+            {
+                mBall.setCollide((mBall.getVelocityY() < 0));
+                mBall.undoMoveY();
+                mBall.scaleY();
+                mBall.reflectY();
+            }
+        }
     
         mBall.render(mRenderer, mSpritesheet);
         
@@ -198,10 +222,13 @@ void playLevel::playGame()
             if (collide(curSpike, mBall))
             {
                 mBall.renderPopAnimation(mRenderer, mSpritesheet);
+                mBall.setVelocityX(0);
+                mBall.setVelocityY(0);
                 livesLeft --;
                 respawn = 1;
-            }
-        
+                break;
+            
+
         //Collect a checkpoint
         for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)
         {
@@ -240,9 +267,26 @@ void playLevel::playGame()
             }
         }
 
+        if (portalsLeft == 0)
+        {
+            if (!curFinishLine.checkIsOpen())
+            {
+                curFinishLine.openFinishLine();
+            }
+        }
+
+        //Touch the finish line
+        if (collide(curFinishLine, mBall))
+        {
+            if (curFinishLine.checkIsOpen())
+            {
+                score += 500;
+            }
+        }
          
         mLevelMap.updateCheckpointsList(checkpointsList);
         mLevelMap.updatePortalsList(portalsList);
+        mLevelMap.updateFinishLine(curFinishLine);
 
         //Render the status area
         mStatusArea.render(livesLeft, portalsLeft, score);

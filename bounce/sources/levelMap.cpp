@@ -1,24 +1,6 @@
 // levelMap.cpp
 #include "levelMap.h"
 
-brickTile::brickTile()
-{
-    setSize(BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
-}
-
-brickTile::brickTile(const int& __PosX, const int& __PosY)
-{
-    mPosX = __PosX;
-    mPosY = __PosY;
-    setSize(BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
-}
-
-void brickTile::render(SDL_Renderer* renderer, LTexture& spritesheet)
-{
-    setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH / 2, BRICK_TILE_HEIGHT / 2);
-    spritesheet.render(renderer, mPosX, mPosY - BRICK_TILE_HEIGHT, &mSpriteClip, 2);
-}
-
 levelMap::levelMap(/* args */)
 {
 }
@@ -143,6 +125,11 @@ std::vector <portal> levelMap::portalsList() const
     return vPortals;
 }
 
+finishLine levelMap::getFinishLine() const
+{
+    return mFinishLine;
+}
+
 void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList)
 {
     vCheckpoints = newCheckpointsList;
@@ -151,6 +138,11 @@ void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpoi
 void levelMap::updatePortalsList(const std::vector <portal>& newPortalsList)
 {
     vPortals = newPortalsList;
+}   
+
+void levelMap::updateFinishLine(const finishLine& newFinishLine)
+{
+    mFinishLine = newFinishLine;
 }   
 
 void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
@@ -174,7 +166,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
             {
                 case BRICK_CHAR_SYMBOL:
                 {
-                    brickTile curBrick(BRICK_TILE_WIDTH * i - int(remFrameX), BRICK_TILE_HEIGHT * (j + 1));
+                    brickTile curBrick(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
                     curBrick.render(renderer, spritesheet);
 
                     vBrickTiles.push_back(curBrick);
@@ -233,7 +225,6 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                     {
                         if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j) continue;
                         curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
-                        std::cout << TILE_WIDTH * i - int(remFrameX) << " " << TILE_HEIGHT * (j + 1) << "\n";
                         curPortal.render(renderer, spritesheet);
                     }
                     break;
@@ -248,6 +239,13 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                         curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
                         curPortal.render(renderer, spritesheet);
                     }
+                    break;
+                }
+
+                case FINISH_LINE_CHAR_SYMBOL:
+                {
+                    mFinishLine.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                    mFinishLine.render(renderer, spritesheet);
                     break;
                 }
 

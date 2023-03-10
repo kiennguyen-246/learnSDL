@@ -21,10 +21,12 @@
 #include <SDL_mixer.h>
 #include "base.h"
 #include "ball.h"
+#include "brickTile.h"
 #include "levelMap.h"
 #include "checkpoint.h"
 #include "enemy.h"
 #include "portal.h"
+#include "finishLine.h"
 
 /**
  * @brief 
@@ -48,11 +50,11 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
     {
         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB          ",
         "     B    BB   BBBBBB          BBB         BB         BBB                  BBB      BB  L   BB               BB         BB          ",
-        "    BB    BBc  BBBBBB          BBB         +          BB                    BB      BB      BB               BB         BB          ",
+        "    BB    BBc  BBBBBB         tBBB         +          BB                    BB      BB      BB               BB         BB          ",
         "   B B    BB   BBBBBB   BB     BBB         r          BB         C          BB  BB  BB  BB  BB  BB           BB         BB          ",
         "  B  B    BB   BBBBBB   BB     BBB  BBBB  BBBB  BBBB  BB                    BB  BB  BB  BB  BB  BB       BBe-BBe-BB     BB          ",
-        "     B    BB       +    BB          BB     BB     BB                            BB  +   BB  +   BB    BBTBB  C   BBTBB  G#          ",
-        "  BBBBBBB BB       r    BB T        BB  T     T   BB        T  T   T   T        BB  r   BB  r   BB    BBBBB      BBBBB  ##          ",
+        "     B    BB       +    BB          BB     BB     BB                            BB  +   BB  +   BB    BBTBB  C   BBTBB  ##          ",
+        "  BBBBBBB BB       r    BB T        BB  T     T   BB        T  T   T   T        BB  r   BB  r   BB    BBBBB      BBBBB  G#          ",
         "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB          ",
     },
 
@@ -62,8 +64,8 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
         "                                                                                                                        BB          +         BB"
         "                                                                                                                        BB          R         BB"
         "                                                                                                                        BBBBBBBBBBBBBB        BB"
-        "                                                                                                                        BB                    G#"
         "                                                                                                                        BB                    ##"
+        "                                                                                                                        BB                    G#"
         "                                                                                                                        BB   BBBBBBBBBBBBBBBBBBB"
         "                                                                                                                        BB                    BB"
         "                                                                                                                        BB                    BB"
@@ -85,11 +87,6 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
 
-const int BRICK_TILE_SPRITE_POS_x = 85;   //position in spritesheet
-const int BRICK_TILE_SPRITE_POS_Y = 165;
-const int BRICK_TILE_WIDTH = 80;
-const int BRICK_TILE_HEIGHT = 80;
-
 const char BRICK_CHAR_SYMBOL = 'B';
 const char CHECKPOINT_CHAR_SYMBOL = 'C';
 const char CHECKPOINT_START_CHAR_SYMBOL = 'c';
@@ -99,23 +96,11 @@ const char PORTAL_VERTICAL_SMALL_CHAR_SYMBOL = 'r';
 const char PORTAL_VERTICAL_LARGE_CHAR_SYMBOL = 'R';
 const char PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL = 'e';
 const char PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL = 'E';
+const char FINISH_LINE_CHAR_SYMBOL = 'G';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
 
-class brickTile: public gameObject
-{
-private:
-    
-public:
-    /// @brief Default constructor
-    brickTile();
-
-    /// @brief Create a brick tile that has the bottom left coordinate of (__PosX, __PosY)
-    brickTile(const int& __PosX, const int& __PosY);
-
-    void render(SDL_Renderer* renderer, LTexture& spritesheet);
-};
 
 class levelMap
 {
@@ -134,6 +119,9 @@ private:
 
     /// @brief List of portals
     std::vector <portal> vPortals;
+
+    /// @brief The finish line
+    finishLine mFinishLine;
 
     /// @brief The bottom left position of the current frame, in comparison with the full level map
     double curFramePosX, curFramePosY;
@@ -168,11 +156,16 @@ public:
     /// @brief Get the list of portals in the map
     std::vector <portal> portalsList() const;
 
+    finishLine getFinishLine() const;
+
     /// @brief Update the checkpoints list
     void updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList);
 
     /// @brief Update the portals list
     void updatePortalsList(const std::vector <portal>& newPortalsList);
+
+    /// @brief Update the finish line
+    void updateFinishLine(const finishLine& newFinishLine);
 
     int getFramePosX() const;
 

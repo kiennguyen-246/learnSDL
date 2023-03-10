@@ -27,7 +27,7 @@
 #include <SDL_mixer.h>
 #include "base.h"
 
-const double BALL_VELOCITY_X_DEFAULT = 12;     //unit: pixel/frame
+const double BALL_VELOCITY_X_DEFAULT = 9;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 24;     //unit: pixel/frame
 const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(frame)^2
 const double BALL_ACCELERATION_Y_DEFAULT = 4.0 / 5;     //unit: pixel/(frame)^2
