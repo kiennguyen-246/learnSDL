@@ -13,10 +13,16 @@ playLevel::~playLevel()
 
 }
 
+int playLevel::getLivesLeft() const
+{
+    return livesLeft;
+}
+
 void playLevel::setLevelId(const int& id)
 {
     levelId = id;
     mLevelMap.setMap(id);
+    livesLeft = 3;
 }
 
 void playLevel::playGame()
@@ -25,7 +31,7 @@ void playLevel::playGame()
     SDL_Event curEvent;
 
     mBall.setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
-    mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
+    mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2);
 
     bool respawn = 1;
     int lastCheckpointIndex = 0;
@@ -86,6 +92,7 @@ void playLevel::playGame()
 
         mBall.passFrame();
 
+        //Try moving by X
         if (abs(mBall.getVelocityX()) > 1e-3)
         {
             double distance = mBall.moveX();
@@ -93,6 +100,7 @@ void playLevel::playGame()
             mBall.scaleX(mLevelMap.getFramePosX());
             for (auto &curBrickTile: mLevelMap.brickTilesList())
             {
+                //Hit the wall
                 if (collide(curBrickTile, mBall)) 
                 {
                     mBall.undoMoveX();
@@ -105,9 +113,12 @@ void playLevel::playGame()
             if (!blocked) mLevelMap.moveX(distance);
         }
         
+        //Try moving by Y
         mBall.moveY();
         mBall.scaleY();
         for (auto &curBrickTile: mLevelMap.brickTilesList())
+        {
+            //Hit the wall
             if (collide(curBrickTile, mBall)) 
             {
                 mBall.setCollide((mBall.getVelocityY() < 0));
@@ -115,18 +126,20 @@ void playLevel::playGame()
                 mBall.scaleY();
                 mBall.reflectY();
             }
-
+        }
+    
         mBall.render(mRenderer, mSpritesheet);
         
+        //Hit a spike
         for (auto &curSpike: mLevelMap.spikesList())
             if (collide(curSpike, mBall))
             {
-                // SDL_Rect poppedBallRenderClip = {POPPED_BALL_SPRITE_POS_x, POPPED_BALL_SPRITE_POS_Y, POPPED_BALL_WIDTH, POPPED_BALL_HEIGHT};
-                // mSpritesheet.render(mRenderer, mBall.getPosX(), mBall.getPosY(), &poppedBallRenderClip);
                 mBall.renderPopAnimation(mRenderer, mSpritesheet);
+                livesLeft --;
                 respawn = 1;
             }
         
+        //Collect a checkpoint
         for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)
         {
             if (collide(checkpointsList[curIndex], mBall))
@@ -145,8 +158,18 @@ void playLevel::playGame()
             }
         }
          
-
         mLevelMap.updateCheckpointsList(checkpointsList);
+
+        //Render the status area
+        SDL_Rect statusAreaBound = {STATUS_AREA_POS_X, STATUS_AREA_POS_Y, STATUS_AREA_WIDTH, STATUS_AREA_HEIGHT};
+        SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
+        SDL_RenderFillRect(mRenderer, &statusAreaBound);
+
+        LTexture curRenderTexture;
+        std::string livesInfo = std::to_string(livesLeft) + "x";
+        renderText(mRenderer, curRenderTexture, &livesInfo[0], LIVES_INFO_TEXT_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, 
+                    STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+        mSpritesheet.render(mRenderer, LIVES_INFO_BALL_SPRITE_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, mBall.getSpriteClipPtr(), 2);
 
         SDL_RenderPresent(mRenderer);
     }

@@ -90,13 +90,14 @@ bool LTexture::loadTexture(SDL_Renderer* mRenderer, TTF_Font* mFont, const char*
 
 }
 
-void LTexture::render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip, const double& angle, SDL_Point* center, SDL_RendererFlip flip)
+void LTexture::render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip, const int& stretchSize,
+                     const double& angle, SDL_Point* center, SDL_RendererFlip flip)
 {
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
     if (clip != NULL)
     {
-        renderQuad.h = clip->h;
-        renderQuad.w = clip->w;
+        renderQuad.h = clip->h * stretchSize;
+        renderQuad.w = clip->w * stretchSize;
     }
     SDL_RenderCopyEx(mRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
@@ -185,6 +186,11 @@ void gameObject::setSpriteClip(LTexture& spritesheet, const int& x, const int& y
     mSpriteClip = {x, y, w, h};
 }
 
+SDL_Rect* gameObject::getSpriteClipPtr()
+{
+    return &mSpriteClip;
+}
+
 bool collide(const gameObject& obj1, const gameObject& obj2)
 {
     int hitbox1L = obj1.mPosX;
@@ -202,4 +208,20 @@ bool collide(const gameObject& obj1, const gameObject& obj2)
     if ((hitbox1R - hitbox1L + hitbox2R - hitbox2L > std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L)) && 
         (hitbox1D - hitbox1U + hitbox2D - hitbox2U > std::max(hitbox1D, hitbox2D) - std::min(hitbox1U, hitbox2U))) return 1;
     return 0;
+}
+
+void renderText(SDL_Renderer* renderer, LTexture& texture, const char* text, const int& x, const int& y, 
+                      const int& fontSize, const char* fontPath, const SDL_Color& fontColor)
+{
+    TTF_Font* font = TTF_OpenFont(fontPath, fontSize);
+
+    if (!texture.loadTexture(renderer, font, text, fontColor)) 
+    {
+        cout << "Cannot render given text.\n";
+    }
+    else
+    {
+        texture.render(renderer, x, y);
+    }
+    TTF_CloseFont(font);
 }

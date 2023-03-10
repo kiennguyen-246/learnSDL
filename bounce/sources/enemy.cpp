@@ -27,9 +27,8 @@ void spike::setRotateAngle(const int& angle)
 
 void spike::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    setSpriteClip(spritesheet, SPIKE_SPRITE_POS_x, SPIKE_SPRITE_POS_Y, SPIKE_WIDTH, SPIKE_HEIGHT);
-    SDL_Point center = {mPosX + SPIKE_WIDTH / 2, mPosY - SPIKE_HEIGHT / 2};
+    setSpriteClip(spritesheet, SPIKE_SPRITE_POS_x, SPIKE_SPRITE_POS_Y, SPIKE_WIDTH / 2, SPIKE_HEIGHT / 2);
 
-    spritesheet.render(renderer, mPosX, mPosY - SPIKE_HEIGHT, &mSpriteClip, rotateAngle, NULL);
+    spritesheet.render(renderer, mPosX, mPosY - SPIKE_HEIGHT, &mSpriteClip, 2, rotateAngle, NULL);
 
 }

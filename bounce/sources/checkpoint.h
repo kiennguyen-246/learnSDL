@@ -21,10 +21,10 @@
 #include "base.h"
 #include "ball.h"
 
-const int CHECKPOINT_DEFAULT_SPRITE_POS_x = 282;   //position in spritesheet
-const int CHECKPOINT_DEFAULT_SPRITE_POS_Y = 2;
-const int CHECKPOINT_COLLECTED_SPRITE_POS_x = 366;   //position in spritesheet
-const int CHECKPOINT_COLLECTED_SPRITE_POS_Y = 2;
+const int CHECKPOINT_DEFAULT_SPRITE_POS_x = 141;   //position in spritesheet
+const int CHECKPOINT_DEFAULT_SPRITE_POS_Y = 1;
+const int CHECKPOINT_COLLECTED_SPRITE_POS_x = 183;   //position in spritesheet
+const int CHECKPOINT_COLLECTED_SPRITE_POS_Y = 1;
 const int CHECKPOINT_WIDTH = 80;
 const int CHECKPOINT_HEIGHT = 80;
 const double CHECKPOINT_DROP_VELOCITY = 10;

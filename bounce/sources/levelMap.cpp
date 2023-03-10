@@ -15,8 +15,8 @@ brickTile::brickTile(const int& __PosX, const int& __PosY)
 
 void brickTile::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
-    spritesheet.render(renderer, mPosX, mPosY - BRICK_TILE_HEIGHT, &mSpriteClip);
+    setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH / 2, BRICK_TILE_HEIGHT / 2);
+    spritesheet.render(renderer, mPosX, mPosY - BRICK_TILE_HEIGHT, &mSpriteClip, 2);
 }
 
 levelMap::levelMap(/* args */)

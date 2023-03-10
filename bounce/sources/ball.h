@@ -33,13 +33,13 @@ const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 64;     //unit: pixel/(frame)^
 const double BALL_ACCELERATION_Y_DEFAULT = 1.0 / 5;     //unit: pixel/(frame)^2
 const int BALL_BOUNCE_LEVEL = 50;      //new velocity multiplier after a bounce (percent)
 
-const int SMALL_BALL_SPRITE_POS_x = 198;   //position in spritesheet
-const int SMALL_BALL_SPRITE_POS_Y = 0;
+const int SMALL_BALL_SPRITE_POS_x = 99;   //position in spritesheet
+const int SMALL_BALL_SPRITE_POS_Y = 1;
 const int SMALL_BALL_WIDTH = 80;
 const int SMALL_BALL_HEIGHT = 80;
 
-const int POPPED_BALL_SPRITE_POS_x = 114;   //position in spritesheet
-const int POPPED_BALL_SPRITE_POS_Y = 2;
+const int POPPED_BALL_SPRITE_POS_x = 57;   //position in spritesheet
+const int POPPED_BALL_SPRITE_POS_Y = 1;
 const int POPPED_BALL_WIDTH = 80;
 const int POPPED_BALL_HEIGHT = 80;
 

@@ -22,10 +22,20 @@ const int GAMEPLAY_AREA_POS_Y = 0;
 const int GAMEPLAY_AREA_WIDTH = 1280;
 const int GAMEPLAY_AREA_HEIGHT = 640;
 
+const int STATUS_AREA_POS_X = 0;
+const int STATUS_AREA_POS_Y = GAMEPLAY_AREA_HEIGHT;
+const int STATUS_AREA_WIDTH = 1280;
+const int STATUS_AREA_HEIGHT = 640;
+const int STATUS_AREA_FONT_SIZE = 72;
+
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
+const SDL_Color SDL_COLOR_WHITE = {255, 255, 255};
 const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
 const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
+const std::string CALIBRI_FONT_PATH = "./fonts/calibri.ttf";
+
+const int LIVES_LEFT_DEFAULT = 3;
 
 /// @brief Texture class
 class LTexture
@@ -70,7 +80,8 @@ class LTexture
         /// @param angle Rotation angle
         /// @param center Rotation center
         /// @param flip Flip flag
-        void render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip = NULL, const double& angle = 0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        void render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_Rect* clip = NULL, const int& stretchSize = 1, 
+                    const double& angle = 0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
         /// @brief Destroy the LTexture object
         void clear();
@@ -133,9 +144,12 @@ public:
 
     int getPosY() const;
 
-    /// @brief Get the clip for the sprite of the object
+    /// @brief Set the clip for the sprite of the object in the spritesheet
     /// @param spritesheet 
     void setSpriteClip(LTexture& spritesheet, const int& x, const int& y, const int& w, const int& h);
+
+    /// @brief Set the clip for the sprite of the object in the spritesheet
+    SDL_Rect* getSpriteClipPtr();
 
     virtual void render(SDL_Renderer* renderer, LTexture& spritesheet) = 0;
 
@@ -145,5 +159,15 @@ public:
 /// @brief Check if two objects "touch" each other by their hitbox
 /// @return 1 if obj1 touches obj2, 0 otherwise
 bool collide(const gameObject& obj1, const gameObject& obj2);
+
+/// @brief Render some text to the screen
+/// @param texture The LTexture object
+/// @param x,y The render position
+/// @param text The text being rendered, in char* form
+/// @param fontPath Path to the font (ttf) file
+/// @param fontSize Font size
+/// @param textColor Text color, in SDL_Color form
+void renderText(SDL_Renderer* renderer, LTexture& texture, const char* text, const int& x, const int& y, const int& fontSize = 48, const char* fontPath = &CALIBRI_FONT_PATH[0], const SDL_Color& fontColor = SDL_COLOR_BLACK);
+
 
 #endif

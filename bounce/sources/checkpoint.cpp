@@ -70,12 +70,12 @@ void checkpoint::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
     if (mState == CHECKPOINT_DEFAULT)
     {
-        setSpriteClip(spritesheet, CHECKPOINT_DEFAULT_SPRITE_POS_x, CHECKPOINT_DEFAULT_SPRITE_POS_Y, CHECKPOINT_WIDTH, CHECKPOINT_HEIGHT);
+        setSpriteClip(spritesheet, CHECKPOINT_DEFAULT_SPRITE_POS_x, CHECKPOINT_DEFAULT_SPRITE_POS_Y, CHECKPOINT_WIDTH / 2, CHECKPOINT_HEIGHT / 2);
     } 
     else if (mState == CHECKPOINT_COLLECTED)
     {
-        setSpriteClip(spritesheet, CHECKPOINT_COLLECTED_SPRITE_POS_x, CHECKPOINT_COLLECTED_SPRITE_POS_Y, CHECKPOINT_WIDTH, CHECKPOINT_HEIGHT);
+        setSpriteClip(spritesheet, CHECKPOINT_COLLECTED_SPRITE_POS_x, CHECKPOINT_COLLECTED_SPRITE_POS_Y, CHECKPOINT_WIDTH / 2, CHECKPOINT_HEIGHT / 2);
     } 
     else return;
-    spritesheet.render(renderer, mPosX, mPosY - CHECKPOINT_HEIGHT, &mSpriteClip);
+    spritesheet.render(renderer, mPosX, mPosY - CHECKPOINT_HEIGHT, &mSpriteClip, 2);
 }

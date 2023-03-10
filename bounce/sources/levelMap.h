@@ -84,8 +84,8 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
 const int TILE_WIDTH = 80;
 const int TILE_HEIGHT = 80;
 
-const int BRICK_TILE_SPRITE_POS_x = 170;   //position in spritesheet
-const int BRICK_TILE_SPRITE_POS_Y = 330;
+const int BRICK_TILE_SPRITE_POS_x = 85;   //position in spritesheet
+const int BRICK_TILE_SPRITE_POS_Y = 165;
 const int BRICK_TILE_WIDTH = 80;
 const int BRICK_TILE_HEIGHT = 80;
 

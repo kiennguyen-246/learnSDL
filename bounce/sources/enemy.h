@@ -19,8 +19,8 @@
 #include <SDL_mixer.h>
 #include "base.h"
 
-const int SPIKE_SPRITE_POS_x = 1781;   //position in spritesheet
-const int SPIKE_SPRITE_POS_Y = 2;
+const int SPIKE_SPRITE_POS_x = 891;   //position in spritesheet
+const int SPIKE_SPRITE_POS_Y = 1;
 const int SPIKE_WIDTH = 80;
 const int SPIKE_HEIGHT = 80;
 
