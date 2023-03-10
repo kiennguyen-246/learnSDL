@@ -5,7 +5,7 @@
  * Moving logic:
  * - After the control key is pressed, the ball moves horizontally with an accelerator of -5/64 pixel/(frames)^2
  *   Each time a control key is pressed, the ball starts with a velocity of 5 pixel/frames
- *   The moving equation is X = X0 - 5 * t - (5/128) * (t^2)  (pixel)
+ *   The moving equation is X = X0 - 10 * t - (5/8) * (t^2)  (pixel)
  * 
  * - After the control key is pressed, the ball moves vertically with an accelerator of 1/5 pixel/(frames)^2
  *   Each time a control key is pressed, the ball starts with a velocity of 12 pixel/frames
@@ -14,7 +14,7 @@
  * - Note that the horizontal move and vertical move are independent, so they use different time count
  * 
  * - While moving vertically, if the ball collides with any kind of bricks, it moves in the opposite direction
- *   with the velocity being decreased by 50%. 
+ *   with the velocity being decreased by 60%. 
  */
 
 #ifndef BALL_GUARD
@@ -27,11 +27,11 @@
 #include <SDL_mixer.h>
 #include "base.h"
 
-const double BALL_VELOCITY_X_DEFAULT = 5;     //unit: pixel/frame
-const double BALL_VELOCITY_Y_DEFAULT = 12;     //unit: pixel/frame
-const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 64;     //unit: pixel/(frame)^2
-const double BALL_ACCELERATION_Y_DEFAULT = 1.0 / 5;     //unit: pixel/(frame)^2
-const int BALL_BOUNCE_LEVEL = 50;      //new velocity multiplier after a bounce (percent)
+const double BALL_VELOCITY_X_DEFAULT = 10;     //unit: pixel/frame
+const double BALL_VELOCITY_Y_DEFAULT = 24;     //unit: pixel/frame
+const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(frame)^2
+const double BALL_ACCELERATION_Y_DEFAULT = 4.0 / 5;     //unit: pixel/(frame)^2
+const int BALL_BOUNCE_LEVEL = 40;      //new velocity multiplier after a bounce (percent)
 
 const int SMALL_BALL_SPRITE_POS_x = 99;   //position in spritesheet
 const int SMALL_BALL_SPRITE_POS_Y = 1;
