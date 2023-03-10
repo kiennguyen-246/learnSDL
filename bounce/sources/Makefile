@@ -1,4 +1,4 @@
-OBJS = main.cpp game.cpp base.cpp playLevel.cpp ball.cpp levelMap.cpp checkpoint.cpp
+OBJS = main.cpp game.cpp base.cpp playLevel.cpp ball.cpp levelMap.cpp checkpoint.cpp enemy.cpp
 
 CC = g++ -std=c++17
 

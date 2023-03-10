@@ -36,6 +36,11 @@ const int SMALL_BALL_SPRITE_POS_Y = 0;
 const int SMALL_BALL_WIDTH = 80;
 const int SMALL_BALL_HEIGHT = 80;
 
+const int POPPED_BALL_SPRITE_POS_x = 114;   //position in spritesheet
+const int POPPED_BALL_SPRITE_POS_Y = 2;
+const int POPPED_BALL_WIDTH = 80;
+const int POPPED_BALL_HEIGHT = 80;
+
 class ball: public gameObject
 {
 private:

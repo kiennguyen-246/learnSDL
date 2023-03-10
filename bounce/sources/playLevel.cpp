@@ -71,14 +71,12 @@ void playLevel::playGame()
         SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
         SDL_RenderClear(mRenderer);
 
-        mLevelMap.clearBrickTilesList();
         mLevelMap.render(mRenderer, mSpritesheet);
 
         checkpointsList = mLevelMap.checkpointsList();
         
         if (respawn)
         {
-            std::cout << checkpointsList[1].getPosX() << " " << checkpointsList[1].getPosY() << "\n";
             checkpointsList[lastCheckpointIndex].spawnBall(mBall);
             mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                                 checkpointsList[lastCheckpointIndex].getFramePosY());
@@ -115,6 +113,15 @@ void playLevel::playGame()
                 mBall.undoMoveY();
                 mBall.scaleY();
                 mBall.reflectY();
+            }
+        
+        for (auto &curSpike: mLevelMap.spikesList())
+            if (collide(curSpike, mBall))
+            {
+                SDL_Rect poppedBallRenderClip = {POPPED_BALL_SPRITE_POS_x, POPPED_BALL_SPRITE_POS_Y, POPPED_BALL_WIDTH, POPPED_BALL_HEIGHT};
+                mSpritesheet.render(mRenderer, mBall.getPosX(), mBall.getPosY(), &poppedBallRenderClip);
+                SDL_Delay(100);
+                respawn = 1;
             }
         
         for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)

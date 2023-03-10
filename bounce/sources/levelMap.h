@@ -4,9 +4,10 @@
  * @brief This file controls the map of the game and how it is rendered
  * Logic:
  * - Horizontally, the map will move along with the ball. While playing, the ball will "stand still"
- *   at some position during the game
+ * at some position during the game. The balls position is fixed at 7 brick tiles (560px) from the 
+ * leftmost position of the game area.
  * - The map shifts up 7 brick tiles when the ball moves vertically out.
- * 
+ * - The collide checking function will check colliding objects based on the position of the render map
  */
 
 #ifndef LEVELMAP_GUARD
@@ -22,6 +23,7 @@
 #include "ball.h"
 #include "levelMap.h"
 #include "checkpoint.h"
+#include "enemy.h"
 
 /**
  * @brief 
@@ -90,6 +92,8 @@ const int BRICK_TILE_HEIGHT = 80;
 const char BRICK_CHAR_SYMBOL = 'B';
 const char CHECKPOINT_CHAR_SYMBOL = 'C';
 const char CHECKPOINT_START_CHAR_SYMBOL = 'c';
+const char SPIKE_CHAR_SYMBOL = 'T';
+const char SPIKE_HORIZONTAL_CHAR_SYMBOL = 't';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -117,6 +121,9 @@ private:
     /// @brief List of brick tiles
     std::vector <brickTile> vBrickTiles;
 
+    /// @brief List of spikes
+    std::vector <spike> vSpikes;
+
     /// @brief List of checkpoints
     std::vector <checkpoint> vCheckpoints;
 
@@ -141,14 +148,16 @@ public:
     /// @brief Set the bottom left position of the current frame, in comparison with the full level map
     void setFramePos(const double& framePosX, const double& framePosY);
 
-    /// @brief Get the list of objects used in the map
+    /// @brief Get the list of brick tiles rendered on the map
     std::vector <brickTile> brickTilesList() const;
 
     /// @brief Get the list of checkpoints in the map
     std::vector <checkpoint> checkpointsList() const;
 
-    void clearBrickTilesList();
+    /// @brief Get the list of spikes rendered on the map
+    std::vector <spike> spikesList() const;
 
+    /// @brief Update the checkpoints list
     void updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList);
 
     int getFramePosX() const;

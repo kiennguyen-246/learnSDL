@@ -15,6 +15,7 @@ brickTile::brickTile(const int& __PosX, const int& __PosY)
 
 void brickTile::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
+    setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
     spritesheet.render(renderer, mPosX, mPosY - BRICK_TILE_HEIGHT, &mSpriteClip);
 }
 
@@ -84,14 +85,14 @@ std::vector <brickTile> levelMap::brickTilesList() const
     return vBrickTiles;
 }
 
+std::vector <spike> levelMap::spikesList() const
+{
+    return vSpikes;
+}
+
 std::vector <checkpoint> levelMap::checkpointsList() const
 {
     return vCheckpoints;
-}
-
-void levelMap::clearBrickTilesList()
-{
-    vBrickTiles.clear();
 }
 
 void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList)
@@ -109,19 +110,53 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     int maxCharTileX = GAMEPLAY_AREA_WIDTH / TILE_WIDTH;
     int maxCharTileY = GAMEPLAY_AREA_HEIGHT / TILE_HEIGHT;
 
+    vBrickTiles.clear();
+    vSpikes.clear();
+
     for (int i = 0; i < maxCharTileX + 1; i ++)
     {
         for (int j = 0; j < maxCharTileY; j ++)
         {
+            // Render brick tiles
             if (charMap[curCharPosY + j][curCharPosX + i] == BRICK_CHAR_SYMBOL)
             {
                 auto* curBrick = new brickTile(BRICK_TILE_WIDTH * i - int(remFrameX), BRICK_TILE_HEIGHT * (j + 1));
-                curBrick->setSpriteClip(spritesheet, BRICK_TILE_SPRITE_POS_x, BRICK_TILE_SPRITE_POS_Y, BRICK_TILE_WIDTH, BRICK_TILE_HEIGHT);
                 curBrick->render(renderer, spritesheet);
 
                 vBrickTiles.push_back(*curBrick);
             }
-            else if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_CHAR_SYMBOL || charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL)
+
+            // Render spikes
+            if (charMap[curCharPosY + j][curCharPosX + i] == SPIKE_CHAR_SYMBOL || 
+                charMap[curCharPosY + j][curCharPosX + i] == SPIKE_HORIZONTAL_CHAR_SYMBOL)
+            {
+                auto* curSpike = new spike(SPIKE_WIDTH * i - int(remFrameX), SPIKE_HEIGHT * (j + 1));
+                
+                if (1)  //it means that "T" and "t" can be used for both vertical and horizontal spikes
+                {
+                    if (charMap[curCharPosY + j][curCharPosX + i + 1] == BRICK_CHAR_SYMBOL) 
+                        curSpike->setRotateAngle(270);
+                    else if (charMap[curCharPosY + j][curCharPosX + i - 1] == BRICK_CHAR_SYMBOL) 
+                        curSpike->setRotateAngle(90);
+                }
+
+                if (charMap[curCharPosY + j][curCharPosX + i] == SPIKE_CHAR_SYMBOL)
+                {
+                    if (charMap[curCharPosY + j + 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
+                        curSpike->setRotateAngle(0);
+                    else if (charMap[curCharPosY + j - 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
+                        curSpike->setRotateAngle(180);
+                }
+
+                curSpike->render(renderer, spritesheet);
+
+                vSpikes.push_back(*curSpike);
+            }
+
+
+            // Render checkpoints
+            if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_CHAR_SYMBOL || 
+                charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL)
             {
                 int cnt = 0;
                 for (auto &curCheckpoint: vCheckpoints)
@@ -129,9 +164,6 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                     if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j) continue;
                     curCheckpoint.setPos(CHECKPOINT_WIDTH * i - int(remFrameX),
                                          CHECKPOINT_HEIGHT * (j + 1));
-                    // if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL) 
-                    //     std::cout << cnt << " " << curCheckpoint.getState() << "\n" << curCheckpoint.getPosX() << " " << curCheckpoint.getPosY() << "\n";
-                    
                     curCheckpoint.render(renderer, spritesheet);
                 }
             }

@@ -43,8 +43,9 @@ double checkpoint::getFramePosY() const
 
 void checkpoint::spawnBall(ball& __ball)
 {
-    __ball.setPosEx(mPosX + framePosX, mPosY + framePosY, framePosX, framePosY);
-    std::cout << mPosX << " " << mPosY << "\n";
+    __ball.setPosEx(charmapPosX * CHECKPOINT_WIDTH, (charmapPosY + 1) * CHECKPOINT_HEIGHT, framePosX, framePosY);
+    // std::cout << mPosX + framePosX << " " << mPosY + framePosY << "\n";
+    __ball.setVelocityX(0);
     __ball.setVelocityY(CHECKPOINT_DROP_VELOCITY);
     __ball.setAccelerationY(BALL_ACCELERATION_Y_DEFAULT);
 }
