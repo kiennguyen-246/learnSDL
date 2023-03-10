@@ -23,8 +23,30 @@ const int LIVES_INFO_TEXT_RENDER_POS_X = 60;
 const int LIVES_INFO_TEXT_RENDER_POS_Y = 680;
 const int LIVES_INFO_BALL_SPRITE_RENDER_POS_X = 160;
 const int LIVES_INFO_BALL_SPRITE_RENDER_POS_Y = 680;
-const int SCORE_RENDER_POS_X = 800;
+const int SCORE_RENDER_POS_X = 960;
 const int SCORE_RENDER_POS_Y = 680;
+
+class statusArea
+{
+private:
+    SDL_Renderer* mRenderer;
+
+    LTexture mSpritesheet;
+    
+    SDL_Rect mContainer;
+
+    SDL_Rect mBallSpriteClip;
+
+    SDL_Rect mPortalSpriteClip;
+public:
+    void init(SDL_Renderer* renderer, LTexture& spritesheet);
+
+    void renderLivesLeft(const int& livesLeft);
+
+    void renderScore(const int& score);
+
+    void render(const int& livesLeft, const int& portalsLeft, const int& score);
+};
 
 class playLevel
 {
@@ -45,8 +67,11 @@ private:
     /// @brief The map of the level
     levelMap mLevelMap;
 
-    /// @brief Set the number of lives left for the ball
+    statusArea mStatusArea;
+
     int livesLeft;
+
+    int score;
 
 public:
     /// @brief Default constructor
@@ -54,7 +79,13 @@ public:
 
     ~playLevel();
 
+    /// @brief Set the number of lives left for the ball
     int getLivesLeft() const;
+
+    void setScore(const int& score);
+
+    /// @brief Set the score for the game
+    int getScore() const;
 
     /// @brief Set up the index for the level
     void setLevelId(const int& id);

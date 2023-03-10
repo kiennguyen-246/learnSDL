@@ -1,6 +1,41 @@
 // playLevel.cpp
 #include "playLevel.h"
 
+void statusArea::init(SDL_Renderer* renderer, LTexture& spritesheet)
+{
+    mRenderer = renderer;
+    mSpritesheet = spritesheet;
+    mContainer = {STATUS_AREA_POS_X, STATUS_AREA_POS_Y, STATUS_AREA_WIDTH, STATUS_AREA_HEIGHT};
+    mBallSpriteClip = {SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2};
+}
+
+void statusArea::renderScore(const int& score)
+{
+    LTexture curTextTexture;
+    std::string scoreStr = std::to_string(score);
+    while (scoreStr.size() < 8) scoreStr = "0" + scoreStr;
+    renderText(mRenderer, curTextTexture, &scoreStr[0], SCORE_RENDER_POS_X, SCORE_RENDER_POS_Y, 
+                STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+}
+
+void statusArea::renderLivesLeft(const int& livesLeft)
+{
+    LTexture curTextTexture;
+    std::string livesInfo = std::to_string(livesLeft) + "x";
+    renderText(mRenderer, curTextTexture, &livesInfo[0], LIVES_INFO_TEXT_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, 
+                STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+    mSpritesheet.render(mRenderer, LIVES_INFO_BALL_SPRITE_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, &mBallSpriteClip, 2);
+}
+
+void statusArea::render(const int& livesLeft, const int& portalsLeft, const int& score)
+{
+    SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
+    SDL_RenderFillRect(mRenderer, &mContainer);
+
+    renderLivesLeft(livesLeft);
+    renderScore(score);
+}
+
 playLevel::playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, LTexture& __Spritesheet)
 {
     mWindow = __Window;
@@ -18,6 +53,16 @@ int playLevel::getLivesLeft() const
     return livesLeft;
 }
 
+void playLevel::setScore(const int& __score)
+{
+    score = __score;
+}
+
+int playLevel::getScore() const
+{
+    return score;
+}
+
 void playLevel::setLevelId(const int& id)
 {
     levelId = id;
@@ -32,6 +77,8 @@ void playLevel::playGame()
 
     mBall.setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
     mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2);
+
+    mStatusArea.init(mRenderer, mSpritesheet);
 
     bool respawn = 1;
     int lastCheckpointIndex = 0;
@@ -150,6 +197,7 @@ void playLevel::playGame()
                         checkpointsList[lastCheckpointIndex].changeState(CHECKPOINT_DELETED);
                         checkpointsList[curIndex].changeState(CHECKPOINT_COLLECTED);
                         lastCheckpointIndex = curIndex;
+                        score += 20;
                         
                         break;
                     default:
@@ -161,15 +209,8 @@ void playLevel::playGame()
         mLevelMap.updateCheckpointsList(checkpointsList);
 
         //Render the status area
-        SDL_Rect statusAreaBound = {STATUS_AREA_POS_X, STATUS_AREA_POS_Y, STATUS_AREA_WIDTH, STATUS_AREA_HEIGHT};
-        SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
-        SDL_RenderFillRect(mRenderer, &statusAreaBound);
+        mStatusArea.render(livesLeft, 0, score);
 
-        LTexture curRenderTexture;
-        std::string livesInfo = std::to_string(livesLeft) + "x";
-        renderText(mRenderer, curRenderTexture, &livesInfo[0], LIVES_INFO_TEXT_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, 
-                    STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
-        mSpritesheet.render(mRenderer, LIVES_INFO_BALL_SPRITE_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, mBall.getSpriteClipPtr(), 2);
 
         SDL_RenderPresent(mRenderer);
     }

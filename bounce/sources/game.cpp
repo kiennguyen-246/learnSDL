@@ -72,6 +72,7 @@ void game::play()
 {
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
     curLevel->setLevelId(1);
+    curLevel->setScore(0);
     curLevel->playGame();
 
 }
