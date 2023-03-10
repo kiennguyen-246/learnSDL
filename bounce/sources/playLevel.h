@@ -23,6 +23,10 @@ const int LIVES_INFO_TEXT_RENDER_POS_X = 60;
 const int LIVES_INFO_TEXT_RENDER_POS_Y = 680;
 const int LIVES_INFO_BALL_SPRITE_RENDER_POS_X = 160;
 const int LIVES_INFO_BALL_SPRITE_RENDER_POS_Y = 680;
+const int PORTALS_LEFT_TEXT_RENDER_POS_X = 360;
+const int PORTALS_LEFT_TEXT_RENDER_POS_Y = 680;
+const int PORTALS_LEFT_SPRITE_RENDER_POS_X = 480;
+const int PORTALS_LEFT_SPRITE_RENDER_POS_Y = 680;
 const int SCORE_RENDER_POS_X = 960;
 const int SCORE_RENDER_POS_Y = 680;
 
@@ -42,6 +46,8 @@ public:
     void init(SDL_Renderer* renderer, LTexture& spritesheet);
 
     void renderLivesLeft(const int& livesLeft);
+
+    void renderPortalsLeft(const int& portalsLeft);
 
     void renderScore(const int& score);
 
@@ -70,6 +76,8 @@ private:
     statusArea mStatusArea;
 
     int livesLeft;
+
+    int portalsLeft;
 
     int score;
 

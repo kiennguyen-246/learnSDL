@@ -48,19 +48,62 @@ void levelMap::setMap(const int& id)
     for (int j = 0; j < charMap.size(); j ++)
         for (int i = 0; i < charMap[j].size(); i ++)
         {
-            if (charMap[j][i] == 'C')
+            switch(charMap[j][i])
             {
-                auto* curCheckpoint = new checkpoint;
-                curCheckpoint->init(i, j);
-                vCheckpoints.push_back(*curCheckpoint);
+                case CHECKPOINT_CHAR_SYMBOL:
+                {
+                    checkpoint curCheckpoint;
+                    curCheckpoint.init(i, j);
+                    vCheckpoints.push_back(curCheckpoint);
+                    break;
+                }
+
+                case CHECKPOINT_START_CHAR_SYMBOL:
+                {
+                    checkpoint curCheckpoint;
+                    curCheckpoint.init(i, j, CHECKPOINT_HIDDEN);
+                    vCheckpoints.push_back(curCheckpoint);
+                    break;
+                }
+
+                case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
+                {
+                    portal curPortal;
+                    curPortal.init(i, j, PORTAL_VERTICAL, PORTAL_SMALL);
+                    vPortals.push_back(curPortal);
+                    break;
+                }
+                    
+                case PORTAL_VERTICAL_LARGE_CHAR_SYMBOL:
+                {
+                    portal curPortal;
+                    curPortal.init(i, j, PORTAL_VERTICAL, PORTAL_LARGE);
+                    vPortals.push_back(curPortal);
+                    break;
+                }
+                
+                case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
+                {
+                    portal curPortal;
+                    curPortal.init(i, j, PORTAL_HORIZONTAL, PORTAL_SMALL);
+                    vPortals.push_back(curPortal);
+                    break;
+                }
+                    
+                case PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL:
+                {
+                    portal curPortal;
+                    curPortal.init(i, j, PORTAL_HORIZONTAL, PORTAL_LARGE);
+                    vPortals.push_back(curPortal);
+                    break;
+                }
+
+                default: break;
+
             }
-            else if (charMap[j][i] == 'c')
-            {
-                auto* curCheckpoint = new checkpoint;
-                curCheckpoint->init(i, j, CHECKPOINT_HIDDEN);
-                vCheckpoints.push_back(*curCheckpoint);
-            }
+
         }
+
             
 }
 
@@ -95,10 +138,20 @@ std::vector <checkpoint> levelMap::checkpointsList() const
     return vCheckpoints;
 }
 
+std::vector <portal> levelMap::portalsList() const
+{
+    return vPortals;
+}
+
 void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList)
 {
     vCheckpoints = newCheckpointsList;
 }
+
+void levelMap::updatePortalsList(const std::vector <portal>& newPortalsList)
+{
+    vPortals = newPortalsList;
+}   
 
 void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
@@ -117,56 +170,91 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     {
         for (int j = 0; j < maxCharTileY; j ++)
         {
-            // Render brick tiles
-            if (charMap[curCharPosY + j][curCharPosX + i] == BRICK_CHAR_SYMBOL)
+            switch(charMap[curCharPosY + j][curCharPosX + i])
             {
-                auto* curBrick = new brickTile(BRICK_TILE_WIDTH * i - int(remFrameX), BRICK_TILE_HEIGHT * (j + 1));
-                curBrick->render(renderer, spritesheet);
-
-                vBrickTiles.push_back(*curBrick);
-            }
-
-            // Render spikes
-            if (charMap[curCharPosY + j][curCharPosX + i] == SPIKE_CHAR_SYMBOL || 
-                charMap[curCharPosY + j][curCharPosX + i] == SPIKE_HORIZONTAL_CHAR_SYMBOL)
-            {
-                auto* curSpike = new spike(SPIKE_WIDTH * i - int(remFrameX), SPIKE_HEIGHT * (j + 1));
-                
-                if (1)  //it means that "T" and "t" can be used for both vertical and horizontal spikes
+                case BRICK_CHAR_SYMBOL:
                 {
+                    brickTile curBrick(BRICK_TILE_WIDTH * i - int(remFrameX), BRICK_TILE_HEIGHT * (j + 1));
+                    curBrick.render(renderer, spritesheet);
+
+                    vBrickTiles.push_back(curBrick);
+
+                    break;
+                }
+
+                case SPIKE_HORIZONTAL_CHAR_SYMBOL:
+                {
+                    spike curSpike(SPIKE_WIDTH * i - int(remFrameX), SPIKE_HEIGHT * (j + 1));
+
                     if (charMap[curCharPosY + j][curCharPosX + i + 1] == BRICK_CHAR_SYMBOL) 
-                        curSpike->setRotateAngle(270);
+                        curSpike.setRotateAngle(270);
                     else if (charMap[curCharPosY + j][curCharPosX + i - 1] == BRICK_CHAR_SYMBOL) 
-                        curSpike->setRotateAngle(90);
+                        curSpike.setRotateAngle(90);
+
+                    curSpike.render(renderer, spritesheet);
+
+                    vSpikes.push_back(curSpike);
+
+                    break;
                 }
 
-                if (charMap[curCharPosY + j][curCharPosX + i] == SPIKE_CHAR_SYMBOL)
+                case SPIKE_CHAR_SYMBOL:
                 {
+                    spike curSpike(SPIKE_WIDTH * i - int(remFrameX), SPIKE_HEIGHT * (j + 1));
+
                     if (charMap[curCharPosY + j + 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
-                        curSpike->setRotateAngle(0);
+                        curSpike.setRotateAngle(0);
                     else if (charMap[curCharPosY + j - 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
-                        curSpike->setRotateAngle(180);
+                        curSpike.setRotateAngle(180);
+
+                    curSpike.render(renderer, spritesheet);
+
+                    vSpikes.push_back(curSpike);
+
+                    break;
                 }
-
-                curSpike->render(renderer, spritesheet);
-
-                vSpikes.push_back(*curSpike);
-            }
-
-
-            // Render checkpoints
-            if (charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_CHAR_SYMBOL || 
-                charMap[curCharPosY + j][curCharPosX + i] == CHECKPOINT_START_CHAR_SYMBOL)
-            {
-                int cnt = 0;
-                for (auto &curCheckpoint: vCheckpoints)
+                    
+                case CHECKPOINT_CHAR_SYMBOL:
+                case CHECKPOINT_START_CHAR_SYMBOL:
                 {
-                    if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j) continue;
-                    curCheckpoint.setPos(CHECKPOINT_WIDTH * i - int(remFrameX),
-                                         CHECKPOINT_HEIGHT * (j + 1));
-                    curCheckpoint.render(renderer, spritesheet);
+                    for (auto &curCheckpoint: vCheckpoints)
+                    {
+                        if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j) continue;
+                        curCheckpoint.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                        curCheckpoint.render(renderer, spritesheet);
+                    }
+                    break;
                 }
+
+                case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
+                case PORTAL_VERTICAL_LARGE_CHAR_SYMBOL:
+                {
+                    for (auto &curPortal: vPortals)
+                    {
+                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j) continue;
+                        curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                        std::cout << TILE_WIDTH * i - int(remFrameX) << " " << TILE_HEIGHT * (j + 1) << "\n";
+                        curPortal.render(renderer, spritesheet);
+                    }
+                    break;
+                }
+
+                case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
+                case PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL:
+                {
+                    for (auto &curPortal: vPortals)
+                    {
+                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j) continue;
+                        curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                        curPortal.render(renderer, spritesheet);
+                    }
+                    break;
+                }
+
+                default: break;
+
             }
+            
 
         }
     }

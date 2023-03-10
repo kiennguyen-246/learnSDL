@@ -7,6 +7,8 @@ void statusArea::init(SDL_Renderer* renderer, LTexture& spritesheet)
     mSpritesheet = spritesheet;
     mContainer = {STATUS_AREA_POS_X, STATUS_AREA_POS_Y, STATUS_AREA_WIDTH, STATUS_AREA_HEIGHT};
     mBallSpriteClip = {SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2};
+    mPortalSpriteClip = {PORTAL_HORIZONTAL_DEFAULT_SPRITE_POS_x, PORTAL_HORIZONTAL_COLLECTED_SPRITE_POS_Y,
+                         PORTAL_HORIZONTAL_WIDTH / 2, PORTAL_HORIZONTAL_HEIGHT / 2};
 }
 
 void statusArea::renderScore(const int& score)
@@ -18,11 +20,20 @@ void statusArea::renderScore(const int& score)
                 STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
 }
 
+void statusArea::renderPortalsLeft(const int& portalsLeft)
+{
+    LTexture curTextTexture;
+    std::string portalsLeftInfo = std::to_string(portalsLeft) + "x";
+    renderText(mRenderer, curTextTexture, &portalsLeftInfo[0], PORTALS_LEFT_TEXT_RENDER_POS_X, PORTALS_LEFT_TEXT_RENDER_POS_Y, 
+                STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+    mSpritesheet.render(mRenderer, PORTALS_LEFT_SPRITE_RENDER_POS_X, PORTALS_LEFT_SPRITE_RENDER_POS_Y, &mPortalSpriteClip, 2);
+}
+
 void statusArea::renderLivesLeft(const int& livesLeft)
 {
     LTexture curTextTexture;
     std::string livesInfo = std::to_string(livesLeft) + "x";
-    renderText(mRenderer, curTextTexture, &livesInfo[0], LIVES_INFO_TEXT_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, 
+    renderText(mRenderer, curTextTexture, &livesInfo[0], LIVES_INFO_TEXT_RENDER_POS_X, LIVES_INFO_TEXT_RENDER_POS_Y, 
                 STATUS_AREA_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
     mSpritesheet.render(mRenderer, LIVES_INFO_BALL_SPRITE_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, &mBallSpriteClip, 2);
 }
@@ -33,6 +44,7 @@ void statusArea::render(const int& livesLeft, const int& portalsLeft, const int&
     SDL_RenderFillRect(mRenderer, &mContainer);
 
     renderLivesLeft(livesLeft);
+    renderPortalsLeft(portalsLeft);
     renderScore(score);
 }
 
@@ -89,6 +101,9 @@ void playLevel::playGame()
     }
     mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                         checkpointsList[lastCheckpointIndex].getFramePosY());
+    
+    auto portalsList = mLevelMap.portalsList();
+    portalsLeft = portalsList.size();
 
     while (!quit)
     {
@@ -127,6 +142,7 @@ void playLevel::playGame()
         mLevelMap.render(mRenderer, mSpritesheet);
 
         checkpointsList = mLevelMap.checkpointsList();
+        portalsList = mLevelMap.portalsList();
         
         if (respawn)
         {
@@ -197,7 +213,7 @@ void playLevel::playGame()
                         checkpointsList[lastCheckpointIndex].changeState(CHECKPOINT_DELETED);
                         checkpointsList[curIndex].changeState(CHECKPOINT_COLLECTED);
                         lastCheckpointIndex = curIndex;
-                        score += 20;
+                        score += CHECKPOINT_SCORE;
                         
                         break;
                     default:
@@ -205,11 +221,31 @@ void playLevel::playGame()
                 }
             }
         }
+
+        //Collect a portal
+        for (int curIndex = 0; curIndex < portalsList.size(); curIndex ++)
+        {
+            if (collide(portalsList[curIndex], mBall))
+            {
+                switch(portalsList[curIndex].checkIsCollected())
+                {
+                    case PORTAL_DEFAULT:
+                        portalsList[curIndex].collectPortal();
+                        portalsLeft --;
+                        score += PORTAL_SCORE;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
          
         mLevelMap.updateCheckpointsList(checkpointsList);
+        mLevelMap.updatePortalsList(portalsList);
 
         //Render the status area
-        mStatusArea.render(livesLeft, 0, score);
+        mStatusArea.render(livesLeft, portalsLeft, score);
 
 
         SDL_RenderPresent(mRenderer);

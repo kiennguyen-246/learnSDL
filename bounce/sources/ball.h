@@ -9,7 +9,7 @@
  * 
  * - After the control key is pressed, the ball moves vertically with an accelerator of 1/5 pixel/(frames)^2
  *   Each time a control key is pressed, the ball starts with a velocity of 12 pixel/frames
- *   The moving equation is Y = Y0 - 12 * t + (1/10) * (t^2)  (pixel)
+ *   The moving equation is Y = Y0 - 24 * t + (2/5) * (t^2)  (pixel)
  * 
  * - Note that the horizontal move and vertical move are independent, so they use different time count
  * 
@@ -27,7 +27,7 @@
 #include <SDL_mixer.h>
 #include "base.h"
 
-const double BALL_VELOCITY_X_DEFAULT = 10;     //unit: pixel/frame
+const double BALL_VELOCITY_X_DEFAULT = 12;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 24;     //unit: pixel/frame
 const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(frame)^2
 const double BALL_ACCELERATION_Y_DEFAULT = 4.0 / 5;     //unit: pixel/(frame)^2

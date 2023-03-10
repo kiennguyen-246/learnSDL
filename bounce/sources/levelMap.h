@@ -24,6 +24,7 @@
 #include "levelMap.h"
 #include "checkpoint.h"
 #include "enemy.h"
+#include "portal.h"
 
 /**
  * @brief 
@@ -45,39 +46,39 @@ const std::vector <std::string> LEVEL_CHAR_MAP[3] =
     {""},
 
     {
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"          ,
-        "     B    BB   BBBBBB          BBB         BB         BBB                  BBB      BB  L   BB               BB         BB"          ,
-        "    BB    BBc  BBBBBB          BBB         R          BB                    BB      BB      BB               BB         BB"          ,
-        "   B B    BB   BBBBBB   BB     BBB         +          BB         C          BB  BB  BB  BB  BB  BB           BB         BB"          ,
-        "  B  B    BB   BBBBBB   BB     BBB  BBBB  BBBB  BBBB  BB                    BB  BB  BB  BB  BB  BB       BBE-BBE-BB     BB"          ,
-        "     B    BB       R    BB          BB     BB     BB                            BB  R   BB  R   BB    BBTBB  C   BBTBB  G#"          ,
-        "  BBBBBBB BB       +    BB T        BB  T     T   BB        T  T   T   T        BB  +   BB  +   BB    BBBBB      BBBBB  ##"          ,
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"          ,
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB          ",
+        "     B    BB   BBBBBB          BBB         BB         BBB                  BBB      BB  L   BB               BB         BB          ",
+        "    BB    BBc  BBBBBB          BBB         +          BB                    BB      BB      BB               BB         BB          ",
+        "   B B    BB   BBBBBB   BB     BBB         r          BB         C          BB  BB  BB  BB  BB  BB           BB         BB          ",
+        "  B  B    BB   BBBBBB   BB     BBB  BBBB  BBBB  BBBB  BB                    BB  BB  BB  BB  BB  BB       BBe-BBe-BB     BB          ",
+        "     B    BB       +    BB          BB     BB     BB                            BB  +   BB  +   BB    BBTBB  C   BBTBB  G#          ",
+        "  BBBBBBB BB       r    BB T        BB  T     T   BB        T  T   T   T        BB  r   BB  r   BB    BBBBB      BBBBB  ##          ",
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB          ",
     },
 
     {
-        "                                                                                                              BBBBBBBBBBBBBBBBBBBBBBBB"
-        "                                                                                                              BBC                   BB"
-        "                                                                                                              BB          R         BB"
-        "                                                                                                              BB          +         BB"
-        "                                                                                                              BBBBBBBBBBBBBB        BB"
-        "                                                                                                              BB                    G#"
-        "                                                                                                              BB                    ##"
-        "                                                                                                              BB   BBBBBBBBBBBBBBBBBBB"
-        "                                                                                                              BB                    BB"
-        "                                                                                                              BB                    BB"
-        "                                                                                                              BBBB      BB  BB      BB"
-        "                                                                                                              BBC      BB    BB     BB"
-        "                                                                                                              BB      BB      BB    BB"
-        "                                                                                                              BB     BB   T    BB   BB"
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBE-BB"
-        "BB                    R   BB      BB     R                        BB        C           BB         BB         R   BB         BB     BB"
-        "BB       c            +   BB      BB     +                        BB                    BB         BB         +   BB         BB     BB"
-        "BB             BBBBBBBBB  BB  BB         BBBBB                    BB        XZ          BB         R          BB  BB    BB   BB  BBBBB"
-        "BB             BB     BB  BB  BB         BBBBB                    BB       XBBZ         BB         +          BB  BB  BBBB          BB"
-        "BB             BB L           BB         BBBBB                    R       XBBBBZ        R          BB         BB      L BB          BB"
-        "BB           T BB             BBP        BBBBB                    +      XBBBBBBZ       +          BB         BB        BB        T BB"
-        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBB"
+        "                                                                                                                        BBBBBBBBBBBBBBBBBBBBBBBB"
+        "                                                                                                                        BBC                   BB"
+        "                                                                                                                        BB          +         BB"
+        "                                                                                                                        BB          R         BB"
+        "                                                                                                                        BBBBBBBBBBBBBB        BB"
+        "                                                                                                                        BB                    G#"
+        "                                                                                                                        BB                    ##"
+        "                                                                                                                        BB   BBBBBBBBBBBBBBBBBBB"
+        "                                                                                                                        BB                    BB"
+        "                                                                                                                        BB                    BB"
+        "                                                                                                                        BBBB      BB  BB      BB"
+        "                                                                                                                        BBC      BB    BB     BB"
+        "                                                                                                                        BB      BB      BB    BB"
+        "                                                                                                                        BB     BB   T    BB   BB"
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBE-BB"
+        "  BBBBBBB BB                    +   BB      BB     +                        BB        C           BB         BB         +   BB         BB     BB"
+        "  T     B BB       c            R   BB      BB     R                        BB                    BB         BB         r   BB         BB     BB"
+        "        B BB             BBBBBBBBB  BB  BB         BBBBB                    BB        XZ          BB         +          BB  BB    BB   BB  BBBBB"
+        "  BBBBBBB BB             BB     BB  BB  BB         BBBBB                    BB       XBBZ         BB         R          BB  BB  BBBB          BB"
+        "  B     T BB             BB L           BB         BBBBB                    +       XBBBBZ        +          BB         BB      L BB          BB"
+        "  BBBBBBB BB           T BB             BBP        BBBBB                    R      XBBBBBBZ       R          BB         BB        BB        T BB"
+        "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBB"
     }
 };
 
@@ -94,6 +95,10 @@ const char CHECKPOINT_CHAR_SYMBOL = 'C';
 const char CHECKPOINT_START_CHAR_SYMBOL = 'c';
 const char SPIKE_CHAR_SYMBOL = 'T';
 const char SPIKE_HORIZONTAL_CHAR_SYMBOL = 't';
+const char PORTAL_VERTICAL_SMALL_CHAR_SYMBOL = 'r';
+const char PORTAL_VERTICAL_LARGE_CHAR_SYMBOL = 'R';
+const char PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL = 'e';
+const char PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL = 'E';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -127,6 +132,9 @@ private:
     /// @brief List of checkpoints
     std::vector <checkpoint> vCheckpoints;
 
+    /// @brief List of portals
+    std::vector <portal> vPortals;
+
     /// @brief The bottom left position of the current frame, in comparison with the full level map
     double curFramePosX, curFramePosY;
 
@@ -151,14 +159,20 @@ public:
     /// @brief Get the list of brick tiles rendered on the map
     std::vector <brickTile> brickTilesList() const;
 
-    /// @brief Get the list of checkpoints in the map
-    std::vector <checkpoint> checkpointsList() const;
-
     /// @brief Get the list of spikes rendered on the map
     std::vector <spike> spikesList() const;
 
+    /// @brief Get the list of checkpoints in the map
+    std::vector <checkpoint> checkpointsList() const;
+
+    /// @brief Get the list of portals in the map
+    std::vector <portal> portalsList() const;
+
     /// @brief Update the checkpoints list
     void updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList);
+
+    /// @brief Update the portals list
+    void updatePortalsList(const std::vector <portal>& newPortalsList);
 
     int getFramePosX() const;
 
