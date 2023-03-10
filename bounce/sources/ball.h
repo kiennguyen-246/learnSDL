@@ -11,6 +11,8 @@
  *   Each time a control key is pressed, the ball starts with a velocity of 12 pixel/frames
  *   The moving equation is Y = Y0 - 12 * t + (1/10) * (t^2)  (pixel)
  * 
+ * - Note that the horizontal move and vertical move are independent, so they use different time count
+ * 
  * - While moving vertically, if the ball collides with any kind of bricks, it moves in the opposite direction
  *   with the velocity being decreased by 50%. 
  */
@@ -137,6 +139,9 @@ public:
     void scaleY();
 
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
+
+    /// @brief Render the "pop" animation when hitting enemies
+    void renderPopAnimation(SDL_Renderer* renderer, LTexture& spritesheet);
 };
 
 #endif

@@ -143,5 +143,11 @@ void ball::scaleY()
 
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    spritesheet.render(renderer, mPosX, mPosY - SMALL_BALL_HEIGHT, &mSpriteClip);
+    spritesheet.render(renderer, mPosX, mPosY - mHeight, &mSpriteClip);
+}
+
+void ball::renderPopAnimation(SDL_Renderer* renderer, LTexture& spritesheet)
+{
+    SDL_Rect poppedBallRenderClip = {POPPED_BALL_SPRITE_POS_x, POPPED_BALL_SPRITE_POS_Y, POPPED_BALL_WIDTH, POPPED_BALL_HEIGHT};
+    spritesheet.render(renderer, mPosX, mPosY - POPPED_BALL_HEIGHT, &poppedBallRenderClip);
 }

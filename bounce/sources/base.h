@@ -15,7 +15,7 @@
 #include <SDL_mixer.h>
 
 const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_HEIGHT = 800;
 
 const int GAMEPLAY_AREA_POS_X = 0;
 const int GAMEPLAY_AREA_POS_Y = 0;

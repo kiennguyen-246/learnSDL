@@ -77,6 +77,7 @@ void playLevel::playGame()
         
         if (respawn)
         {
+            SDL_Delay(200);
             checkpointsList[lastCheckpointIndex].spawnBall(mBall);
             mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                                 checkpointsList[lastCheckpointIndex].getFramePosY());
@@ -114,13 +115,15 @@ void playLevel::playGame()
                 mBall.scaleY();
                 mBall.reflectY();
             }
+
+        mBall.render(mRenderer, mSpritesheet);
         
         for (auto &curSpike: mLevelMap.spikesList())
             if (collide(curSpike, mBall))
             {
-                SDL_Rect poppedBallRenderClip = {POPPED_BALL_SPRITE_POS_x, POPPED_BALL_SPRITE_POS_Y, POPPED_BALL_WIDTH, POPPED_BALL_HEIGHT};
-                mSpritesheet.render(mRenderer, mBall.getPosX(), mBall.getPosY(), &poppedBallRenderClip);
-                SDL_Delay(100);
+                // SDL_Rect poppedBallRenderClip = {POPPED_BALL_SPRITE_POS_x, POPPED_BALL_SPRITE_POS_Y, POPPED_BALL_WIDTH, POPPED_BALL_HEIGHT};
+                // mSpritesheet.render(mRenderer, mBall.getPosX(), mBall.getPosY(), &poppedBallRenderClip);
+                mBall.renderPopAnimation(mRenderer, mSpritesheet);
                 respawn = 1;
             }
         
@@ -144,8 +147,6 @@ void playLevel::playGame()
          
 
         mLevelMap.updateCheckpointsList(checkpointsList);
-
-        mBall.render(mRenderer, mSpritesheet);
 
         SDL_RenderPresent(mRenderer);
     }
