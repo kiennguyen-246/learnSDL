@@ -9,10 +9,14 @@
 #define BASE_GUARD
 
 #include <iostream>
+#include <vector>
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
+
+typedef std::vector <std::vector <std::string> > vector_2d_string;
+typedef std::vector <std::vector <std::pair <std::pair <int, int>, std::pair <int, int> > > > vector_2d_pair_of_pii;
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 800;
@@ -34,6 +38,7 @@ const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
 const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
 const std::string CALIBRI_FONT_PATH = "./fonts/calibri.ttf";
+const std::string MAPCONFIG_PATH = "./data/mapConfig";
 
 const int LIVES_LEFT_DEFAULT = 3;
 

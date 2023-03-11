@@ -22,11 +22,14 @@ bool levelMap::isFreeBrickTile(const int& brickTileCharPosX, const int& brickTil
     return 0;
 }
 
-void levelMap::setMap(const int& id)
+void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo)
 {
-    charMap = LEVEL_CHAR_MAP[id];
+    charMap = allLevelCharMap[id];
 
     vCheckpoints.clear();
+    vPortals.clear();
+    vLifeBalls.clear();
+
     for (int j = 0; j < charMap.size(); j ++)
         for (int i = 0; i < charMap[j].size(); i ++)
         {

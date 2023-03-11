@@ -75,10 +75,10 @@ int playLevel::getScore() const
     return score;
 }
 
-void playLevel::setLevelId(const int& id)
+void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo)
 {
     levelId = id;
-    mLevelMap.setMap(id);
+    mLevelMap.setMap(id, allLevelCharMap, allLevelSpidersInfo);
     livesLeft = 3;
 }
 
@@ -260,7 +260,6 @@ void playLevel::playGame()
             {
                 if (!lifeBallsList[curIndex].checkIsCollected())
                 {
-                    // std::cout << "[playLevel.cpp] Run here\n";
                     lifeBallsList[curIndex].collectLifeBall();
                     score += LIFE_BALL_SCORE;
                 }

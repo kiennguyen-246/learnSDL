@@ -1,6 +1,8 @@
 //game.h
 #include <iostream>
 #include <vector>
+#include <string>
+#include <fstream>
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -23,6 +25,12 @@ class game
 
         /// @brief The spritesheet of the game
         LTexture mSpritesheet;
+
+        /// @brief The encoded map of all levels, loaded from config file
+        vector_2d_string allLevelCharMap;
+        
+        /// @brief Moving range of all spiders in all levels
+        vector_2d_pair_of_pii allLevelSpidersInfo;
     
     public: 
         /// @brief Constructor
@@ -34,6 +42,9 @@ class game
         /// @brief Initialize SDL window, renderer, image
         /// @return 1 if successful, 0 otherwise
         bool initSDL();
+
+        /// @brief Load data from config file
+        void initMapConfig();
 
         /// @brief Settings before playing the game
         void preset();

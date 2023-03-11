@@ -96,7 +96,7 @@ public:
     int getScore() const;
 
     /// @brief Set up the index for the level
-    void setLevelId(const int& id);
+    void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo);
 
     /// @brief Render the game
     void playGame();

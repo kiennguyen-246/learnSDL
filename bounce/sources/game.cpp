@@ -57,6 +57,50 @@ bool game::initSDL()
     return 1;
 }
 
+void game::initMapConfig()
+{
+    std::ifstream fi(MAPCONFIG_PATH);
+    if (fi.is_open())
+    {
+        int levelCount;
+        fi >> levelCount;
+        allLevelCharMap.resize(levelCount + 1);
+        allLevelSpidersInfo.resize(levelCount + 1);
+
+        for (int levelId = 1; levelId <= levelCount; levelId ++)
+        {
+            int mapHeight;
+            fi >> mapHeight;
+            allLevelCharMap[levelId].resize(mapHeight);
+
+            std::string nul = "";
+            getline(fi, nul);
+            for (int rowId = 0; rowId < mapHeight; rowId ++)
+            {
+                getline(fi, allLevelCharMap[levelId][rowId]);
+            }
+                
+            int spiderCount;
+            fi >> spiderCount;
+            allLevelSpidersInfo[levelId].resize(spiderCount + 1);
+
+            getline(fi, nul);
+            for (int spiderId = 0; spiderId < spiderCount; spiderId ++)
+            {
+                auto& curSpider = allLevelSpidersInfo[levelId][spiderId];
+                fi >> curSpider.first.first >> curSpider.first.second;
+                fi >> curSpider.second.first >> curSpider.second.second;
+            }
+        }
+    }
+    else
+    {
+        std::cout << "Cannot open config file.";
+    }
+    
+
+}
+
 void game::preset()
 {
     if (!initSDL())
@@ -65,13 +109,15 @@ void game::preset()
         return;
     }
 
+    initMapConfig();
+
     mSpritesheet.loadTexture(mRenderer, &SPRITESHEET_PATH[0], SDL_COLOR_MALIBU);
 }
 
 void game::play()
 {
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
-    curLevel->setLevelId(1);
+    curLevel->setLevelId(1, allLevelCharMap, allLevelSpidersInfo);
     curLevel->setScore(0);
     curLevel->playGame();
 
