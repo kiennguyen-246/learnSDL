@@ -101,6 +101,8 @@ void playLevel::playGame()
     }
     mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                         checkpointsList[lastCheckpointIndex].getFramePosY());
+
+    auto lifeBallsList = mLevelMap.lifeBallsList();
     
     auto portalsList = mLevelMap.portalsList();
     portalsLeft = portalsList.size();
@@ -153,6 +155,7 @@ void playLevel::playGame()
         mLevelMap.render(mRenderer, mSpritesheet);
 
         checkpointsList = mLevelMap.checkpointsList();
+        lifeBallsList = mLevelMap.lifeBallsList();
         portalsList = mLevelMap.portalsList();
         curFinishLine = mLevelMap.getFinishLine();
 
@@ -227,6 +230,7 @@ void playLevel::playGame()
                 livesLeft --;
                 respawn = 1;
                 break;
+            }
             
 
         //Collect a checkpoint
@@ -245,6 +249,20 @@ void playLevel::playGame()
                         break;
                     default:
                         break;
+                }
+            }
+        }
+
+        //Collect a life ball
+        for (int curIndex = 0; curIndex < lifeBallsList.size(); curIndex ++)
+        {
+            if (collide(lifeBallsList[curIndex], mBall))
+            {
+                if (!lifeBallsList[curIndex].checkIsCollected())
+                {
+                    // std::cout << "[playLevel.cpp] Run here\n";
+                    lifeBallsList[curIndex].collectLifeBall();
+                    score += LIFE_BALL_SCORE;
                 }
             }
         }
@@ -280,11 +298,12 @@ void playLevel::playGame()
         {
             if (curFinishLine.checkIsOpen())
             {
-                score += 500;
+                score += FINISH_LINE_SCORE;
             }
         }
          
         mLevelMap.updateCheckpointsList(checkpointsList);
+        mLevelMap.updateLifeBallsList(lifeBallsList);
         mLevelMap.updatePortalsList(portalsList);
         mLevelMap.updateFinishLine(curFinishLine);
 

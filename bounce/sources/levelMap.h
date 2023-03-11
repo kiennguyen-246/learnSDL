@@ -27,17 +27,19 @@
 #include "enemy.h"
 #include "portal.h"
 #include "finishLine.h"
+#include "lifeBall.h"
 
 /**
  * @brief 
  * - B: bricks
  * - R: vertical large portals, together with "+"
  * - r: vertical small portals
- * - E: horizontal small portals, together with "+"
+ * - E: horizontal small portals, together with "-"
  * - e: horizontal small portals
- * - T: spikes
+ * - T: vertical spikes
+ * - t: horizontal spikes
  * - C: checkpoints
- * - L: extra lives
+ * - L: life balls
  * - P: pumps
  * - D: shrinkers
  * - G: Finish line, together with "#"
@@ -97,6 +99,7 @@ const char PORTAL_VERTICAL_LARGE_CHAR_SYMBOL = 'R';
 const char PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL = 'e';
 const char PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL = 'E';
 const char FINISH_LINE_CHAR_SYMBOL = 'G';
+const char LIFE_BALL_CHAR_SYMBOL = 'L';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -116,6 +119,9 @@ private:
 
     /// @brief List of checkpoints
     std::vector <checkpoint> vCheckpoints;
+
+    /// @brief List of life balls
+    std::vector <lifeBall> vLifeBalls;
 
     /// @brief List of portals
     std::vector <portal> vPortals;
@@ -153,6 +159,9 @@ public:
     /// @brief Get the list of checkpoints in the map
     std::vector <checkpoint> checkpointsList() const;
 
+    /// @brief Get the list of life balls in the map
+    std::vector <lifeBall> lifeBallsList() const;
+
     /// @brief Get the list of portals in the map
     std::vector <portal> portalsList() const;
 
@@ -160,6 +169,9 @@ public:
 
     /// @brief Update the checkpoints list
     void updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList);
+
+    /// @brief Update the life balls list
+    void updateLifeBallsList(const std::vector <lifeBall>& newLifeBallsList);
 
     /// @brief Update the portals list
     void updatePortalsList(const std::vector <portal>& newPortalsList);

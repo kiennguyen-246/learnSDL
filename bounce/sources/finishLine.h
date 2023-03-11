@@ -25,6 +25,7 @@ const int FINISH_LINE_OPEN_SPRITE_POS_x = 881;   //position in spritesheet
 const int FINISH_LINE_OPEN_SPRITE_POS_Y = 83;
 const int FINISH_LINE_WIDTH = 160;
 const int FINISH_LINE_HEIGHT = 160;
+const int FINISH_LINE_SCORE = 500;
 
 class finishLine: public gameObject
 {

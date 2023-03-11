@@ -80,6 +80,14 @@ void levelMap::setMap(const int& id)
                     break;
                 }
 
+                case LIFE_BALL_CHAR_SYMBOL:
+                {
+                    lifeBall curLifeBall;
+                    curLifeBall.init(i, j);
+                    vLifeBalls.push_back(curLifeBall);
+                    break;
+                }
+
                 default: break;
 
             }
@@ -120,6 +128,11 @@ std::vector <checkpoint> levelMap::checkpointsList() const
     return vCheckpoints;
 }
 
+std::vector <lifeBall> levelMap::lifeBallsList() const
+{
+    return vLifeBalls;
+}
+
 std::vector <portal> levelMap::portalsList() const
 {
     return vPortals;
@@ -133,6 +146,11 @@ finishLine levelMap::getFinishLine() const
 void levelMap::updateCheckpointsList(const std::vector <checkpoint>& newCheckpointsList)
 {
     vCheckpoints = newCheckpointsList;
+}
+
+void levelMap::updateLifeBallsList(const std::vector <lifeBall>& newLifeBallsList)
+{
+    vLifeBalls = newLifeBallsList;
 }
 
 void levelMap::updatePortalsList(const std::vector <portal>& newPortalsList)
@@ -246,6 +264,18 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 {
                     mFinishLine.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
                     mFinishLine.render(renderer, spritesheet);
+                    break;
+                }
+
+                case LIFE_BALL_CHAR_SYMBOL:
+                {
+                    for (auto &curLifeBall: vLifeBalls)
+                    {
+                        if (curLifeBall.getCharmapPosX() != curCharPosX + i || curLifeBall.getCharmapPosY() != curCharPosY + j) continue;
+                        curLifeBall.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                        // std::cout << "[levelMap.cpp] " << curLifeBall.getPosX() << " " << curLifeBall.getPosY() << "\n";
+                        curLifeBall.render(renderer, spritesheet);
+                    }
                     break;
                 }
 
