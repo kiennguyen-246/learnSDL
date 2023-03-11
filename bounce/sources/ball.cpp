@@ -92,6 +92,16 @@ bool ball::lastCollideY() const
     return __lastCollideY;
 }
 
+double ball::getRealPosX() const
+{
+    return mRealPosX;
+}
+
+double ball::getRealPosY() const
+{
+    return mRealPosY;
+}
+
 double ball::moveX()
 {
     //x(t) = x(t - 1) + v(t) - a / 2; v(t) = v(t - 1) + a
@@ -112,7 +122,7 @@ void ball::reflectX()
     framePassedX = 0;
 }
 
-void ball::scaleX(const int& framePos)
+void ball::scaleX(const double& framePos)
 {
     mPosX = mRealPosX - framePos;
 }
@@ -136,9 +146,9 @@ void ball::reflectY()
     framePassedY = 0;
 }
 
-void ball::scaleY()
+void ball::scaleY(const double& framePos)
 {
-    mPosY = mRealPosY;
+    mPosY = mRealPosY - framePos;
 }
 
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)

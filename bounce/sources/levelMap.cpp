@@ -105,9 +105,19 @@ void levelMap::moveX(const double& dist)
     curFramePosX += dist;
 }
 
-int levelMap::getFramePosX() const
+void levelMap::moveY(const double& dist)
+{
+    curFramePosY += dist;
+}
+
+double levelMap::getFramePosX() const
 {
     return curFramePosX;
+}
+
+double levelMap::getFramePosY() const
+{
+    return curFramePosY;
 }
 
 void levelMap::setFramePos(const double& framePosX, const double& framePosY)
@@ -168,13 +178,13 @@ void levelMap::updateFinishLine(const finishLine& newFinishLine)
 
 void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
-    int curCharPosX = curFramePosX / TILE_WIDTH;
-    int curCharPosY = curFramePosY / TILE_HEIGHT;
-    double remFrameX = curFramePosX - int(curFramePosX / TILE_WIDTH) * TILE_WIDTH;
-    // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
-
     int maxCharTileX = GAMEPLAY_AREA_WIDTH / TILE_WIDTH;
     int maxCharTileY = GAMEPLAY_AREA_HEIGHT / TILE_HEIGHT;
+    
+    int curCharPosX = curFramePosX / TILE_WIDTH;
+    int curCharPosY = int(curFramePosY / TILE_HEIGHT / (maxCharTileY - 1)) * (maxCharTileY - 1);
+    double remFrameX = curFramePosX - int(curFramePosX / TILE_WIDTH) * TILE_WIDTH;
+    // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
 
     vBrickTiles.clear();
     vSpikes.clear();

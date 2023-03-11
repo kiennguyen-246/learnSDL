@@ -192,10 +192,11 @@ void playLevel::playGame()
             }
             if (!blocked) mLevelMap.moveX(distance);
         }
-        
+
         //Try moving by Y
+        double ballPosYBeforeMove = mBall.getRealPosY();
         mBall.moveY();
-        mBall.scaleY();
+        mBall.scaleY(mLevelMap.getFramePosY());
         for (auto &curBrickTile: mLevelMap.brickTilesList())
         {
             //Hit the wall
@@ -203,7 +204,7 @@ void playLevel::playGame()
             {
                 mBall.setCollide((mBall.getVelocityY() < 0));
                 mBall.undoMoveY();
-                mBall.scaleY();
+                mBall.scaleY(mLevelMap.getFramePosY());
                 mBall.reflectY();
             }
         }
@@ -213,11 +214,14 @@ void playLevel::playGame()
             {
                 mBall.setCollide((mBall.getVelocityY() < 0));
                 mBall.undoMoveY();
-                mBall.scaleY();
+                mBall.scaleY(mLevelMap.getFramePosY());
                 mBall.reflectY();
             }
         }
-    
+        double ballPosYAfterMove = mBall.getRealPosY();
+
+        mLevelMap.moveY((int((ballPosYAfterMove - 1) / (7 * TILE_HEIGHT)) - int((ballPosYBeforeMove - 1) / (7 * TILE_HEIGHT))) * (7 * TILE_HEIGHT));
+
         mBall.render(mRenderer, mSpritesheet);
         
         //Hit a spike

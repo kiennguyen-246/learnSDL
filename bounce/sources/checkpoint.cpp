@@ -17,8 +17,8 @@ void checkpoint::init(const int& __charmapPosX, const int& __charmapPosY, const 
     mState = __state;
     charmapPosX = __charmapPosX;
     charmapPosY = __charmapPosY;
-    framePosX = (charmapPosX - 7) * CHECKPOINT_WIDTH;
-    framePosY = 0;
+    framePosX = (charmapPosX - 7) * TILE_WIDTH;
+    framePosY = int((charmapPosY - 1) / 7) * (7 * TILE_WIDTH);
 }
 
 int checkpoint::getCharmapPosX() const

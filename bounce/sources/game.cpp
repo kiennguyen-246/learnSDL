@@ -117,7 +117,7 @@ void game::preset()
 void game::play()
 {
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
-    curLevel->setLevelId(1, allLevelCharMap, allLevelSpidersInfo);
+    curLevel->setLevelId(2, allLevelCharMap, allLevelSpidersInfo);
     curLevel->setScore(0);
     curLevel->playGame();
 

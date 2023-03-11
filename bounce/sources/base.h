@@ -26,6 +26,9 @@ const int GAMEPLAY_AREA_POS_Y = 0;
 const int GAMEPLAY_AREA_WIDTH = 1280;
 const int GAMEPLAY_AREA_HEIGHT = 640;
 
+const int TILE_WIDTH = 80;
+const int TILE_HEIGHT = 80;
+
 const int STATUS_AREA_POS_X = 0;
 const int STATUS_AREA_POS_Y = GAMEPLAY_AREA_HEIGHT;
 const int STATUS_AREA_WIDTH = 1280;

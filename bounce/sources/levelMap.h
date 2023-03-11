@@ -48,9 +48,6 @@
  * 
  */
 
-const int TILE_WIDTH = 80;
-const int TILE_HEIGHT = 80;
-
 const char BRICK_CHAR_SYMBOL = 'B';
 const char CHECKPOINT_CHAR_SYMBOL = 'C';
 const char CHECKPOINT_START_CHAR_SYMBOL = 'c';
@@ -106,8 +103,15 @@ public:
     void setMap(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo);
 
     /// @brief Move the map horizontally
-    /// @param v Velocity
+    /// @param dist Move distance
     void moveX(const double& dist);
+
+    /// @brief Move the map vertically
+    /// @param dist Move distance
+    void moveY(const double& dist);
+
+    double getFramePosX() const;
+    double getFramePosY() const;
 
     /// @brief Set the bottom left position of the current frame, in comparison with the full level map
     void setFramePos(const double& framePosX, const double& framePosY);
@@ -140,8 +144,6 @@ public:
 
     /// @brief Update the finish line
     void updateFinishLine(const finishLine& newFinishLine);
-
-    int getFramePosX() const;
 
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
 

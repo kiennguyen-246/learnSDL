@@ -31,7 +31,7 @@ const double BALL_VELOCITY_X_DEFAULT = 9;     //unit: pixel/frame
 const double BALL_VELOCITY_Y_DEFAULT = 24;     //unit: pixel/frame
 const double BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(frame)^2
 const double BALL_ACCELERATION_Y_DEFAULT = 4.0 / 5;     //unit: pixel/(frame)^2
-const int BALL_BOUNCE_LEVEL = 40;      //new velocity multiplier after a bounce (percent)
+const int BALL_BOUNCE_LEVEL = 35;      //new velocity multiplier after a bounce (percent)
 
 const int SMALL_BALL_SPRITE_POS_x = 99;   //position in spritesheet
 const int SMALL_BALL_SPRITE_POS_Y = 1;
@@ -113,6 +113,9 @@ public:
     /// @brief Check if the last collide was the ground(0) or the ceiling(1)
     bool lastCollideY() const;
 
+    double getRealPosX() const;
+    double getRealPosY() const;
+
     /// @brief Move the ball horizontally
     /// @return The moved distance
     double moveX();
@@ -124,7 +127,7 @@ public:
     void reflectX();
 
     /// @brief Scale the ball to be rendered in the screen
-    void scaleX(const int& framePosX);
+    void scaleX(const double& framePosX);
 
     /// @brief Move the ball vertically
     void moveY();
@@ -136,7 +139,7 @@ public:
     void reflectY();
 
     /// @brief Scale the ball to be rendered in the screen
-    void scaleY();
+    void scaleY(const double& framePos);
 
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
 
