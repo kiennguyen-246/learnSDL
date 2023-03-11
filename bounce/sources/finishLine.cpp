@@ -22,6 +22,13 @@ finishLine::~finishLine()
 {
 }
 
+void finishLine::reset()
+{
+    mPosX = 0;
+    mPosY = 0;
+    isOpen = 0;
+}
+
 bool finishLine::checkIsOpen() const
 {
     return isOpen;

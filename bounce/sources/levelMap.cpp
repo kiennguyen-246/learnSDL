@@ -26,9 +26,12 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, co
 {
     charMap = allLevelCharMap[id];
 
+    vBrickTiles.clear();
+    vSpikes.clear();
     vCheckpoints.clear();
     vPortals.clear();
     vLifeBalls.clear();
+    mFinishLine.reset();
 
     for (int j = 0; j < charMap.size(); j ++)
         for (int i = 0; i < charMap[j].size(); i ++)

@@ -38,6 +38,9 @@ public:
 
     ~finishLine();
 
+    /// @brief Reset the finish line
+    void reset();
+
     /// @brief Check if the finish line is opened
     bool checkIsOpen() const;
 

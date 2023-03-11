@@ -60,6 +60,11 @@ playLevel::~playLevel()
 
 }
 
+void playLevel::setLivesLeft(const int& __livesLeft)
+{
+    livesLeft = __livesLeft;
+}
+
 int playLevel::getLivesLeft() const
 {
     return livesLeft;
@@ -79,11 +84,12 @@ void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMa
 {
     levelId = id;
     mLevelMap.setMap(id, allLevelCharMap, allLevelSpidersInfo);
-    livesLeft = 3;
 }
 
-void playLevel::playGame()
+bool playLevel::playGame()
 {
+    bool levelCleared = 0;
+    
     bool quit = 0;
     SDL_Event curEvent;
 
@@ -109,12 +115,17 @@ void playLevel::playGame()
 
     auto curFinishLine = mLevelMap.getFinishLine();
 
+    int moveXCount = 0;
+
     while (!quit)
     {
+        // std::cout << "[playLevel.cpp] Start new loop successfully.\n";
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
         }
+
+        // std::cout << "[playLevel.cpp] Check event successfully.\n";
 
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 
@@ -140,6 +151,8 @@ void playLevel::playGame()
             }
         }
 
+        // std::cout << "[playLevel.cpp] Get keyboard input successfully.\n";
+
         SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
         SDL_RenderClear(mRenderer);
 
@@ -154,6 +167,8 @@ void playLevel::playGame()
 
         mLevelMap.render(mRenderer, mSpritesheet);
 
+        // std::cout << "[playLevel.cpp] Render map successfully.\n";
+
         checkpointsList = mLevelMap.checkpointsList();
         lifeBallsList = mLevelMap.lifeBallsList();
         portalsList = mLevelMap.portalsList();
@@ -164,8 +179,8 @@ void playLevel::playGame()
         //Try moving by X
         if (abs(mBall.getVelocityX()) > 1e-3)
         {
-            double distance = mBall.moveX();
-            bool blocked = 0;
+            double ballPosXBeforeMove = mBall.getRealPosX();
+            mBall.moveX();
             mBall.scaleX(mLevelMap.getFramePosX());
             for (auto &curBrickTile: mLevelMap.brickTilesList())
             {
@@ -174,7 +189,6 @@ void playLevel::playGame()
                 {
                     mBall.undoMoveX();
                     mBall.scaleX(mLevelMap.getFramePosX());
-                    blocked = 1;
                     mBall.setVelocityX(0);
                     // mBall.reflectX();
                 }
@@ -186,11 +200,12 @@ void playLevel::playGame()
                 {
                     mBall.undoMoveX();
                     mBall.scaleX(mLevelMap.getFramePosX());
-                    blocked = 1;
                     mBall.setVelocityX(0);
                 }
             }
-            if (!blocked) mLevelMap.moveX(distance);
+            double ballPosXAfterMove = mBall.getRealPosX();
+            mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
+            std::cout << "[playLevel.cpp] <Pivot> Move X count: " << ++moveXCount << "\n";
         }
 
         //Try moving by Y
@@ -219,10 +234,12 @@ void playLevel::playGame()
             }
         }
         double ballPosYAfterMove = mBall.getRealPosY();
-
+        //Only move frame vertically when the ball is out of it
         mLevelMap.moveY((int((ballPosYAfterMove - 1) / (7 * TILE_HEIGHT)) - int((ballPosYBeforeMove - 1) / (7 * TILE_HEIGHT))) * (7 * TILE_HEIGHT));
 
         mBall.render(mRenderer, mSpritesheet);
+
+        // std::cout << "[playLevel.cpp] Render ball successfully.\n";
         
         //Hit a spike
         for (auto &curSpike: mLevelMap.spikesList())
@@ -266,6 +283,7 @@ void playLevel::playGame()
                 {
                     lifeBallsList[curIndex].collectLifeBall();
                     score += LIFE_BALL_SCORE;
+                    livesLeft ++;
                 }
             }
         }
@@ -299,10 +317,14 @@ void playLevel::playGame()
         //Touch the finish line
         if (collide(curFinishLine, mBall))
         {
+            std::cout << "[playLevel.cpp] " << curFinishLine.checkIsOpen() << " " << curFinishLine.getPosX() << " " << curFinishLine.getPosY() << "\n";
             if (curFinishLine.checkIsOpen())
             {
                 score += FINISH_LINE_SCORE;
+                levelCleared = 1;
+                quit = 1;
             }
+            std::cout << "[playLevel.cpp] Run into finish line collide case.\n";
         }
          
         mLevelMap.updateCheckpointsList(checkpointsList);
@@ -310,10 +332,18 @@ void playLevel::playGame()
         mLevelMap.updatePortalsList(portalsList);
         mLevelMap.updateFinishLine(curFinishLine);
 
+        // std::cout << "[playLevel.cpp] Update successfully.\n";
+
         //Render the status area
         mStatusArea.render(livesLeft, portalsLeft, score);
 
+        // std::cout << "[playLevel.cpp] Render status area successfully.\n";
+
 
         SDL_RenderPresent(mRenderer);
+
+        // std::cout << "[playLevel.cpp] Present renderer successfully.\n";
+        std::cout << "[playLevel.cpp] quit = ." << quit << "\n";
     }
+    return levelCleared;
 }

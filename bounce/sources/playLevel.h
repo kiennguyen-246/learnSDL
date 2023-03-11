@@ -87,6 +87,8 @@ public:
 
     ~playLevel();
 
+    void setLivesLeft(const int& LivesLeft);
+
     /// @brief Set the number of lives left for the ball
     int getLivesLeft() const;
 
@@ -99,7 +101,8 @@ public:
     void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo);
 
     /// @brief Render the game
-    void playGame();
+    /// @return 1 if the player successfully pass the level
+    bool playGame();
 };
 
 #endif

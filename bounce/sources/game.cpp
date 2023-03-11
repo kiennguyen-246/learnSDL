@@ -117,10 +117,15 @@ void game::preset()
 void game::play()
 {
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
-    curLevel->setLevelId(2, allLevelCharMap, allLevelSpidersInfo);
+    curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
     curLevel->setScore(0);
-    curLevel->playGame();
-
+    for (int i = 1; i < allLevelCharMap.size(); i ++)
+    {
+        curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo);
+        
+        if (!curLevel->playGame()) break;       //Only continue if cleared level
+    }
+    
 }
 
 void game::clear()
