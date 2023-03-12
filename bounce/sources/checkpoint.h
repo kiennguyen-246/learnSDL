@@ -51,6 +51,9 @@ private:
     /// @brief Check if this checkpoint is active (the ball will spawn here next death)
     bool isActive; 
 
+    /// @brief Check if the ball is large when spawn 
+    bool ballSpawnSize;
+
 public:
     checkpoint(/* args */);
     ~checkpoint();
@@ -66,8 +69,12 @@ public:
     double getFramePosX() const;
     double getFramePosY() const;
 
+    void setBallSpawnSize(const bool& isLargeBall);
+
+    bool getBallSpawnSize() const;
+
     /// @brief Set the position for the ball to start dropping
-    void spawnBall(ball& __ball);
+    void spawnBall(ball& __ball, LTexture& spritesheet);
 
     /// @brief Change this checkpoint's state
     /// @param newState The new state, chosen from 4 types of flags

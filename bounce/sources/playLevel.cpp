@@ -80,10 +80,73 @@ int playLevel::getScore() const
     return score;
 }
 
-void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo)
+void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo, const std::vector <int>& allLevelBallSpawnSize)
 {
     levelId = id;
     mLevelMap.setMap(id, allLevelCharMap, allLevelSpidersInfo);
+    ballSpawnSize = allLevelBallSpawnSize[id];
+    std::cout << "Starting ball spawn size: " << ballSpawnSize << "\n";
+}
+
+bool playLevel::checkBlocked() const
+{
+    auto brickTilesList = mLevelMap.brickTilesList();
+    auto portalsList = mLevelMap.portalsList();
+    auto curFinishLine = mLevelMap.getFinishLine();
+    
+    bool blocked = 0;
+    for (auto &curBrickTile: brickTilesList)
+        if (collide(curBrickTile, mBall)) blocked = 1;
+    if (collide(curFinishLine, mBall) && !curFinishLine.checkIsOpen()) blocked = 1;
+    for (auto &curPortal: portalsList)
+        if (collide(curPortal, mBall) && mBall.checkIsLargeBall() && curPortal.getPortalSize() == PORTAL_SMALL) blocked = 1;
+
+    return blocked;
+}
+
+void playLevel::tryMoveX()
+{
+    if (abs(mBall.getVelocityX()) < 1e-3) return;
+    
+    double ballPosXBeforeMove = mBall.getRealPosX();
+    mBall.moveX();
+
+    checkBlocked();
+
+    mBall.scaleX(mLevelMap.getFramePosX());
+
+    if (checkBlocked()) 
+    {
+        mBall.undoMoveX();
+        mBall.scaleX(mLevelMap.getFramePosX());
+        mBall.setVelocityX(0);
+        // mBall.reflectX();
+    }
+
+    double ballPosXAfterMove = mBall.getRealPosX();
+    mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
+}
+
+void playLevel::tryMoveY()
+{
+    double ballPosYBeforeMove = mBall.getRealPosY();
+    mBall.moveY();
+    mBall.scaleY(mLevelMap.getFramePosY());
+
+    checkBlocked();
+
+    if (checkBlocked()) 
+    {
+        mBall.setCollide((mBall.getVelocityY() < 0));
+        mBall.undoMoveY();
+        mBall.scaleY(mLevelMap.getFramePosY());
+        mBall.reflectY();
+    }
+
+    double ballPosYAfterMove = mBall.getRealPosY();
+    //Only move frame vertically when the ball is out of it
+    mLevelMap.moveY((int((ballPosYAfterMove - 1) / (7 * TILE_HEIGHT)) - int((ballPosYBeforeMove - 1) / (7 * TILE_HEIGHT))) * (7 * TILE_HEIGHT));
+
 }
 
 bool playLevel::playGame()
@@ -92,9 +155,6 @@ bool playLevel::playGame()
     
     bool quit = 0;
     SDL_Event curEvent;
-
-    mBall.setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
-    mBall.setSpriteClip(mSpritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2);
 
     mStatusArea.init(mRenderer, mSpritesheet);
 
@@ -105,6 +165,8 @@ bool playLevel::playGame()
     {
         if (checkpointsList[i].getState() == CHECKPOINT_HIDDEN) lastCheckpointIndex = i;
     }
+    checkpointsList[lastCheckpointIndex].setBallSpawnSize(ballSpawnSize);
+    mLevelMap.updateCheckpointsList(checkpointsList);
     mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                         checkpointsList[lastCheckpointIndex].getFramePosY());
 
@@ -129,25 +191,30 @@ bool playLevel::playGame()
 
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 
+        auto velocityXVal = (mBall.checkIsLargeBall() ? LARGE_BALL_VELOCITY_X_DEFAULT : SMALL_BALL_VELOCITY_X_DEFAULT);
+        auto accelerationXVal = (mBall.checkIsLargeBall() ? LARGE_BALL_ACCELERATION_X_DEFAULT : SMALL_BALL_ACCELERATION_X_DEFAULT);
+        auto velocityYVal = (mBall.checkIsLargeBall() ? LARGE_BALL_VELOCITY_Y_DEFAULT : SMALL_BALL_VELOCITY_Y_DEFAULT);
+        auto accelerationYVal = (mBall.checkIsLargeBall() ? LARGE_BALL_ACCELERATION_Y_DEFAULT : SMALL_BALL_ACCELERATION_Y_DEFAULT);
+
         if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]) 
         {
             mBall.resetFramesPassedX();
-            mBall.setVelocityX(-BALL_VELOCITY_X_DEFAULT);
-            mBall.setAccelerationX(-BALL_ACCELERATION_X_DEFAULT);
+            mBall.setVelocityX(-velocityXVal);
+            mBall.setAccelerationX(-accelerationXVal);
         }
         if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
         {
             mBall.resetFramesPassedX();
-            mBall.setVelocityX(BALL_VELOCITY_X_DEFAULT);
-            mBall.setAccelerationX(BALL_ACCELERATION_X_DEFAULT);
+            mBall.setVelocityX(velocityXVal);
+            mBall.setAccelerationX(accelerationXVal);
         }
         if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
         {
             if (!mBall.isAirborne())
             {
                 mBall.resetFramesPassedY();
-                mBall.setVelocityY(-BALL_VELOCITY_Y_DEFAULT);
-                mBall.setAccelerationY(BALL_ACCELERATION_Y_DEFAULT);
+                mBall.setVelocityY(-velocityYVal);
+                mBall.setAccelerationY(accelerationYVal);
             }
         }
 
@@ -159,7 +226,7 @@ bool playLevel::playGame()
         if (respawn)
         {
             SDL_Delay(200);
-            checkpointsList[lastCheckpointIndex].spawnBall(mBall);
+            checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
             mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                                 checkpointsList[lastCheckpointIndex].getFramePosY());
             respawn = 0;
@@ -175,67 +242,12 @@ bool playLevel::playGame()
         curFinishLine = mLevelMap.getFinishLine();
 
         mBall.passFrame();
-
+        
         //Try moving by X
-        if (abs(mBall.getVelocityX()) > 1e-3)
-        {
-            double ballPosXBeforeMove = mBall.getRealPosX();
-            mBall.moveX();
-            mBall.scaleX(mLevelMap.getFramePosX());
-            for (auto &curBrickTile: mLevelMap.brickTilesList())
-            {
-                //Hit the wall
-                if (collide(curBrickTile, mBall)) 
-                {
-                    mBall.undoMoveX();
-                    mBall.scaleX(mLevelMap.getFramePosX());
-                    mBall.setVelocityX(0);
-                    // mBall.reflectX();
-                }
-
-            }
-            if (collide(curFinishLine, mBall))
-            {
-                if (!curFinishLine.checkIsOpen())
-                {
-                    mBall.undoMoveX();
-                    mBall.scaleX(mLevelMap.getFramePosX());
-                    mBall.setVelocityX(0);
-                }
-            }
-            double ballPosXAfterMove = mBall.getRealPosX();
-            mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
-            std::cout << "[playLevel.cpp] <Pivot> Move X count: " << ++moveXCount << "\n";
-        }
+        tryMoveX();
 
         //Try moving by Y
-        double ballPosYBeforeMove = mBall.getRealPosY();
-        mBall.moveY();
-        mBall.scaleY(mLevelMap.getFramePosY());
-        for (auto &curBrickTile: mLevelMap.brickTilesList())
-        {
-            //Hit the wall
-            if (collide(curBrickTile, mBall)) 
-            {
-                mBall.setCollide((mBall.getVelocityY() < 0));
-                mBall.undoMoveY();
-                mBall.scaleY(mLevelMap.getFramePosY());
-                mBall.reflectY();
-            }
-        }
-        if (collide(curFinishLine, mBall))
-        {
-            if (!curFinishLine.checkIsOpen())
-            {
-                mBall.setCollide((mBall.getVelocityY() < 0));
-                mBall.undoMoveY();
-                mBall.scaleY(mLevelMap.getFramePosY());
-                mBall.reflectY();
-            }
-        }
-        double ballPosYAfterMove = mBall.getRealPosY();
-        //Only move frame vertically when the ball is out of it
-        mLevelMap.moveY((int((ballPosYAfterMove - 1) / (7 * TILE_HEIGHT)) - int((ballPosYBeforeMove - 1) / (7 * TILE_HEIGHT))) * (7 * TILE_HEIGHT));
+        tryMoveY();
 
         mBall.render(mRenderer, mSpritesheet);
 
@@ -264,16 +276,15 @@ bool playLevel::playGame()
                     case CHECKPOINT_DEFAULT:
                         checkpointsList[lastCheckpointIndex].changeState(CHECKPOINT_DELETED);
                         checkpointsList[curIndex].changeState(CHECKPOINT_COLLECTED);
+                        checkpointsList[curIndex].setBallSpawnSize(mBall.checkIsLargeBall());
                         lastCheckpointIndex = curIndex;
                         score += CHECKPOINT_SCORE;
-                        
                         break;
                     default:
                         break;
                 }
             }
         }
-
         //Collect a life ball
         for (int curIndex = 0; curIndex < lifeBallsList.size(); curIndex ++)
         {
@@ -296,10 +307,18 @@ bool playLevel::playGame()
                 switch(portalsList[curIndex].checkIsCollected())
                 {
                     case PORTAL_DEFAULT:
-                        portalsList[curIndex].collectPortal();
-                        portalsLeft --;
-                        score += PORTAL_SCORE;
-                        break;
+                    {
+                        if (portalsList[curIndex].getPortalSize() == PORTAL_LARGE ||
+                            (portalsList[curIndex].getPortalSize() == PORTAL_SMALL && mBall.checkIsLargeBall() == 0))
+                        {
+                            portalsList[curIndex].collectPortal();
+                            portalsLeft --;
+                            score += PORTAL_SCORE;
+                            break;
+                        }
+                        
+                    }
+                        
                     default:
                         break;
                 }
@@ -324,7 +343,6 @@ bool playLevel::playGame()
                 levelCleared = 1;
                 quit = 1;
             }
-            std::cout << "[playLevel.cpp] Run into finish line collide case.\n";
         }
          
         mLevelMap.updateCheckpointsList(checkpointsList);
@@ -343,7 +361,6 @@ bool playLevel::playGame()
         SDL_RenderPresent(mRenderer);
 
         // std::cout << "[playLevel.cpp] Present renderer successfully.\n";
-        std::cout << "[playLevel.cpp] quit = ." << quit << "\n";
     }
     return levelCleared;
 }

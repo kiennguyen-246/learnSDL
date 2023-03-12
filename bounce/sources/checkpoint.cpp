@@ -41,12 +41,23 @@ double checkpoint::getFramePosY() const
     return framePosY;
 }
 
-void checkpoint::spawnBall(ball& __ball)
+void checkpoint::setBallSpawnSize(const bool& isLargeBall)
 {
-    __ball.setPosEx(charmapPosX * CHECKPOINT_WIDTH, (charmapPosY + 1) * CHECKPOINT_HEIGHT, framePosX, framePosY);
+    ballSpawnSize = isLargeBall;
+}
+
+bool checkpoint::getBallSpawnSize() const
+{
+    return ballSpawnSize;
+}
+
+void checkpoint::spawnBall(ball& __ball, LTexture& spritesheet)
+{
+    __ball.setBallSize(ballSpawnSize, spritesheet);
+    __ball.setPosEx(charmapPosX * TILE_WIDTH, (charmapPosY + 1) * TILE_HEIGHT + TILE_HEIGHT / 2, framePosX, framePosY);
     __ball.setVelocityX(0);
     __ball.setVelocityY(CHECKPOINT_DROP_VELOCITY);
-    __ball.setAccelerationY(BALL_ACCELERATION_Y_DEFAULT);
+    __ball.setAccelerationY(SMALL_BALL_ACCELERATION_Y_DEFAULT);
 }
 
 void checkpoint::changeState(const CHECKPOINT_STATE& newState)

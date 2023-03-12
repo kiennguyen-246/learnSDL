@@ -151,6 +151,27 @@ void ball::scaleY(const double& framePos)
     mPosY = mRealPosY - framePos;
 }
 
+void ball::setBallSize(const bool& __isLargeBall, LTexture& spritesheet)
+{
+    isLargeBall = __isLargeBall;
+    if (isLargeBall)
+    {
+        setSize(LARGE_BALL_WIDTH, LARGE_BALL_HEIGHT);
+        setSpriteClip(spritesheet, LARGE_BALL_SPRITE_POS_x, LARGE_BALL_SPRITE_POS_Y, LARGE_BALL_WIDTH / 2, LARGE_BALL_HEIGHT / 2);
+    }
+    else
+    {
+        setSize(SMALL_BALL_WIDTH, SMALL_BALL_HEIGHT);
+        setSpriteClip(spritesheet, SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2);
+    }
+    
+}
+
+bool ball::checkIsLargeBall() const
+{
+    return isLargeBall;
+}
+
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
     spritesheet.render(renderer, mPosX, mPosY - mHeight, &mSpriteClip, 2);

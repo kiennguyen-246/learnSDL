@@ -70,6 +70,8 @@ public:
 
     void collectPortal();
 
+    PORTAL_STATE getPortalSize() const;
+
     PORTAL_STATE checkIsCollected() const;
 
     /// @brief Render the portal, depending on the current state

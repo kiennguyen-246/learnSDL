@@ -46,6 +46,11 @@ void portal::collectPortal()
     mIsCollected = PORTAL_COLLECTED;
 }
 
+PORTAL_STATE portal::getPortalSize() const
+{
+    return mPortalSize;
+}
+
 PORTAL_STATE portal::checkIsCollected() const
 {
     return mIsCollected;

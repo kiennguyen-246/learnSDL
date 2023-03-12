@@ -75,6 +75,8 @@ private:
 
     statusArea mStatusArea;
 
+    bool ballSpawnSize;
+
     int livesLeft;
 
     int portalsLeft;
@@ -98,7 +100,14 @@ public:
     int getScore() const;
 
     /// @brief Set up the index for the level
-    void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo);
+    void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo, const std::vector <int>& allLevelBallSpawnSize);
+
+    /// @brief Check if the ball move is blocked by something
+    bool checkBlocked() const;
+
+    /// @brief Try moving ball
+    void tryMoveX();
+    void tryMoveY();
 
     /// @brief Render the game
     /// @return 1 if the player successfully pass the level

@@ -66,6 +66,7 @@ void game::initMapConfig()
         fi >> levelCount;
         allLevelCharMap.resize(levelCount + 1);
         allLevelSpidersInfo.resize(levelCount + 1);
+        allLevelBallSpawnSize.resize(levelCount + 1);
 
         for (int levelId = 1; levelId <= levelCount; levelId ++)
         {
@@ -79,6 +80,8 @@ void game::initMapConfig()
             {
                 getline(fi, allLevelCharMap[levelId][rowId]);
             }
+
+            fi >> allLevelBallSpawnSize[levelId];
                 
             int spiderCount;
             fi >> spiderCount;
@@ -121,7 +124,7 @@ void game::play()
     curLevel->setScore(0);
     for (int i = 1; i < allLevelCharMap.size(); i ++)
     {
-        curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo);
+        curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
         
         if (!curLevel->playGame()) break;       //Only continue if cleared level
     }

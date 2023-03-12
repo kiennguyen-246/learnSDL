@@ -9,6 +9,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
   BBBBBBB BB       r    BB T        BB  T     T   BB        T  T   T   T        BB  r   BB  r   BB    BBBBB      BBBBB  G#         B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 0
+0
 
 22
                                                                                                                         BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -33,6 +34,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
   B     T BB             BB L           BB         BBBBB                    +       XBBBBZ        +          BB         BB      L BB          BB         B
   BBBBBBB BB           T BB             BBP        BBBBB                    R      XBBBBBBZ       R          BB         BB        BB        T BB         B
 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+0
 6
 12 17 12 21
 14 17 14 21
@@ -78,6 +80,7 @@ BBBBBBBBBBBBBBB     BBBBBBE-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
                                                                             BBB     +00000000000000000000000000000000000+           T         BB
                                                                             BBB     r00000000000000000000000000000000000R           BB      P BB
                                                                             BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+1
 0
 
 29
@@ -118,7 +121,8 @@ Config file instruction:
 - For each level:
     + The first line contains H - the height of the level, calculated in tiles
     + The H next lines contain the encoded map for the level (Read levelMap.h for more information)
-    + The (H + 2)-th line contains S - the number of spiders
+    + The (H + 2)-th line contains a single number 0 or 1, which indecates that tha ball is small or large when being spawned
+    + The (H + 3)-th line contains S - the number of spiders
     + The i-th of the next S lines contains 4 number indicating the movement of the spider
         * The first 2 numbers indicate the starting position of the spider          s movement
         * The last 2 numbers indicate the ending position of the spider          s movement
