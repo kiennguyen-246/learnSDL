@@ -17,6 +17,7 @@
 #include <SDL_mixer.h>
 #include "base.h"
 #include "ball.h"
+#include "spider.h"
 #include "levelMap.h"
 
 const int LIVES_INFO_TEXT_RENDER_POS_X = 60;
@@ -78,12 +79,15 @@ private:
 
     /// @brief The index of the current level
     int levelId;
-    
-    /// @brief The object for the ball
-    ball mBall;
 
     /// @brief The spritesheet of the game
     LTexture mSpritesheet;
+
+    /// @brief The object for the ball
+    ball mBall;
+
+    /// @brief List of spiders in the level
+    std::vector <spider> mSpiderList;
 
     /// @brief The map of the level
     levelMap mLevelMap;
@@ -107,6 +111,8 @@ public:
 
     ~playLevel();
 
+    void initSpiders(const std::vector <spiderInfo>& allLevelSpidersInfo);
+
     void setLivesLeft(const int& LivesLeft);
 
     /// @brief Set the number of lives left for the ball
@@ -118,7 +124,7 @@ public:
     int getScore() const;
 
     /// @brief Set up the index for the level
-    void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo, const std::vector <int>& allLevelBallSpawnSize);
+    void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_spiderInfo& allLevelSpidersInfo, const std::vector <int>& allLevelBallSpawnSize);
 
     /// @brief Check if the ball move is blocked by something
     BLOCK_OBJECT getBlockObject() const;

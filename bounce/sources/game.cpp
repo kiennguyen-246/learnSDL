@@ -72,6 +72,7 @@ void game::initMapConfig()
         {
             int mapHeight;
             fi >> mapHeight;
+            std::cout << "[game.cpp] mapHeight = " << mapHeight << "\n";
             allLevelCharMap[levelId].resize(mapHeight);
 
             std::string nul = "";
@@ -87,12 +88,13 @@ void game::initMapConfig()
             fi >> spiderCount;
             allLevelSpidersInfo[levelId].resize(spiderCount + 1);
 
-            getline(fi, nul);
+            // getline(fi, nul);
             for (int spiderId = 0; spiderId < spiderCount; spiderId ++)
             {
                 auto& curSpider = allLevelSpidersInfo[levelId][spiderId];
-                fi >> curSpider.first.first >> curSpider.first.second;
-                fi >> curSpider.second.first >> curSpider.second.second;
+                fi >> curSpider.x1 >> curSpider.y1;
+                fi >> curSpider.x2 >> curSpider.y2;
+                fi >> curSpider.startPos;
             }
         }
     }
@@ -122,7 +124,7 @@ void game::play()
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
     curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
     curLevel->setScore(0);
-    for (int i = 4; i < allLevelCharMap.size(); i ++)
+    for (int i = 1; i < allLevelCharMap.size(); i ++)
     {
         curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
         

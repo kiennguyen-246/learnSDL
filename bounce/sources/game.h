@@ -30,7 +30,7 @@ class game
         vector_2d_string allLevelCharMap;
         
         /// @brief Moving range of all spiders in all levels
-        vector_2d_pair_of_pii allLevelSpidersInfo;
+        vector_2d_spiderInfo allLevelSpidersInfo;
 
         /// @brief The starting size of the ball when being spawned
         std::vector <int> allLevelBallSpawnSize;

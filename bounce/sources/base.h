@@ -177,5 +177,11 @@ bool collide(const gameObject& obj1, const gameObject& obj2);
 /// @param textColor Text color, in SDL_Color form
 void renderText(SDL_Renderer* renderer, LTexture& texture, const char* text, const int& x, const int& y, const int& fontSize = 48, const char* fontPath = &CALIBRI_FONT_PATH[0], const SDL_Color& fontColor = SDL_COLOR_BLACK);
 
+struct spiderInfo
+{
+    int x1, y1, x2, y2, startPos;
+};
+
+typedef std::vector <std::vector <spiderInfo> > vector_2d_spiderInfo;
 
 #endif

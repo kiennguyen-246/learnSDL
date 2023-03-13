@@ -22,9 +22,10 @@ bool levelMap::isFreeBrickTile(const int& brickTileCharPosX, const int& brickTil
     return 0;
 }
 
-void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo)
+void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
 {
     charMap = allLevelCharMap[id];
+    std::cout << "[levelMap.cpp] " << charMap.size() << "\n";
 
     vBrickTiles.clear();
     vSpikes.clear();
@@ -43,6 +44,7 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, co
                     checkpoint curCheckpoint;
                     curCheckpoint.init(i, j);
                     vCheckpoints.push_back(curCheckpoint);
+                    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
                     break;
                 }
 
@@ -51,6 +53,7 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, co
                     checkpoint curCheckpoint;
                     curCheckpoint.init(i, j, CHECKPOINT_HIDDEN);
                     vCheckpoints.push_back(curCheckpoint);
+                    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
                     break;
                 }
 
@@ -99,7 +102,7 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap, co
             }
 
         }
-
+    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
             
 }
 
@@ -204,6 +207,13 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     vPumps.clear();
     vShrinkers.clear();
 
+    for (auto &i: vPortals) i.setPos(0, 0);
+    for (auto &i: vCheckpoints) 
+    {
+        i.setPos(0, 0);
+    }
+    for (auto &i: vLifeBalls) i.setPos(0, 0);
+
     for (int i = 0; i < maxCharTileX + 1; i ++)
     {
         for (int j = 0; j < maxCharTileY; j ++)
@@ -257,9 +267,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 {
                     for (auto &curCheckpoint: vCheckpoints)
                     {
-                        if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j) continue;
-                        curCheckpoint.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
-                        curCheckpoint.render(renderer, spritesheet);
+                        if (curCheckpoint.getCharmapPosX() != curCharPosX + i || curCheckpoint.getCharmapPosY() != curCharPosY + j)
+                        {
+                            continue;
+                        } 
+                        else
+                        {
+                            curCheckpoint.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                            curCheckpoint.render(renderer, spritesheet);
+                        }
+                        
                     }
                     break;
                 }
@@ -269,9 +286,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 {
                     for (auto &curPortal: vPortals)
                     {
-                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j) continue;
-                        curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
-                        curPortal.render(renderer, spritesheet);
+                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                            curPortal.render(renderer, spritesheet);
+                        }
+                        
                     }
                     break;
                 }
@@ -281,9 +305,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 {
                     for (auto &curPortal: vPortals)
                     {
-                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j) continue;
-                        curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
-                        curPortal.render(renderer, spritesheet);
+                        if (curPortal.getCharmapPosX() != curCharPosX + i || curPortal.getCharmapPosY() != curCharPosY + j)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            curPortal.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                            curPortal.render(renderer, spritesheet);
+                        }
+                        
                     }
                     break;
                 }
@@ -299,10 +330,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                 {
                     for (auto &curLifeBall: vLifeBalls)
                     {
-                        if (curLifeBall.getCharmapPosX() != curCharPosX + i || curLifeBall.getCharmapPosY() != curCharPosY + j) continue;
-                        curLifeBall.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
-                        // std::cout << "[levelMap.cpp] " << curLifeBall.getPosX() << " " << curLifeBall.getPosY() << "\n";
-                        curLifeBall.render(renderer, spritesheet);
+                        if (curLifeBall.getCharmapPosX() != curCharPosX + i || curLifeBall.getCharmapPosY() != curCharPosY + j) 
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            curLifeBall.setPos(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                            curLifeBall.render(renderer, spritesheet);
+                        }
+                        
                     }
                     break;
                 }
@@ -344,4 +381,5 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 
         }
     }
+
 }

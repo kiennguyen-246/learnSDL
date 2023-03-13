@@ -14,6 +14,7 @@ checkpoint::~checkpoint()
 
 void checkpoint::init(const int& __charmapPosX, const int& __charmapPosY, const CHECKPOINT_STATE& __state)
 {
+    ballSpawnSize = 0;
     mState = __state;
     charmapPosX = __charmapPosX;
     charmapPosY = __charmapPosY;

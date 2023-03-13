@@ -110,7 +110,7 @@ public:
 
     /// @brief Set up the map by the level
     /// @param id The index of the current level
-    void setMap(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo);
+    void setMap(const int& id, const vector_2d_string& allLevelCharMap);
 
     /// @brief Move the map horizontally
     /// @param dist Move distance

@@ -205,8 +205,8 @@ bool collide(const gameObject& obj1, const gameObject& obj2)
 
     // std::cout << "Size comparison: " << hitbox1R - hitbox1L + hitbox2R - hitbox2L << " " << std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L) << "\n";
 
-    if (((hitbox1R - hitbox1L + hitbox2R - hitbox2L) - (std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L)) >= 1) && 
-        ((hitbox1D - hitbox1U + hitbox2D - hitbox2U) - (std::max(hitbox1D, hitbox2D) - std::min(hitbox1U, hitbox2U)) >= 1)) return 1;
+    if (((hitbox1R - hitbox1L + hitbox2R - hitbox2L) - (std::max(hitbox1R, hitbox2R) - std::min(hitbox1L, hitbox2L)) > 0) && 
+        ((hitbox1D - hitbox1U + hitbox2D - hitbox2U) - (std::max(hitbox1D, hitbox2D) - std::min(hitbox1U, hitbox2U)) > 0)) return 1;
     return 0;
 }
 
