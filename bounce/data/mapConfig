@@ -33,7 +33,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
   BBBBBBB BB             BB     BB  BB  BB         BBBBB                    BB       XBBZ         BB         R          BB  BB  BBBB          BB         B
   B     T BB             BB L           BB         BBBBB                    +       XBBBBZ        +          BB         BB      L BB          BB         B
   BBBBBBB BB           T BB             BBP        BBBBB                    R      XBBBBBBZ       R          BB         BB        BB        T BB         B
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBDDDDDDDDDBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 0
 6
 12 17 12 21
@@ -49,8 +49,8 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
         B BB        BB                               VBB      c     r      BBN      VBBBBBN                               BB  BB              BB
   BBBBBBB BB        BBZ        XBB                    +             XZ     +             +                                          BB        BB
     T   B BB        BBBZ      XBBB                    R            XBB     r             r                                  BB            BB  BB
-    P   B BB        BBBBZ    XBBBB                   XBB          XBG#     BBZ      XBBBBBZ     XBBZ      XBBBBBBBBBBBBBBB       BB      BB   BB
-  BBBBBBB BB        BBBBBZ  XBBBBB                  XBBB         XBB##     BBBZ    XBBBBBBBZ   XBBBB000000BBBBBBBBBBBBBBBB          BBTT    T BB
+    P   B BB        BBBBZ    XBBBB                   XBB          XB##     BBZ      XBBBBBZ     XBBZ      XBBBBBBBBBBBBBBB       BB      BB   BB
+  BBBBBBB BB        BBBBBZ  XBBBBB                  XBBB         XBBG#     BBBZ    XBBBBBBBZ   XBBBB000000BBBBBBBBBBBBBBBB          BBTT    T BB
 BBBBBBBBBBBBBBB     BBBBBBE-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB0000BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
           BB                             BB    BB             T     T   VBBBBBBNY VBBBBBBBBBBBBBBBBBB0000BB             BB                      
           BB                             BB    BB                        VBBBBN    VBBBBBBBBBBBBBBBBB0000BB  BB 0  BB   BB                      
@@ -113,7 +113,8 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
                                 BB                    BB   XB    BZB   BZ       IIII      IIII            XBBBBBBZ          +            +  O BB          ,
                                 BB                    BB     IIII   III         IIIIIIIIIIIIII           XBBBBBBBBZ         R            R  P BB          ,
                                 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-
+0
+0
 
 
 Config file instruction:

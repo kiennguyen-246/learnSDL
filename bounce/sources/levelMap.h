@@ -30,6 +30,8 @@
 #include "portal.h"
 #include "finishLine.h"
 #include "lifeBall.h"
+#include "pump.h"
+#include "shrinker.h"
 
 /**
  * @brief 
@@ -59,6 +61,8 @@ const char PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL = 'e';
 const char PORTAL_HORIZONTAL_LARGE_CHAR_SYMBOL = 'E';
 const char FINISH_LINE_CHAR_SYMBOL = 'G';
 const char LIFE_BALL_CHAR_SYMBOL = 'L';
+const char PUMP_CHAR_SYMBOL = 'P';
+const char SHRINKER_CHAR_SYMBOL = 'D';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -75,6 +79,12 @@ private:
 
     /// @brief List of spikes
     std::vector <spike> vSpikes;
+
+    /// @brief List of pumps
+    std::vector <pump> vPumps;
+
+    /// @brief List of shrinkers
+    std::vector <shrinker> vShrinkers;
 
     /// @brief List of checkpoints
     std::vector <checkpoint> vCheckpoints;
@@ -121,6 +131,12 @@ public:
 
     /// @brief Get the list of spikes rendered on the map
     std::vector <spike> spikesList() const;
+
+    /// @brief Get the list of pumps rendered on the map
+    std::vector <pump> pumpsList() const;
+
+    /// @brief Get the list of shrinkers rendered on the map
+    std::vector <shrinker> shrinkersList() const;
 
     /// @brief Get the list of checkpoints in the map
     std::vector <checkpoint> checkpointsList() const;

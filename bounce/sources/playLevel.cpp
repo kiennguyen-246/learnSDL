@@ -88,20 +88,40 @@ void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMa
     std::cout << "Starting ball spawn size: " << ballSpawnSize << "\n";
 }
 
-bool playLevel::checkBlocked() const
+BLOCK_OBJECT playLevel::getBlockObject() const
 {
     auto brickTilesList = mLevelMap.brickTilesList();
     auto portalsList = mLevelMap.portalsList();
     auto curFinishLine = mLevelMap.getFinishLine();
+    auto pumpsList = mLevelMap.pumpsList();
+    auto shrinkersList = mLevelMap.shrinkersList();
     
-    bool blocked = 0;
+    BLOCK_OBJECT blockObject = NOT_BLOCKED;
     for (auto &curBrickTile: brickTilesList)
-        if (collide(curBrickTile, mBall)) blocked = 1;
-    if (collide(curFinishLine, mBall) && !curFinishLine.checkIsOpen()) blocked = 1;
-    for (auto &curPortal: portalsList)
-        if (collide(curPortal, mBall) && mBall.checkIsLargeBall() && curPortal.getPortalSize() == PORTAL_SMALL) blocked = 1;
+        if (collide(curBrickTile, mBall)) blockObject = BRICK_TILE;
 
-    return blocked;
+    for (auto &curPump: pumpsList)
+    {
+        if (collide(curPump, mBall))
+        {
+            blockObject = PUMP_TILE;
+        } 
+    }
+
+    for (auto &curShrinker: shrinkersList)
+    {
+        if (collide(curShrinker, mBall))
+        {
+            blockObject = SHRINKER_TILE;
+        } 
+    }
+        
+    if (collide(curFinishLine, mBall) && !curFinishLine.checkIsOpen()) blockObject = CLOSED_FINISH_LINE_TILES;
+
+    for (auto &curPortal: portalsList)
+        if (collide(curPortal, mBall) && mBall.checkIsLargeBall() && curPortal.getPortalSize() == PORTAL_SMALL) blockObject = SMALL_PORTAL_TILES;
+
+    return blockObject;
 }
 
 void playLevel::tryMoveX()
@@ -111,11 +131,12 @@ void playLevel::tryMoveX()
     double ballPosXBeforeMove = mBall.getRealPosX();
     mBall.moveX();
 
-    checkBlocked();
+    mCurBlockObjectX = getBlockObject();
+    // std::cout << "[playLevel.cpp] Object that blocks X's code: " << mCurBlockObjectX << "\n";
 
     mBall.scaleX(mLevelMap.getFramePosX());
 
-    if (checkBlocked()) 
+    if (getBlockObject() != NOT_BLOCKED) 
     {
         mBall.undoMoveX();
         mBall.scaleX(mLevelMap.getFramePosX());
@@ -124,6 +145,7 @@ void playLevel::tryMoveX()
     }
 
     double ballPosXAfterMove = mBall.getRealPosX();
+
     mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
 }
 
@@ -133,9 +155,9 @@ void playLevel::tryMoveY()
     mBall.moveY();
     mBall.scaleY(mLevelMap.getFramePosY());
 
-    checkBlocked();
+    mCurBlockObjectY = getBlockObject();
 
-    if (checkBlocked()) 
+    if (getBlockObject() != NOT_BLOCKED) 
     {
         mBall.setCollide((mBall.getVelocityY() < 0));
         mBall.undoMoveY();
@@ -242,6 +264,9 @@ bool playLevel::playGame()
         curFinishLine = mLevelMap.getFinishLine();
 
         mBall.passFrame();
+
+        mCurBlockObjectX = NOT_BLOCKED;
+        mCurBlockObjectY = NOT_BLOCKED;
         
         //Try moving by X
         tryMoveX();
@@ -264,8 +289,19 @@ bool playLevel::playGame()
                 respawn = 1;
                 break;
             }
-            
 
+        //Hit a pump
+        if (mCurBlockObjectX == PUMP_TILE || mCurBlockObjectY == PUMP_TILE)
+        {
+            mBall.setBallSize(1, mSpritesheet);
+        }
+
+        //Hit a shrinker
+        if (mCurBlockObjectX == SHRINKER_TILE || mCurBlockObjectY == SHRINKER_TILE)
+        {
+            mBall.setBallSize(0, mSpritesheet);
+        }
+         
         //Collect a checkpoint
         for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)
         {

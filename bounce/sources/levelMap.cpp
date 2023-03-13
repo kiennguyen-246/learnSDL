@@ -139,6 +139,16 @@ std::vector <spike> levelMap::spikesList() const
     return vSpikes;
 }
 
+std::vector <pump> levelMap::pumpsList() const
+{
+    return vPumps;
+}
+
+std::vector <shrinker> levelMap::shrinkersList() const
+{
+    return vShrinkers;
+}
+
 std::vector <checkpoint> levelMap::checkpointsList() const
 {
     return vCheckpoints;
@@ -191,6 +201,8 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 
     vBrickTiles.clear();
     vSpikes.clear();
+    vPumps.clear();
+    vShrinkers.clear();
 
     for (int i = 0; i < maxCharTileX + 1; i ++)
     {
@@ -292,6 +304,36 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                         // std::cout << "[levelMap.cpp] " << curLifeBall.getPosX() << " " << curLifeBall.getPosY() << "\n";
                         curLifeBall.render(renderer, spritesheet);
                     }
+                    break;
+                }
+
+                case PUMP_CHAR_SYMBOL:
+                {
+                    pump curPump(PUMP_WIDTH * i - int(remFrameX), PUMP_HEIGHT * (j + 1));
+
+                    if (charMap[curCharPosY + j + 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
+                        curPump.setRotateAngle(0);
+                    else if (charMap[curCharPosY + j - 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
+                        curPump.setRotateAngle(180);
+
+                    curPump.render(renderer, spritesheet);
+
+                    vPumps.push_back(curPump);
+
+                    break;
+                }
+
+                case SHRINKER_CHAR_SYMBOL:
+                {
+                    shrinker curShrinker(SHRINKER_WIDTH * i - int(remFrameX), SHRINKER_HEIGHT * (j + 1));
+
+                    if (charMap[curCharPosY + j - 1][curCharPosX + i] == BRICK_CHAR_SYMBOL) 
+                        curShrinker.setRotateAngle(180);
+
+                    curShrinker.render(renderer, spritesheet);
+
+                    vShrinkers.push_back(curShrinker);
+
                     break;
                 }
 

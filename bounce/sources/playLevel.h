@@ -30,6 +30,21 @@ const int PORTALS_LEFT_SPRITE_RENDER_POS_Y = 680;
 const int SCORE_RENDER_POS_X = 960;
 const int SCORE_RENDER_POS_Y = 680;
 
+/// @brief Obejects that can block the move of the ball
+enum BLOCK_OBJECT
+{
+    NOT_BLOCKED,
+    BRICK_TILE,
+    TRAMPOLINE_TILE,
+    SMALL_PORTAL_TILES,
+    CLOSED_FINISH_LINE_TILES,
+    PUMP_TILE,
+    SHRINKER_TILE,
+    ACCELERATOR_TILE,
+    JUMP_BOOSTER_TILE,
+    GRAVITY_REVERSER_TILE
+};
+
 class statusArea
 {
 private:
@@ -75,6 +90,9 @@ private:
 
     statusArea mStatusArea;
 
+    BLOCK_OBJECT mCurBlockObjectX;
+    BLOCK_OBJECT mCurBlockObjectY;
+
     bool ballSpawnSize;
 
     int livesLeft;
@@ -103,7 +121,7 @@ public:
     void setLevelId(const int& id, const vector_2d_string& allLevelCharMap, const vector_2d_pair_of_pii& allLevelSpidersInfo, const std::vector <int>& allLevelBallSpawnSize);
 
     /// @brief Check if the ball move is blocked by something
-    bool checkBlocked() const;
+    BLOCK_OBJECT getBlockObject() const;
 
     /// @brief Try moving ball
     void tryMoveX();
