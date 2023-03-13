@@ -122,7 +122,7 @@ void game::play()
     auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
     curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
     curLevel->setScore(0);
-    for (int i = 1; i < allLevelCharMap.size(); i ++)
+    for (int i = 4; i < allLevelCharMap.size(); i ++)
     {
         curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
         

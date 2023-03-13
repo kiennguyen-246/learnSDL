@@ -26,7 +26,7 @@
 #include "brickTile.h"
 #include "levelMap.h"
 #include "checkpoint.h"
-#include "enemy.h"
+#include "spike.h"
 #include "portal.h"
 #include "finishLine.h"
 #include "lifeBall.h"

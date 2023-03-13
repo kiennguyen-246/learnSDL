@@ -1,6 +1,6 @@
 // enemy.cpp
 
-#include "enemy.h"
+#include "spike.h"
 
 spike::spike()
 {

@@ -294,6 +294,20 @@ bool playLevel::playGame()
         if (mCurBlockObjectX == PUMP_TILE || mCurBlockObjectY == PUMP_TILE)
         {
             mBall.setBallSize(1, mSpritesheet);
+            double ballPosXBeforeMove = mBall.getRealPosX();
+            for (auto curPump: mLevelMap.pumpsList())
+                if (collide(curPump, mBall))
+                {
+                    mBall.setPosEx(mBall.getRealPosX() - 20, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                }
+            double ballPosXAfterMove = mBall.getRealPosX();
+            mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
+
+            for (auto curPump: mLevelMap.pumpsList())
+                if (collide(curPump, mBall))
+                {
+                    mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - 20, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                }
         }
 
         //Hit a shrinker
