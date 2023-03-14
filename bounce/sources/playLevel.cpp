@@ -100,14 +100,19 @@ void playLevel::initSpiders(const std::vector <spiderInfo>& allLevelSpidersInfo)
 BLOCK_OBJECT playLevel::getBlockObject() const
 {
     auto brickTilesList = mLevelMap.brickTilesList();
+    auto trampolineTilesList = mLevelMap.trampolineTilesList();
     auto portalsList = mLevelMap.portalsList();
     auto curFinishLine = mLevelMap.getFinishLine();
     auto pumpsList = mLevelMap.pumpsList();
     auto shrinkersList = mLevelMap.shrinkersList();
     
     BLOCK_OBJECT blockObject = NOT_BLOCKED;
+
     for (auto &curBrickTile: brickTilesList)
         if (collide(curBrickTile, mBall)) blockObject = BRICK_TILE;
+
+    for (auto &curTrampolineTile: trampolineTilesList)
+        if (collide(curTrampolineTile, mBall)) blockObject = TRAMPOLINE_TILE;
 
     for (auto &curPump: pumpsList)
     {
@@ -149,8 +154,27 @@ void playLevel::tryMoveX()
     {
         mBall.undoMoveX();
         mBall.scaleX(mLevelMap.getFramePosX());
-        mBall.setVelocityX(0);
-        // mBall.reflectX();
+        if (mBall.getVelocityX() > 0)
+        {
+            while (getBlockObject() == NOT_BLOCKED)
+            {
+                mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                mBall.scaleX(mLevelMap.getFramePosX());
+            }
+            mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+            mBall.scaleX(mLevelMap.getFramePosX());
+        } 
+        if (mBall.getVelocityX() < 0)
+        {
+            while (getBlockObject() == NOT_BLOCKED)
+            {
+                mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                mBall.scaleX(mLevelMap.getFramePosX());
+            }
+            mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+            mBall.scaleX(mLevelMap.getFramePosX());
+        } 
+        mBall.reflectX();
     }
 
     double ballPosXAfterMove = mBall.getRealPosX();
@@ -168,16 +192,81 @@ void playLevel::tryMoveY()
 
     if (getBlockObject() != NOT_BLOCKED) 
     {
-        mBall.setCollide((mBall.getVelocityY() < 0));
         mBall.undoMoveY();
         mBall.scaleY(mLevelMap.getFramePosY());
+        if (mBall.getVelocityY() > 0)
+        {
+            while (getBlockObject() == NOT_BLOCKED)
+            {
+                mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                mBall.scaleY(mLevelMap.getFramePosY());
+            }
+            mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+            mBall.scaleY(mLevelMap.getFramePosY());
+        } 
+        
         mBall.reflectY();
     }
 
-    double ballPosYAfterMove = mBall.getRealPosY();
-    //Only move frame vertically when the ball is out of it
-    mLevelMap.moveY((int((ballPosYAfterMove - 1) / (7 * TILE_HEIGHT)) - int((ballPosYBeforeMove - 1) / (7 * TILE_HEIGHT))) * (7 * TILE_HEIGHT));
+    if (mBall.getPosY() < 0)
+    {
+        mBall.undoMoveY();
+        mBall.scaleY(mLevelMap.getFramePosY());
+        mLevelMap.moveY(-7 * TILE_WIDTH);
+        yFrameChanged = 1;
+    }
+    if (mBall.getPosY() > 8 * TILE_WIDTH)
+    {
+        mBall.undoMoveY();
+        mBall.scaleY(mLevelMap.getFramePosY());
+        mLevelMap.moveY(7 * TILE_WIDTH);
+        yFrameChanged = 1;
+    }
 
+    // std::cout << "[playLevel.cpp] Ball position before and after move: " << ballPosYBeforeMove << " " << ballPosYAfterMove << "\n";
+    //Only move frame vertically when the ball is out of it
+    
+
+}
+
+bool playLevel::checkBallIsAirborne()
+{
+    int charMapPosX = (mBall.getRealPosX()) / TILE_WIDTH;
+    int charMapPosY = (mBall.getRealPosY() + 5) / TILE_HEIGHT;
+    switch(mLevelMap.getMap()[charMapPosY][charMapPosX])
+    {
+        case BRICK_CHAR_SYMBOL:
+        case TRAMPOLINE_CHAR_SYMBOL:
+        case PUMP_CHAR_SYMBOL:
+        case SHRINKER_CHAR_SYMBOL:
+            return 0;
+        case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
+        case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
+            if (mBall.checkIsLargeBall()) return 0;
+            break;
+        default:
+            break;
+    }
+
+    if (mBall.getRealPosX() + (mBall.checkIsLargeBall() ? LARGE_BALL_WIDTH : SMALL_BALL_WIDTH) - 5 >= (charMapPosX + 1) * TILE_WIDTH)
+    {
+        switch(mLevelMap.getMap()[charMapPosY][charMapPosX + 1])
+        {
+            case BRICK_CHAR_SYMBOL:
+            case TRAMPOLINE_CHAR_SYMBOL:
+            case PUMP_CHAR_SYMBOL:
+            case SHRINKER_CHAR_SYMBOL:
+                return 0;
+            case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
+            case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
+                if (mBall.checkIsLargeBall()) return 0;
+                break;
+            default:
+                break;
+        }
+    } 
+    
+    return 1;
 }
 
 bool playLevel::playGame()
@@ -212,9 +301,11 @@ bool playLevel::playGame()
 
     int moveXCount = 0;
     
+    double lastTrampolineVelocity = -SMALL_BALL_VELOCITY_Y_DEFAULT;
 
     while (!quit)
     {   
+        
         // std::cout << "[playLevel.cpp] Start new loop successfully.\n";
         while (SDL_PollEvent(&curEvent) != 0)
         {
@@ -242,15 +333,32 @@ bool playLevel::playGame()
             mBall.setVelocityX(velocityXVal);
             mBall.setAccelerationX(accelerationXVal);
         }
+
         if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
         {
-            if (!mBall.isAirborne())
+            if (!checkBallIsAirborne())
             {
                 mBall.resetFramesPassedY();
-                mBall.setVelocityY(-velocityYVal);
+                
+                int charMapPosX = mBall.getRealPosX() / TILE_WIDTH;
+                int charMapPosY = (mBall.getRealPosY() + 10) / TILE_HEIGHT;
+                if (mLevelMap.getMap()[charMapPosY][charMapPosX] == TRAMPOLINE_CHAR_SYMBOL || mLevelMap.getMap()[charMapPosY][charMapPosX + 1] == TRAMPOLINE_CHAR_SYMBOL)
+                {
+                    if (abs(mBall.getVelocityY()) < 1e-7) mBall.setVelocityY(-velocityYVal * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
+                    else mBall.setVelocityY(lastTrampolineVelocity * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
+                    if (mBall.getVelocityY() < -BALL_MAX_VELOCITY_Y) mBall.setVelocityY(-BALL_MAX_VELOCITY_Y); 
+                    lastTrampolineVelocity = mBall.getVelocityY();
+                    // std::cout << "[playLevel.cpp] Velocity: " << mBall.getVelocityY() << "\n";
+                }
+                else 
+                {
+                    mBall.setVelocityY(-velocityYVal);
+                    lastTrampolineVelocity = mBall.getVelocityY();
+                }
                 mBall.setAccelerationY(accelerationYVal);
             }
         }
+        else lastTrampolineVelocity = -velocityYVal;
 
         // std::cout << "[playLevel.cpp] Get keyboard input successfully.\n";
 
@@ -259,33 +367,6 @@ bool playLevel::playGame()
 
         mLevelMap.render(mRenderer, mSpritesheet);
 
-        checkpointsList = mLevelMap.checkpointsList();
-        lifeBallsList = mLevelMap.lifeBallsList();
-        portalsList = mLevelMap.portalsList();
-        curFinishLine = mLevelMap.getFinishLine();
-
-        if (respawn)
-        {
-            SDL_Delay(200);
-            checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
-            mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
-                                checkpointsList[lastCheckpointIndex].getFramePosY());
-            respawn = 0;
-        }
-
-        // std::cout << "[playLevel.cpp] Render map successfully.\n";
-
-        mBall.passFrame();
-
-        mCurBlockObjectX = NOT_BLOCKED;
-        mCurBlockObjectY = NOT_BLOCKED;
-        
-        //Try moving by X
-        tryMoveX();
-
-        //Try moving by Y
-        tryMoveY();
-
         for (auto &curSpider: mSpiderList) 
         {
             curSpider.move();
@@ -293,16 +374,27 @@ bool playLevel::playGame()
             curSpider.scaleY(mLevelMap.getFramePosY());
         }
 
-        mBall.render(mRenderer, mSpritesheet);
-
         for (auto &curSpider: mSpiderList)
         {
-            if (curSpider.getPosX() < -SPIDER_WIDTH || curSpider.getPosY() > GAMEPLAY_AREA_WIDTH + SPIDER_WIDTH) continue;
-            if (curSpider.getPosY() < -SPIDER_HEIGHT || curSpider.getPosY() > GAMEPLAY_AREA_HEIGHT + SPIDER_HEIGHT) continue;
+            if (curSpider.getPosX() < -SPIDER_WIDTH || curSpider.getPosY() > GAMEPLAY_AREA_WIDTH) curSpider.deleteFromRenderer();
+            if (curSpider.getPosY() < -SPIDER_HEIGHT || curSpider.getPosY() > GAMEPLAY_AREA_HEIGHT) curSpider.deleteFromRenderer();
             curSpider.render(mRenderer, mSpritesheet);
         } 
 
+        checkpointsList = mLevelMap.checkpointsList();
+        lifeBallsList = mLevelMap.lifeBallsList();
+        portalsList = mLevelMap.portalsList();
+        curFinishLine = mLevelMap.getFinishLine();
+
+        // std::cout << "[playLevel.cpp] Ball render position: " << mBall.getPosX() << " " << mBall.getPosY() << "\n";
+
         // std::cout << "[playLevel.cpp] Render ball successfully.\n";
+
+        // Hit a trampoline tile
+        if (mCurBlockObjectY == TRAMPOLINE_TILE) 
+        {
+            mBall.setVelocityY(mBall.getVelocityY() * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
+        }
         
         //Hit a spider
         for (auto &curSpider: mSpiderList)
@@ -320,8 +412,10 @@ bool playLevel::playGame()
 
         //Hit a spike
         for (auto &curSpike: mLevelMap.spikesList())
+        {
             if (collide(curSpike, mBall))
             {
+                std::cout << "[playLevel.cpp] Hit spike at position " << curSpike.getPosX() << " " << curSpike.getPosY() << ".\n";
                 mBall.renderPopAnimation(mRenderer, mSpritesheet);
                 mBall.setVelocityX(0);
                 mBall.setVelocityY(0);
@@ -329,6 +423,8 @@ bool playLevel::playGame()
                 respawn = 1;
                 break;
             }
+            
+        }   
 
         //Hit a pump
         if (mCurBlockObjectX == PUMP_TILE || mCurBlockObjectY == PUMP_TILE)
@@ -444,6 +540,31 @@ bool playLevel::playGame()
 
         //Render the status area
         mStatusArea.render(livesLeft, portalsLeft, score);
+
+        if (respawn)
+        {
+            SDL_Delay(200);
+            mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
+                                checkpointsList[lastCheckpointIndex].getFramePosY());
+            checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
+            respawn = 0;
+        }
+
+        // std::cout << "[playLevel.cpp] Render map successfully.\n";
+
+        mBall.passFrame();
+
+        mCurBlockObjectX = NOT_BLOCKED;
+        mCurBlockObjectY = NOT_BLOCKED;
+        yFrameChanged = 0;
+
+        //Try moving by Y
+        tryMoveY();
+
+        //Try moving by X
+        if (!yFrameChanged) tryMoveX();
+
+        mBall.render(mRenderer, mSpritesheet);
 
         // std::cout << "[playLevel.cpp] Render status area successfully.\n";
 

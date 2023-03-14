@@ -56,6 +56,9 @@ public:
     void scaleX(const double& framePos);
     void scaleY(const double& framePos);
 
+    /// @brief Delete the spider from the renderer when it strays out of the screen
+    void deleteFromRenderer();
+
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
 };
 

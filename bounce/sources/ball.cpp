@@ -118,7 +118,8 @@ void ball::undoMoveX()
 
 void ball::reflectX()
 {
-    mVelocityX = -mVelocityX * 5 / 10;
+    mVelocityX = -mVelocityX * BALL_BOUNCE_LEVEL / 200;
+    mAccelerationX = -mAccelerationX;
     framePassedX = 0;
 }
 

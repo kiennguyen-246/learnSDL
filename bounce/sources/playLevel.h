@@ -97,6 +97,8 @@ private:
     BLOCK_OBJECT mCurBlockObjectX;
     BLOCK_OBJECT mCurBlockObjectY;
 
+    bool yFrameChanged;
+
     bool ballSpawnSize;
 
     int livesLeft;
@@ -132,6 +134,8 @@ public:
     /// @brief Try moving ball
     void tryMoveX();
     void tryMoveY();
+
+    bool checkBallIsAirborne();
 
     /// @brief Render the game
     /// @return 1 if the player successfully pass the level

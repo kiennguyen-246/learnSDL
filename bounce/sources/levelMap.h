@@ -32,6 +32,7 @@
 #include "lifeBall.h"
 #include "pump.h"
 #include "shrinker.h"
+#include "trampolineTile.h"
 
 /**
  * @brief 
@@ -47,6 +48,7 @@
  * - P: pumps
  * - D: shrinkers
  * - G: Finish line, together with "#"
+ * - I: Trampoline tile
  * 
  */
 
@@ -63,6 +65,7 @@ const char FINISH_LINE_CHAR_SYMBOL = 'G';
 const char LIFE_BALL_CHAR_SYMBOL = 'L';
 const char PUMP_CHAR_SYMBOL = 'P';
 const char SHRINKER_CHAR_SYMBOL = 'D';
+const char TRAMPOLINE_CHAR_SYMBOL = 'I';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -76,6 +79,9 @@ private:
 
     /// @brief List of brick tiles
     std::vector <brickTile> vBrickTiles;
+
+    /// @brief List of trampoline tiles
+    std::vector <trampolineTile> vTrampolineTiles;
 
     /// @brief List of spikes
     std::vector <spike> vSpikes;
@@ -112,6 +118,8 @@ public:
     /// @param id The index of the current level
     void setMap(const int& id, const vector_2d_string& allLevelCharMap);
 
+    std::vector <std::string> getMap();
+
     /// @brief Move the map horizontally
     /// @param dist Move distance
     void moveX(const double& dist);
@@ -128,6 +136,9 @@ public:
 
     /// @brief Get the list of brick tiles rendered on the map
     std::vector <brickTile> brickTilesList() const;
+
+    /// @brief Get the list of trampoline tiles rendered on the map
+    std::vector <trampolineTile> trampolineTilesList() const;
 
     /// @brief Get the list of spikes rendered on the map
     std::vector <spike> spikesList() const;

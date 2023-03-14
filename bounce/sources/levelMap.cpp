@@ -25,9 +25,9 @@ bool levelMap::isFreeBrickTile(const int& brickTileCharPosX, const int& brickTil
 void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
 {
     charMap = allLevelCharMap[id];
-    std::cout << "[levelMap.cpp] " << charMap.size() << "\n";
 
     vBrickTiles.clear();
+    vTrampolineTiles.clear();
     vSpikes.clear();
     vCheckpoints.clear();
     vPortals.clear();
@@ -44,7 +44,6 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
                     checkpoint curCheckpoint;
                     curCheckpoint.init(i, j);
                     vCheckpoints.push_back(curCheckpoint);
-                    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
                     break;
                 }
 
@@ -53,7 +52,6 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
                     checkpoint curCheckpoint;
                     curCheckpoint.init(i, j, CHECKPOINT_HIDDEN);
                     vCheckpoints.push_back(curCheckpoint);
-                    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
                     break;
                 }
 
@@ -106,6 +104,11 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
             
 }
 
+std::vector <std::string> levelMap::getMap()
+{
+    return charMap;
+}
+
 void levelMap::moveX(const double& dist)
 {
     curFramePosX += dist;
@@ -135,6 +138,11 @@ void levelMap::setFramePos(const double& framePosX, const double& framePosY)
 std::vector <brickTile> levelMap::brickTilesList() const
 {
     return vBrickTiles;
+}
+
+std::vector <trampolineTile> levelMap::trampolineTilesList() const
+{
+    return vTrampolineTiles;
 }
 
 std::vector <spike> levelMap::spikesList() const
@@ -203,6 +211,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
 
     vBrickTiles.clear();
+    vTrampolineTiles.clear();
     vSpikes.clear();
     vPumps.clear();
     vShrinkers.clear();
@@ -226,6 +235,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                     curBrick.render(renderer, spritesheet);
 
                     vBrickTiles.push_back(curBrick);
+
+                    break;
+                }
+
+                case TRAMPOLINE_CHAR_SYMBOL:
+                {
+                    trampolineTile curTrampoline(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                    curTrampoline.render(renderer, spritesheet);
+
+                    vTrampolineTiles.push_back(curTrampoline);
 
                     break;
                 }

@@ -77,6 +77,12 @@ void spider::scaleY(const double& framePos)
     mPosY = mRealPosY - framePos;
 }
 
+void spider::deleteFromRenderer()
+{
+    mPosX = 0;
+    mPosY = 0;
+}
+
 void spider::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
     spritesheet.render(renderer, mPosX, mPosY - mHeight, &mSpriteClip, 2);

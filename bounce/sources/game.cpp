@@ -72,7 +72,6 @@ void game::initMapConfig()
         {
             int mapHeight;
             fi >> mapHeight;
-            std::cout << "[game.cpp] mapHeight = " << mapHeight << "\n";
             allLevelCharMap[levelId].resize(mapHeight);
 
             std::string nul = "";
