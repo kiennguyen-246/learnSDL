@@ -138,11 +138,11 @@ BLOCK_OBJECT playLevel::getBlockObject() const
     return blockObject;
 }
 
-void playLevel::tryMoveX()
+void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
 {
     if (abs(mBall.getVelocityX()) < 1e-3) return;
     
-    double ballPosXBeforeMove = mBall.getRealPosX();
+    ballPosXBeforeMove = mBall.getRealPosX();
     mBall.moveX();
 
     mCurBlockObjectX = getBlockObject();
@@ -161,6 +161,7 @@ void playLevel::tryMoveX()
                 mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleX(mLevelMap.getFramePosX());
             }
+            // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleX(mLevelMap.getFramePosX());
         } 
@@ -171,15 +172,17 @@ void playLevel::tryMoveX()
                 mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleX(mLevelMap.getFramePosX());
             }
+            // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleX(mLevelMap.getFramePosX());
         } 
         mBall.reflectX();
     }
 
-    double ballPosXAfterMove = mBall.getRealPosX();
+    ballPosXAfterMove = mBall.getRealPosX();
 
     mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
+    mBall.scaleX(mLevelMap.getFramePosX());
 }
 
 void playLevel::tryMoveY()
@@ -201,6 +204,7 @@ void playLevel::tryMoveY()
                 mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleY(mLevelMap.getFramePosY());
             }
+            // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleY(mLevelMap.getFramePosY());
         } 
@@ -211,15 +215,15 @@ void playLevel::tryMoveY()
     if (mBall.getPosY() < 0)
     {
         mBall.undoMoveY();
-        mBall.scaleY(mLevelMap.getFramePosY());
         mLevelMap.moveY(-7 * TILE_WIDTH);
+        mBall.scaleY(mLevelMap.getFramePosY());
         yFrameChanged = 1;
     }
     if (mBall.getPosY() > 8 * TILE_WIDTH)
     {
         mBall.undoMoveY();
-        mBall.scaleY(mLevelMap.getFramePosY());
         mLevelMap.moveY(7 * TILE_WIDTH);
+        mBall.scaleY(mLevelMap.getFramePosY());
         yFrameChanged = 1;
     }
 
@@ -303,8 +307,11 @@ bool playLevel::playGame()
     
     double lastTrampolineVelocity = -SMALL_BALL_VELOCITY_Y_DEFAULT;
 
+    int tmpCnt = 0;
+
     while (!quit)
     {   
+        // SDL_Delay(100);
         
         // std::cout << "[playLevel.cpp] Start new loop successfully.\n";
         while (SDL_PollEvent(&curEvent) != 0)
@@ -415,7 +422,8 @@ bool playLevel::playGame()
         {
             if (collide(curSpike, mBall))
             {
-                std::cout << "[playLevel.cpp] Hit spike at position " << curSpike.getPosX() << " " << curSpike.getPosY() << ".\n";
+                // std::cout << "[playLevel.cpp] Hit spike at position " << curSpike.getPosX() << " " << curSpike.getPosY() << ".\n";
+                // std::cout << "[playLevel.cpp] Ball render position is:  " << mBall.getPosX() << " " << mBall.getPosY() << ".\n";
                 mBall.renderPopAnimation(mRenderer, mSpritesheet);
                 mBall.setVelocityX(0);
                 mBall.setVelocityY(0);
@@ -552,17 +560,31 @@ bool playLevel::playGame()
 
         // std::cout << "[playLevel.cpp] Render map successfully.\n";
 
+        // SDL_Delay(100);
+
         mBall.passFrame();
 
         mCurBlockObjectX = NOT_BLOCKED;
         mCurBlockObjectY = NOT_BLOCKED;
         yFrameChanged = 0;
 
+        double ballPosXBeforeMove = 0;
+        double ballPosXAfterMove = 0;
+
+        // std::cout << "[levelMap.cpp] " << tmpCnt++ << "\n";
+
+        //Try moving by X
+        tryMoveX(ballPosXBeforeMove, ballPosXAfterMove);
+
         //Try moving by Y
         tryMoveY();
 
-        //Try moving by X
-        if (!yFrameChanged) tryMoveX();
+        if (yFrameChanged && ballPosXBeforeMove != ballPosXAfterMove)
+        {
+            mBall.undoMoveX();
+            mLevelMap.moveX(ballPosXBeforeMove - ballPosXAfterMove);
+            mBall.scaleX(mLevelMap.getFramePosX());
+        }
 
         mBall.render(mRenderer, mSpritesheet);
 

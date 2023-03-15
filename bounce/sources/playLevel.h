@@ -132,7 +132,7 @@ public:
     BLOCK_OBJECT getBlockObject() const;
 
     /// @brief Try moving ball
-    void tryMoveX();
+    void tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove);
     void tryMoveY();
 
     bool checkBallIsAirborne();
