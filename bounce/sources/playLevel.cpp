@@ -212,14 +212,14 @@ void playLevel::tryMoveY()
         mBall.reflectY();
     }
 
-    if (mBall.getPosY() < 0)
+    if (mBall.getPosY() < TILE_HEIGHT / 2)
     {
         mBall.undoMoveY();
         mLevelMap.moveY(-7 * TILE_WIDTH);
         mBall.scaleY(mLevelMap.getFramePosY());
         yFrameChanged = 1;
     }
-    if (mBall.getPosY() > 8 * TILE_WIDTH)
+    if (mBall.getPosY() > 8 * TILE_HEIGHT)
     {
         mBall.undoMoveY();
         mLevelMap.moveY(7 * TILE_WIDTH);
@@ -273,6 +273,19 @@ bool playLevel::checkBallIsAirborne()
     return 1;
 }
 
+bool playLevel::checkBallIsInsideWater()
+{
+    auto waterloggedTilesList = mLevelMap.waterloggedTilesList();
+    auto fakeBall = mBall;
+    fakeBall.setPos(mBall.getPosX(), mBall.getPosY() - TILE_HEIGHT / 2);
+    
+    for (auto &curWaterloggedTile: waterloggedTilesList)
+    {
+        if (collide(curWaterloggedTile, fakeBall)) return 1;
+    }
+    return 0;
+}
+
 bool playLevel::playGame()
 {
     bool levelCleared = 0;
@@ -309,9 +322,10 @@ bool playLevel::playGame()
 
     int tmpCnt = 0;
 
+    bool waterlogged = 0;
+
     while (!quit)
     {   
-        // SDL_Delay(100);
         
         // std::cout << "[playLevel.cpp] Start new loop successfully.\n";
         while (SDL_PollEvent(&curEvent) != 0)
@@ -327,6 +341,8 @@ bool playLevel::playGame()
         auto accelerationXVal = (mBall.checkIsLargeBall() ? LARGE_BALL_ACCELERATION_X_DEFAULT : SMALL_BALL_ACCELERATION_X_DEFAULT);
         auto velocityYVal = (mBall.checkIsLargeBall() ? LARGE_BALL_VELOCITY_Y_DEFAULT : SMALL_BALL_VELOCITY_Y_DEFAULT);
         auto accelerationYVal = (mBall.checkIsLargeBall() ? LARGE_BALL_ACCELERATION_Y_DEFAULT : SMALL_BALL_ACCELERATION_Y_DEFAULT);
+
+        if (waterlogged) velocityYVal = velocityYVal * (100 - WATERLOGGED_TILE_VELOCITY_DECREASE_LEVEL) / 100;
 
         if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]) 
         {
@@ -402,6 +418,9 @@ bool playLevel::playGame()
         {
             mBall.setVelocityY(mBall.getVelocityY() * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
         }
+
+        waterlogged = 0;
+        if (checkBallIsInsideWater()) waterlogged = 1;
         
         //Hit a spider
         for (auto &curSpider: mSpiderList)
@@ -571,7 +590,16 @@ bool playLevel::playGame()
         double ballPosXBeforeMove = 0;
         double ballPosXAfterMove = 0;
 
-        // std::cout << "[levelMap.cpp] " << tmpCnt++ << "\n";
+        if (waterlogged)
+        {
+            if (mBall.checkIsLargeBall())
+            {
+                double v = mBall.getVelocityY();
+                v -= LARGE_BALL_VELOCITY_Y_WATERLOGGED;
+                if (v < -LARGE_BALL_VELOCITY_Y_WATERLOGGED) v = -LARGE_BALL_VELOCITY_Y_WATERLOGGED;
+                mBall.setVelocityY(v);
+            }
+        }
 
         //Try moving by X
         tryMoveX(ballPosXBeforeMove, ballPosXAfterMove);

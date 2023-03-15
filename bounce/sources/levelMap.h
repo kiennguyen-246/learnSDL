@@ -33,6 +33,7 @@
 #include "pump.h"
 #include "shrinker.h"
 #include "trampolineTile.h"
+#include "waterloggedTile.h"
 
 /**
  * @brief 
@@ -49,6 +50,7 @@
  * - D: shrinkers
  * - G: Finish line, together with "#"
  * - I: Trampoline tile
+ * - 0: Waterlogged tile
  * 
  */
 
@@ -66,6 +68,7 @@ const char LIFE_BALL_CHAR_SYMBOL = 'L';
 const char PUMP_CHAR_SYMBOL = 'P';
 const char SHRINKER_CHAR_SYMBOL = 'D';
 const char TRAMPOLINE_CHAR_SYMBOL = 'I';
+const char WATERLOGGED_CHAR_SYMBOL = '0';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -82,6 +85,9 @@ private:
 
     /// @brief List of trampoline tiles
     std::vector <trampolineTile> vTrampolineTiles;
+
+    /// @brief List of trampoline tiles
+    std::vector <waterloggedTile> vWaterloggedTiles;
 
     /// @brief List of spikes
     std::vector <spike> vSpikes;
@@ -139,6 +145,9 @@ public:
 
     /// @brief Get the list of trampoline tiles rendered on the map
     std::vector <trampolineTile> trampolineTilesList() const;
+
+    /// @brief Get the list of waterlogged tiles rendered on the map
+    std::vector <waterloggedTile> waterloggedTilesList() const;
 
     /// @brief Get the list of spikes rendered on the map
     std::vector <spike> spikesList() const;

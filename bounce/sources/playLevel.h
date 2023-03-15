@@ -137,6 +137,8 @@ public:
 
     bool checkBallIsAirborne();
 
+    bool checkBallIsInsideWater();
+
     /// @brief Render the game
     /// @return 1 if the player successfully pass the level
     bool playGame();

@@ -28,6 +28,7 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
 
     vBrickTiles.clear();
     vTrampolineTiles.clear();
+    vWaterloggedTiles.clear();
     vSpikes.clear();
     vCheckpoints.clear();
     vPortals.clear();
@@ -145,6 +146,11 @@ std::vector <trampolineTile> levelMap::trampolineTilesList() const
     return vTrampolineTiles;
 }
 
+std::vector <waterloggedTile> levelMap::waterloggedTilesList() const
+{
+    return vWaterloggedTiles;
+}
+
 std::vector <spike> levelMap::spikesList() const
 {
     return vSpikes;
@@ -212,6 +218,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 
     vBrickTiles.clear();
     vTrampolineTiles.clear();
+    vWaterloggedTiles.clear();
     vSpikes.clear();
     vPumps.clear();
     vShrinkers.clear();
@@ -245,6 +252,16 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                     curTrampoline.render(renderer, spritesheet);
 
                     vTrampolineTiles.push_back(curTrampoline);
+
+                    break;
+                }
+
+                case WATERLOGGED_CHAR_SYMBOL:
+                {
+                    waterloggedTile curWaterlogged(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1));
+                    curWaterlogged.render(renderer, spritesheet);
+
+                    vWaterloggedTiles.push_back(curWaterlogged);
 
                     break;
                 }
