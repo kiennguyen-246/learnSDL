@@ -29,6 +29,16 @@ void ball::setAccelerationY(const double& a)
     mAccelerationY = a;
 }
 
+double ball::getAccelerationX() const
+{
+    return mAccelerationX;
+}
+
+double ball::getAccelerationY() const
+{
+    return mAccelerationY;
+}
+
 void ball::setVelocityX(const int& v)
 {
     mVelocityX = v;

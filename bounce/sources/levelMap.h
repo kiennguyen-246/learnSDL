@@ -34,6 +34,7 @@
 #include "shrinker.h"
 #include "trampolineTile.h"
 #include "waterloggedTile.h"
+#include "accelerator.h"
 
 /**
  * @brief 
@@ -51,7 +52,7 @@
  * - G: Finish line, together with "#"
  * - I: Trampoline tile
  * - 0: Waterlogged tile
- * 
+ * - S: Accelerator
  */
 
 const char BRICK_CHAR_SYMBOL = 'B';
@@ -69,6 +70,7 @@ const char PUMP_CHAR_SYMBOL = 'P';
 const char SHRINKER_CHAR_SYMBOL = 'D';
 const char TRAMPOLINE_CHAR_SYMBOL = 'I';
 const char WATERLOGGED_CHAR_SYMBOL = '0';
+const char ACCELERATOR_CHAR_SYMBOL = 'S';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -97,6 +99,9 @@ private:
 
     /// @brief List of shrinkers
     std::vector <shrinker> vShrinkers;
+
+    /// @brief List of accelerators
+    std::vector <accelerator> vAccelerators;
 
     /// @brief List of checkpoints
     std::vector <checkpoint> vCheckpoints;
@@ -157,6 +162,9 @@ public:
 
     /// @brief Get the list of shrinkers rendered on the map
     std::vector <shrinker> shrinkersList() const;
+
+    /// @brief Get the list of accelerators rendered on the map
+    std::vector <accelerator> acceleratorsList() const;
 
     /// @brief Get the list of checkpoints in the map
     std::vector <checkpoint> checkpointsList() const;

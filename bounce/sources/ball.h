@@ -34,7 +34,7 @@ const double SMALL_BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(fr
 const double SMALL_BALL_ACCELERATION_Y_DEFAULT = 4.0 / 5;     //unit: pixel/(frame)^2
 const double LARGE_BALL_VELOCITY_X_DEFAULT = 9;     //unit: pixel/frame
 const double LARGE_BALL_VELOCITY_Y_DEFAULT = 18;     //unit: pixel/frame
-const double LARGE_BALL_VELOCITY_Y_WATERLOGGED = 6;     //unit: pixel/frame
+const double LARGE_BALL_VELOCITY_Y_WATERLOGGED = 8;     //unit: pixel/frame
 const double LARGE_BALL_ACCELERATION_X_DEFAULT = -5.0 / 8;     //unit: pixel/(frame)^2
 const double LARGE_BALL_ACCELERATION_Y_DEFAULT = 63.0 / 200;     //unit: pixel/(frame)^2
 const int BALL_BOUNCE_LEVEL = 35;      //new velocity multiplier after a bounce (percent)
@@ -92,6 +92,10 @@ public:
     void setAccelerationX(const double& a);
 
     void setAccelerationY(const double& a);
+
+    double getAccelerationX() const;
+
+    double getAccelerationY() const;
 
     void setVelocityX(const int& v);
 

@@ -9,6 +9,7 @@ void statusArea::init(SDL_Renderer* renderer, LTexture& spritesheet)
     mBallSpriteClip = {SMALL_BALL_SPRITE_POS_x, SMALL_BALL_SPRITE_POS_Y, SMALL_BALL_WIDTH / 2, SMALL_BALL_HEIGHT / 2};
     mPortalSpriteClip = {PORTAL_HORIZONTAL_DEFAULT_SPRITE_POS_x, PORTAL_HORIZONTAL_COLLECTED_SPRITE_POS_Y,
                          PORTAL_HORIZONTAL_WIDTH / 2, PORTAL_HORIZONTAL_HEIGHT / 2};
+    mAcceleratorSpriteClip = {ACCELERATOR_SPRITE_POS_x, ACCELERATOR_SPRITE_POS_Y, ACCELERATOR_WIDTH / 2, ACCELERATOR_HEIGHT / 2};
 }
 
 void statusArea::renderScore(const int& score)
@@ -38,7 +39,20 @@ void statusArea::renderLivesLeft(const int& livesLeft)
     mSpritesheet.render(mRenderer, LIVES_INFO_BALL_SPRITE_RENDER_POS_X, LIVES_INFO_BALL_SPRITE_RENDER_POS_Y, &mBallSpriteClip, 2);
 }
 
-void statusArea::render(const int& livesLeft, const int& portalsLeft, const int& score)
+void statusArea::renderLevelInfo(const int& levelId)
+{
+    SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
+    SDL_RenderFillRect(mRenderer, &mContainer);
+
+    LTexture curTextTexture;
+    std::string levelInfo = "LEVEL " + std::to_string(levelId);
+    renderText(mRenderer, curTextTexture, &levelInfo[0], LEVEL_INFO_TEXT_RENDER_POS_X, LEVEL_INFO_TEXT_RENDER_POS_Y, 
+                LEVEL_INFO_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+
+    std::cout << "[playLevel.cpp] Run here\n";
+}
+
+void statusArea::render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated)
 {
     SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
     SDL_RenderFillRect(mRenderer, &mContainer);
@@ -46,6 +60,7 @@ void statusArea::render(const int& livesLeft, const int& portalsLeft, const int&
     renderLivesLeft(livesLeft);
     renderPortalsLeft(portalsLeft);
     renderScore(score);
+    if (acceleratorActivated) mSpritesheet.render(mRenderer, EXTRA_RENDER_POS_X, EXTRA_RENDER_POS_Y, &mAcceleratorSpriteClip, 2);
 }
 
 playLevel::playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, LTexture& __Spritesheet)
@@ -105,6 +120,7 @@ BLOCK_OBJECT playLevel::getBlockObject() const
     auto curFinishLine = mLevelMap.getFinishLine();
     auto pumpsList = mLevelMap.pumpsList();
     auto shrinkersList = mLevelMap.shrinkersList();
+    auto acceleratorsList = mLevelMap.acceleratorsList();
     
     BLOCK_OBJECT blockObject = NOT_BLOCKED;
 
@@ -129,6 +145,14 @@ BLOCK_OBJECT playLevel::getBlockObject() const
             blockObject = SHRINKER_TILE;
         } 
     }
+
+    for (auto &curAccelerator: acceleratorsList)
+    {
+        if (collide(curAccelerator, mBall))
+        {
+            blockObject = ACCELERATOR_TILE;
+        } 
+    }
         
     if (collide(curFinishLine, mBall) && !curFinishLine.checkIsOpen()) blockObject = CLOSED_FINISH_LINE_TILES;
 
@@ -144,6 +168,8 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
     
     ballPosXBeforeMove = mBall.getRealPosX();
     mBall.moveX();
+
+    // std::cout << "[playLevel.cpp] Trying to move horizontally...\n";
 
     mCurBlockObjectX = getBlockObject();
     // std::cout << "[playLevel.cpp] Object that blocks X's code: " << mCurBlockObjectX << "\n";
@@ -161,6 +187,7 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
                 mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleX(mLevelMap.getFramePosX());
             }
+            mCurBlockObjectX = getBlockObject();
             // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleX(mLevelMap.getFramePosX());
@@ -172,6 +199,7 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
                 mBall.setPosEx(mBall.getRealPosX() - 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleX(mLevelMap.getFramePosX());
             }
+            mCurBlockObjectX = getBlockObject();
             // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX() + 1, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleX(mLevelMap.getFramePosX());
@@ -204,6 +232,7 @@ void playLevel::tryMoveY()
                 mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                 mBall.scaleY(mLevelMap.getFramePosY());
             }
+            mCurBlockObjectX = getBlockObject();
             // std::cout << "[playLevel.cpp] Exit loop successfullly.\n";
             mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - 1, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
             mBall.scaleY(mLevelMap.getFramePosY());
@@ -243,6 +272,7 @@ bool playLevel::checkBallIsAirborne()
         case TRAMPOLINE_CHAR_SYMBOL:
         case PUMP_CHAR_SYMBOL:
         case SHRINKER_CHAR_SYMBOL:
+        case ACCELERATOR_CHAR_SYMBOL:
             return 0;
         case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
         case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
@@ -260,6 +290,7 @@ bool playLevel::checkBallIsAirborne()
             case TRAMPOLINE_CHAR_SYMBOL:
             case PUMP_CHAR_SYMBOL:
             case SHRINKER_CHAR_SYMBOL:
+            case ACCELERATOR_CHAR_SYMBOL:
                 return 0;
             case PORTAL_VERTICAL_SMALL_CHAR_SYMBOL:
             case PORTAL_HORIZONTAL_SMALL_CHAR_SYMBOL:
@@ -289,6 +320,7 @@ bool playLevel::checkBallIsInsideWater()
 bool playLevel::playGame()
 {
     bool levelCleared = 0;
+    frameCount = 0;
     
     bool quit = 0;
     SDL_Event curEvent;
@@ -320,18 +352,20 @@ bool playLevel::playGame()
     
     double lastTrampolineVelocity = -SMALL_BALL_VELOCITY_Y_DEFAULT;
 
-    int tmpCnt = 0;
-
     bool waterlogged = 0;
+
+    int acceleratorStartFrame = 0;
+    acceleratorActivated = 0;
 
     while (!quit)
     {   
-        
         // std::cout << "[playLevel.cpp] Start new loop successfully.\n";
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
         }
+
+        frameCount ++;
 
         // std::cout << "[playLevel.cpp] Check event successfully.\n";
 
@@ -344,12 +378,15 @@ bool playLevel::playGame()
 
         if (waterlogged) velocityYVal = velocityYVal * (100 - WATERLOGGED_TILE_VELOCITY_DECREASE_LEVEL) / 100;
 
+        if (acceleratorActivated) velocityXVal = velocityXVal * (ACCELERATOR_SPEED_BOOST_LEVEL) / 100;
+
         if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]) 
         {
             mBall.resetFramesPassedX();
             mBall.setVelocityX(-velocityXVal);
             mBall.setAccelerationX(-accelerationXVal);
         }
+
         if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
         {
             mBall.resetFramesPassedX();
@@ -478,7 +515,20 @@ bool playLevel::playGame()
         {
             mBall.setBallSize(0, mSpritesheet);
         }
-         
+
+        //Hit an accelerator
+        if (mCurBlockObjectX == ACCELERATOR_TILE || mCurBlockObjectY == ACCELERATOR_TILE)
+        {
+            acceleratorActivated = 1;
+            acceleratorStartFrame = frameCount;
+        }
+        
+        if (frameCount - acceleratorStartFrame > ACCELERATOR_ACTIVE_TIME)
+        {
+            acceleratorActivated = 0;
+            acceleratorStartFrame = 0;
+        }
+
         //Collect a checkpoint
         for (int curIndex = 0; curIndex < checkpointsList.size(); curIndex ++)
         {
@@ -530,7 +580,6 @@ bool playLevel::playGame()
                             score += PORTAL_SCORE;
                             break;
                         }
-                        
                     }
                         
                     default:
@@ -565,15 +614,14 @@ bool playLevel::playGame()
 
         // std::cout << "[playLevel.cpp] Update successfully.\n";
 
-        //Render the status area
-        mStatusArea.render(livesLeft, portalsLeft, score);
-
         if (respawn)
         {
             SDL_Delay(200);
             mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
                                 checkpointsList[lastCheckpointIndex].getFramePosY());
             checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
+            acceleratorActivated = 0;
+            acceleratorStartFrame = 0;
             respawn = 0;
         }
 
@@ -595,7 +643,7 @@ bool playLevel::playGame()
             if (mBall.checkIsLargeBall())
             {
                 double v = mBall.getVelocityY();
-                v -= LARGE_BALL_VELOCITY_Y_WATERLOGGED;
+                v -= WATERLOGGED_TILE_ACCELERATION_ADDITION;
                 if (v < -LARGE_BALL_VELOCITY_Y_WATERLOGGED) v = -LARGE_BALL_VELOCITY_Y_WATERLOGGED;
                 mBall.setVelocityY(v);
             }
@@ -618,6 +666,9 @@ bool playLevel::playGame()
 
         // std::cout << "[playLevel.cpp] Render status area successfully.\n";
 
+        //Render the status area
+        if (frameCount <= LEVEL_INFO_TEXT_RENDER_TIME) mStatusArea.renderLevelInfo(levelId);
+        else mStatusArea.render(livesLeft, portalsLeft, score, acceleratorActivated);
 
         SDL_RenderPresent(mRenderer);
 

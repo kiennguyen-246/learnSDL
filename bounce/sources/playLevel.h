@@ -30,6 +30,12 @@ const int PORTALS_LEFT_SPRITE_RENDER_POS_X = 480;
 const int PORTALS_LEFT_SPRITE_RENDER_POS_Y = 680;
 const int SCORE_RENDER_POS_X = 960;
 const int SCORE_RENDER_POS_Y = 680;
+const int EXTRA_RENDER_POS_X = 720;
+const int EXTRA_RENDER_POS_Y = 680;
+const int LEVEL_INFO_TEXT_RENDER_POS_X = 500;
+const int LEVEL_INFO_TEXT_RENDER_POS_Y = 680;
+const int LEVEL_INFO_TEXT_FONT_SIZE = 90;
+const int LEVEL_INFO_TEXT_RENDER_TIME = 180;
 
 /// @brief Obejects that can block the move of the ball
 enum BLOCK_OBJECT
@@ -58,6 +64,8 @@ private:
     SDL_Rect mBallSpriteClip;
 
     SDL_Rect mPortalSpriteClip;
+
+    SDL_Rect mAcceleratorSpriteClip;
 public:
     void init(SDL_Renderer* renderer, LTexture& spritesheet);
 
@@ -67,7 +75,9 @@ public:
 
     void renderScore(const int& score);
 
-    void render(const int& livesLeft, const int& portalsLeft, const int& score);
+    void renderLevelInfo(const int& levelId);
+
+    void render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated);
 };
 
 class playLevel
@@ -97,7 +107,11 @@ private:
     BLOCK_OBJECT mCurBlockObjectX;
     BLOCK_OBJECT mCurBlockObjectY;
 
+    int frameCount;
+
     bool yFrameChanged;
+
+    bool acceleratorActivated;
 
     bool ballSpawnSize;
 

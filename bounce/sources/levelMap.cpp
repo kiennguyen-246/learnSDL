@@ -166,6 +166,11 @@ std::vector <shrinker> levelMap::shrinkersList() const
     return vShrinkers;
 }
 
+std::vector <accelerator> levelMap::acceleratorsList() const
+{
+    return vAccelerators;
+}
+
 std::vector <checkpoint> levelMap::checkpointsList() const
 {
     return vCheckpoints;
@@ -222,6 +227,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     vSpikes.clear();
     vPumps.clear();
     vShrinkers.clear();
+    vAccelerators.clear();
 
     for (auto &i: vPortals) i.setPos(0, 0);
     for (auto &i: vCheckpoints) 
@@ -406,6 +412,17 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
                     curShrinker.render(renderer, spritesheet);
 
                     vShrinkers.push_back(curShrinker);
+
+                    break;
+                }
+
+                case ACCELERATOR_CHAR_SYMBOL:
+                {
+                    accelerator curAccelerator(ACCELERATOR_WIDTH * i - int(remFrameX), ACCELERATOR_HEIGHT * (j + 1));
+
+                    curAccelerator.render(renderer, spritesheet);
+
+                    vAccelerators.push_back(curAccelerator);
 
                     break;
                 }
