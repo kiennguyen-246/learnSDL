@@ -27,6 +27,7 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
     charMap = allLevelCharMap[id];
 
     vBrickTiles.clear();
+    vSlopeTiles.clear();
     vTrampolineTiles.clear();
     vWaterloggedTiles.clear();
     vSpikes.clear();
@@ -101,7 +102,6 @@ void levelMap::setMap(const int& id, const vector_2d_string& allLevelCharMap)
             }
 
         }
-    std::cout << "[levelMap.cpp] vCheckpoints size = " << vCheckpoints.size() << "\n";
             
 }
 
@@ -139,6 +139,11 @@ void levelMap::setFramePos(const double& framePosX, const double& framePosY)
 std::vector <brickTile> levelMap::brickTilesList() const
 {
     return vBrickTiles;
+}
+
+std::vector <slopeTile> levelMap::slopeTilesList() const
+{
+    return vSlopeTiles;
 }
 
 std::vector <trampolineTile> levelMap::trampolineTilesList() const
@@ -222,6 +227,7 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
     // double remFrameY = TILE_HEIGHT - curFramePosY % TILE_HEIGHT;
 
     vBrickTiles.clear();
+    vSlopeTiles.clear();
     vTrampolineTiles.clear();
     vWaterloggedTiles.clear();
     vSpikes.clear();
@@ -249,6 +255,21 @@ void levelMap::render(SDL_Renderer* renderer, LTexture& spritesheet)
 
                     vBrickTiles.push_back(curBrick);
 
+                    break;
+                }
+
+                case SLOPE_CHAR_SYMBOL_1:
+                case SLOPE_CHAR_SYMBOL_2:
+                case SLOPE_CHAR_SYMBOL_3:
+                case SLOPE_CHAR_SYMBOL_4:
+                {
+                    for (int k = 1; k <= 4; k ++)
+                        if (charMap[curCharPosY + j][curCharPosX + i] == SLOPE_CHAR_SYMBOL[k])
+                        {
+                            slopeTile curSlope(TILE_WIDTH * i - int(remFrameX), TILE_HEIGHT * (j + 1), k);
+                            curSlope.render(renderer, spritesheet);
+                            vSlopeTiles.push_back(curSlope);
+                        }
                     break;
                 }
 

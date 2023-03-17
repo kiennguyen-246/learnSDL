@@ -164,6 +164,11 @@ public:
 
     bool checkIsLargeBall() const;
 
+    double getRadius() const;
+
+    /// @brief Get the center coordinate of the ball
+    std::pair <double, double> getBallCenter() const;
+
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
 
     /// @brief Render the "pop" animation when hitting enemies

@@ -113,6 +113,8 @@ private:
 
     bool acceleratorActivated;
 
+    bool ballIsOnSlope;
+
     bool ballSpawnSize;
 
     int livesLeft;

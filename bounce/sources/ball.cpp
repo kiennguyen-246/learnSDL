@@ -183,6 +183,16 @@ bool ball::checkIsLargeBall() const
     return isLargeBall;
 }
 
+double ball::getRadius() const
+{
+    return mWidth / 2;
+}
+
+std::pair <double, double> ball::getBallCenter() const
+{
+    return std::make_pair(mPosX + mWidth / 2, mPosY - mHeight / 2);
+}
+
 void ball::render(SDL_Renderer* renderer, LTexture& spritesheet)
 {
     spritesheet.render(renderer, mPosX, mPosY - mHeight, &mSpriteClip, 2);

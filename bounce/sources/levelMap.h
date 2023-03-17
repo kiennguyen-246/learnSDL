@@ -35,6 +35,7 @@
 #include "trampolineTile.h"
 #include "waterloggedTile.h"
 #include "accelerator.h"
+#include "slopeTile.h"
 
 /**
  * @brief 
@@ -71,6 +72,11 @@ const char SHRINKER_CHAR_SYMBOL = 'D';
 const char TRAMPOLINE_CHAR_SYMBOL = 'I';
 const char WATERLOGGED_CHAR_SYMBOL = '0';
 const char ACCELERATOR_CHAR_SYMBOL = 'S';
+const char SLOPE_CHAR_SYMBOL[] = {',', 'Z', 'X', 'V', 'N'};
+const char SLOPE_CHAR_SYMBOL_1 = 'Z';
+const char SLOPE_CHAR_SYMBOL_2 = 'X';
+const char SLOPE_CHAR_SYMBOL_3 = 'V';
+const char SLOPE_CHAR_SYMBOL_4 = 'N';
 
 const int DIRX[] = {1, -1, 0, 0};
 const int DIRY[] = {0, 0, 1, -1};
@@ -84,6 +90,9 @@ private:
 
     /// @brief List of brick tiles
     std::vector <brickTile> vBrickTiles;
+
+    /// @brief List of slope tiles
+    std::vector <slopeTile> vSlopeTiles;
 
     /// @brief List of trampoline tiles
     std::vector <trampolineTile> vTrampolineTiles;
@@ -147,6 +156,9 @@ public:
 
     /// @brief Get the list of brick tiles rendered on the map
     std::vector <brickTile> brickTilesList() const;
+
+    /// @brief Get the list of brick tiles rendered on the map
+    std::vector <slopeTile> slopeTilesList() const;
 
     /// @brief Get the list of trampoline tiles rendered on the map
     std::vector <trampolineTile> trampolineTilesList() const;
