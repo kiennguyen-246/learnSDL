@@ -67,24 +67,33 @@ bool slopeTile::checkBallIsOnSlope(const ball& __ball) const
             && cosOAB > 0 && cosOBA > 0);
 }
 
-bool slopeTile::checkBallIsInsideSlope(const ball& __ball) const
+bool slopeTile::checkBallIsInsideSlope(const ball& __ball, bool& backToSlope) const
 {
-    /*The ball is inside the slope if d(O, slopeEquation) < radius and one of these happens
-        - cos(vOA, vBA) < 1 and cos(vOB, vAB) < 1
-        - OB < radius
-        - OA < radius
+    /*
+        - The ball is inside the slope if d(O, slopeEquation) < radius 
+        - To be back to slope, O needs to:
+            + be on the different side with T
+            + cos(vOA, vBA) < 1 and cos(vOB, vAB) < 1
     */
+    if (!collide(*this, __ball)) return 0;
+
+    backToSlope = 0;
+
     auto O = __ball.getBallCenter();
-    std::pair <double, double> A, B;
+    std::pair <double, double> A, B, T;
     if (slopeType == 2 || slopeType == 4)
     {
         A = {mPosX, mPosY};
         B = {mPosX + mWidth , mPosY - mHeight};
+        if (slopeType == 2) T = {mPosX + mWidth, mPosY};
+        else T = {mPosX, mPosY - mHeight};
     }
     else
     {
         A = {mPosX, mPosY - mHeight};
         B = {mPosX + mWidth, mPosY};
+        if (slopeType == 1) T = {mPosX, mPosY};
+        else T = {mPosX + mWidth, mPosY - mHeight};
     }
     
     std::pair <double, double> vAO = {O.first - A.first, O.second - A.second};
@@ -97,11 +106,35 @@ bool slopeTile::checkBallIsInsideSlope(const ball& __ball) const
     double cosOAB = (vAO.first * vAB.first + vAO.second * vAB.second) / AO / AB;
     double cosOBA = (vOB.first * vAB.first + vOB.second * vAB.second) / OB / AB;
 
-    if (distanceFromCenter(__ball) - __ball.getRadius() < -1e-3)
+    if ((mEquationA * O.first - O.second + mEquationB) * (mEquationA * T.first - T.second + mEquationB) < 0)
     {
-        if ((cosOAB > 0 && cosOBA > 0)) return 1;
-        if (AO < __ball.getRadius() || OB < __ball.getRadius()) return 1;
+        if (distanceFromCenter(__ball) - __ball.getRadius() < -1e-3)
+        {
+            if ((cosOAB > 1e-3 && cosOBA > 1e-3)) 
+            {
+                backToSlope  = 1;
+                return 1;
+            }
+            else 
+            {
+                backToSlope = 0;
+                if (AO < __ball.getRadius() || OB < __ball.getRadius()) return 1;
+                return 0;
+            }
+        }
+        else 
+        {
+            backToSlope = 0;
+            return 0;
+        }
     }
+    else 
+    {
+        backToSlope = 0;
+        if (collide(*this, __ball)) return 1;
+        return 0;
+    }
+    
     return 0; 
 }
 

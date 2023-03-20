@@ -52,7 +52,8 @@ public:
     bool checkBallIsOnSlope(const ball& __ball) const;
 
     /// @brief Ball is stuck inside the slope tile
-    bool checkBallIsInsideSlope(const ball& __ball) const;
+    /// @param backToSlope Check if the ball will be going back to the slope or is reflected
+    bool checkBallIsInsideSlope(const ball& __ball, bool& backToSlope) const;
 
     void render(SDL_Renderer* renderer, LTexture& spritesheet);
 };
