@@ -96,9 +96,11 @@ void LTexture::render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_R
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
     if (clip != NULL)
     {
-        renderQuad.h = clip->h * stretchSize;
-        renderQuad.w = clip->w * stretchSize;
+        renderQuad.h = clip->h;
+        renderQuad.w = clip->w;
     }
+    renderQuad.h *= stretchSize;
+    renderQuad.w *= stretchSize;
     SDL_RenderCopyEx(mRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
@@ -110,72 +112,6 @@ void LTexture::clear()
         mTexture = NULL;
         mWidth = mHeight = 0;
     }
-}
-
-LButton::LButton()
-{
-    mPos = {0, 0};
-}
-
-void LButton::set(const int& x, const int& y, const int& __w, const int& __h)
-{
-    mPos = {x, y};
-    mWidth = __w;
-    mHeight = __h;
-}
-
-void LButton::set(const int& x, const int& y, const LTexture& __ButtonTexture)
-{
-    setTexture(__ButtonTexture);
-    set(x, y, __ButtonTexture.getWidth(), __ButtonTexture.getHeight());
-}
-
-SDL_Point LButton::getPos()
-{
-    return mPos;
-}
-
-int LButton::getWidth()
-{
-    return mWidth;
-}
-
-int LButton::getHeight()
-{
-    return mHeight;
-}
-
-void LButton::setTexture(const LTexture& __ButtonTexture)
-{
-    mButtonTexture = __ButtonTexture;
-    mSpriteClipPtr = NULL;
-}
-
-void LButton::setText(SDL_Renderer* renderer, const std::string& __Text, const int& fontSize, const char* fontPath, const SDL_Color& fontColor)
-{
-    mText = __Text;
-
-    TTF_Font* font = TTF_OpenFont(fontPath, fontSize);
-
-    if (!mTextTexture.loadTexture(renderer, font, &mText[0], fontColor)) 
-    {
-        cout << "Cannot load button text.\n";
-    }
-    else textIsSetUp = 1;
-    TTF_CloseFont(font);
-}
-
-void LButton::render(SDL_Renderer* renderer)
-{
-    mButtonTexture.render(renderer, mPos.x, mPos.y, mSpriteClipPtr);
-
-    if (textIsSetUp)
-    {
-        int textRenderPosX = mPos.x + (mWidth - mTextTexture.getWidth() / 2);  
-        int textRenderPosY = mPos.y + (mHeight - mTextTexture.getHeight() / 2); 
-        mTextTexture.render(renderer, textRenderPosX, textRenderPosY);
-    }
-    
 }
 
 gameObject::gameObject()

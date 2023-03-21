@@ -37,11 +37,14 @@ const int STATUS_AREA_FONT_SIZE = 72;
 
 const SDL_Color SDL_COLOR_BLACK = {0, 0, 0};
 const SDL_Color SDL_COLOR_WHITE = {255, 255, 255};
+const SDL_Color SDL_COLOR_GREEN = {0, 255, 0};
 const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
 const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
 const std::string CALIBRI_FONT_PATH = "./fonts/calibri.ttf";
 const std::string MAPCONFIG_PATH = "./data/mapConfig";
+
+const std::string BACKGROUND_PATH = "./img/background.png";
 
 const int LIVES_LEFT_DEFAULT = 3;
 
@@ -71,7 +74,7 @@ class LTexture
         /// @brief Load texture from file
         /// @param mRenderer SDL_Renderer
         /// @param path The directory of the file containing the texture
-        bool loadTexture(SDL_Renderer* mRenderer, const char* path, const SDL_Color& colorKey = SDL_COLOR_BLACK);
+        bool loadTexture(SDL_Renderer* mRenderer, const char* path, const SDL_Color& colorKey = SDL_COLOR_GREEN);
 
         /// @brief Create texture from text
         /// @param mRenderer SDL_Renderer
@@ -93,57 +96,6 @@ class LTexture
 
         /// @brief Destroy the LTexture object
         void clear();
-};
-
-/// @brief Button class
-class LButton
-{
-    private:
-        /// @brief Upper left position of the button
-        SDL_Point mPos;
-
-        int mWidth;
-        int mHeight;
-        
-        /// @brief The texture rendered with the button
-        LTexture mButtonTexture;
-        SDL_Rect* mSpriteClipPtr;
-
-        /// @brief The text rendered inside the button
-        std::string mText;
-        LTexture mTextTexture;
-
-        bool textIsSetUp;
-
-    public:
-        /// @brief Constructor
-        LButton();
-
-        /// @brief Set the texture rendered with the button
-        void setTexture(const LTexture& __Texture);
-
-        /// @brief Set the text rendered inside the button
-        void setText(SDL_Renderer* renderer, const std::string& __Text, const int& fontSize = 48, const char* fontPath = &CALIBRI_FONT_PATH[0], const SDL_Color& fontColor = SDL_COLOR_BLACK);
-
-        /// @brief Set the upper left position, width and height of the button
-        void set(const int& x, const int& y, const int& __w, const int& __h);
-        
-        /// @brief Set up a button with a given texture
-        void set(const int& x, const int& y, const LTexture& __ButtonTexture);
-
-        /// @brief Get the upper left position of the button
-        SDL_Point getPos();
-        /// @brief Get the width of the button
-        int getWidth();
-
-        /// @brief Get the height of the button
-        int getHeight();
-
-        /// @brief Render the button
-        void render(SDL_Renderer* renderer);
-
-        /// @brief Handle the SDL events
-        virtual void handleEvent(SDL_Event event) = 0;
 };
 
 class gameObject

@@ -1,4 +1,7 @@
 //game.h
+#ifndef GAME_GUARD
+#define GAME_GUARD
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -7,6 +10,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include "base.h"
+#include "mainMenu.h"
 #include "playLevel.h"
 
 /**
@@ -58,3 +62,5 @@ class game
         /// @brief Cleanup
         void clear();
 };
+
+#endif

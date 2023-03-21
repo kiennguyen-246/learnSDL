@@ -1,6 +1,6 @@
 // mainMenu.h
 /**
- * @brief This file controls a single level of the game
+ * @brief This file controls a main menu level of the game
  * 
  */
 
@@ -15,14 +15,57 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include "base.h"
+#include "buttons.h"
+
+enum MAIN_MENU_EXIT_STATUS
+{
+    MAIN_MENU_EXIT_NULL,
+    MAIN_MENU_EXIT_NEW_GAME,
+    MAIN_MENU_EXIT_CONTINUE,
+    MAIN_MENU_EXIT_INSTRUCTION,
+    MAIN_MENU_EXIT_HIGH_SCORES
+};
 
 const std::string GAME_LOGO_PATH = "./img/menu_logo.png";
-const int GAME_LOGO_RENDER_POS_X = 
+const int GAME_LOGO_RENDER_POS_X = 100;
+const int GAME_LOGO_RENDER_POS_Y = 100;
+const int GAME_LOGO_RENDER_STRETCH = 2;
+
+const std::string NEW_GAME_BUTTON_TEXT = "NEW GAME";
+const int NEW_GAME_BUTTON_RENDER_POS_X = 600;
+const int NEW_GAME_BUTTON_RENDER_POS_Y = 280;
+
+class newGameButton: public redButton
+{
+private:
+
+public: 
+    newGameButton();
+    ~newGameButton();
+
+    void handleEvent(SDL_Event* event, bool& isTriggered);
+};
 
 class mainMenu
 {
-    private:
-        LTexture gameLogo;  
+private:
+    SDL_Renderer* mRenderer;
+    
+    LTexture mBackgroundTexture;
+
+    LTexture mGameLogoTexture;  
+
+    newGameButton mNewGameButton;
+
+public:
+    mainMenu();
+    ~mainMenu();
+
+    mainMenu(SDL_Renderer* __Renderer);
+
+    void init(SDL_Renderer* __Renderer);
+
+    MAIN_MENU_EXIT_STATUS render();
 };
 
 #endif

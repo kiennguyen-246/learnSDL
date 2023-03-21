@@ -120,14 +120,20 @@ void game::preset()
 
 void game::play()
 {
-    auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
-    curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
-    curLevel->setScore(0);
-    for (int i = 1; i < allLevelCharMap.size(); i ++)
+    auto* curMainMenu = new mainMenu(mRenderer);
+    auto mainMenuStatus = curMainMenu->render();
+
+    if (mainMenuStatus == MAIN_MENU_EXIT_NEW_GAME)
     {
-        curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
-        
-        if (!curLevel->playGame()) break;       //Only continue if cleared level
+        auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
+        curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
+        curLevel->setScore(0);
+        for (int i = 1; i < allLevelCharMap.size(); i ++)
+        {
+            curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
+            
+            if (!curLevel->playGame()) break;       //Only continue if cleared level
+        }
     }
     
 }
