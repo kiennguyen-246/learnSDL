@@ -15,12 +15,12 @@ LTexture::~LTexture()
     clear();
 }
 
-int LTexture::getWidth()
+int LTexture::getWidth() const
 {
     return mWidth;
 }
 
-int LTexture::getHeight()
+int LTexture::getHeight() const
 {
     return mHeight;
 }
@@ -120,8 +120,14 @@ LButton::LButton()
 void LButton::set(const int& x, const int& y, const int& __w, const int& __h)
 {
     mPos = {x, y};
-    w = __w;
-    h = __h;
+    mWidth = __w;
+    mHeight = __h;
+}
+
+void LButton::set(const int& x, const int& y, const LTexture& __ButtonTexture)
+{
+    setTexture(__ButtonTexture);
+    set(x, y, __ButtonTexture.getWidth(), __ButtonTexture.getHeight());
 }
 
 SDL_Point LButton::getPos()
@@ -131,17 +137,45 @@ SDL_Point LButton::getPos()
 
 int LButton::getWidth()
 {
-    return w;
+    return mWidth;
 }
 
 int LButton::getHeight()
 {
-    return h;
+    return mHeight;
 }
 
-void LButton::render(SDL_Renderer* renderer, LTexture& texture, SDL_Rect* clip)
+void LButton::setTexture(const LTexture& __ButtonTexture)
 {
-    texture.render(renderer, mPos.x, mPos.y, clip);
+    mButtonTexture = __ButtonTexture;
+    mSpriteClipPtr = NULL;
+}
+
+void LButton::setText(SDL_Renderer* renderer, const std::string& __Text, const int& fontSize, const char* fontPath, const SDL_Color& fontColor)
+{
+    mText = __Text;
+
+    TTF_Font* font = TTF_OpenFont(fontPath, fontSize);
+
+    if (!mTextTexture.loadTexture(renderer, font, &mText[0], fontColor)) 
+    {
+        cout << "Cannot load button text.\n";
+    }
+    else textIsSetUp = 1;
+    TTF_CloseFont(font);
+}
+
+void LButton::render(SDL_Renderer* renderer)
+{
+    mButtonTexture.render(renderer, mPos.x, mPos.y, mSpriteClipPtr);
+
+    if (textIsSetUp)
+    {
+        int textRenderPosX = mPos.x + (mWidth - mTextTexture.getWidth() / 2);  
+        int textRenderPosY = mPos.y + (mHeight - mTextTexture.getHeight() / 2); 
+        mTextTexture.render(renderer, textRenderPosX, textRenderPosY);
+    }
+    
 }
 
 gameObject::gameObject()

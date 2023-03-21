@@ -49,7 +49,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
         B BB        BB                               VBB     c      r      BBN      VBBBBBN                               BB  BB              BB
   BBBBBBB BB        BBZ        XBB                    +             XZ     +             +                                          BB        BB
     T   B BB        BBBZ      XBBB                    R            XBB     r             r                                  BB            BB  BB
-    P   B BB        BBBBZ    XBBBB                   XBB          XB##     BBZ      XBBBBBZ     XBBZ      XBBBBBBBBBBBBBBB       BB      BB   BB
+    P   B BB        BBBBZ    XBBBB                   XBB          XB##     BBZ      XBBBBBZ     XBB        BBBBBBBBBBBBBBB       BB      BB   BB
   BBBBBBB BB        BBBBBZ  XBBBBB                  XBBB         XBBG#     BBBZ    XBBBBBBBZ   XBBBB000000BBBBBBBBBBBBBBBB          BBTT    T BB
 BBBBBBBBBBBBBBB     BBBBBBE-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB0000BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
           BB                             BB    BB             T     T   VBBBBBBNY VBBBBBBBBBBBBBBBBBB0000BB             BB                      
@@ -103,8 +103,8 @@ BBBBBBBBBBBBBBB     BBBBBBE-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
                                 BBBBBBBBBBBB          BB                                                                                                  
                                 BBBBBBBBBBBB          BB                                                                                                  
                                 BB    C               BB                                                                                                 
-                                BB                    BB                                                T                                                 
-                                BB                    BB                XZ                 Z     Z                                                        
+                                BB                    BB                                    X   Z                                                         
+                                BB                    BB                XZ                 X     Z                                                        
                                 BB                    BB               X  Z              BBBBBBBBBBBBBBBBB                                                             
                                 BB              T     BB              X    Z                                                                             
                                 BB              BBIIIIBB             X      Z                                                                             
@@ -121,7 +121,7 @@ BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
                                 BB    BB        BB    BB                       II  II    II  II   BBBB  BN  XBBZ  VB  BBBBBBBB          BBBBBBBB          
                                 BB    BB        BB    BB    X    Z X   Z        IIII  C   IIII    BBBB  N  XBBBBZ  V  BBBBBBBN          VBBBBBBB          
                                 BB                    BB   XB    BZB   BZ       IIII      IIII            XBBBBBBZ          +            +  P BB          
-                                BB                    BB     IIII   III  Z      IIIIIIIIIIIIII           XBBBBBBBBZ         R            R  P BB          
+                                BB                    BB     IIII   III         IIIIIIIIIIIIII           XBBBBBBBBZ         R            R  P BB          
                                 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 0
 10
