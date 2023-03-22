@@ -8,6 +8,8 @@
 #ifndef PLAYLEVEL_GUARD
 #define PLAYLEVEL_GUARD
 
+#define CODE787898 0
+
 #include <iostream>
 #include <string>
 #include <windows.h>
@@ -19,6 +21,16 @@
 #include "ball.h"
 #include "spider.h"
 #include "levelMap.h"
+#include "miniMenu.h";
+
+const int MINIMUM_LIFE_COUNT = 0;
+enum PLAY_LEVEL_EXIT_STATUS
+{
+    PLAY_LEVEL_EXIT_NULL,
+    PLAY_LEVEL_EXIT_LEVEL_CLEARED,
+    PLAY_LEVEL_EXIT_MAIN_MENU,
+    PLAY_LEVEL_EXIT_REPLAY_LEVEL,
+};
 
 const int LIVES_INFO_TEXT_RENDER_POS_X = 60;
 const int LIVES_INFO_TEXT_RENDER_POS_Y = 680;
@@ -32,7 +44,7 @@ const int SCORE_RENDER_POS_X = 960;
 const int SCORE_RENDER_POS_Y = 680;
 const int EXTRA_RENDER_POS_X = 720;
 const int EXTRA_RENDER_POS_Y = 680;
-const int LEVEL_INFO_TEXT_RENDER_POS_X = 500;
+const int LEVEL_INFO_TEXT_RENDER_POS_X = -1e6;  //middle of screen
 const int LEVEL_INFO_TEXT_RENDER_POS_Y = 680;
 const int LEVEL_INFO_TEXT_FONT_SIZE = 90;
 const int LEVEL_INFO_TEXT_RENDER_TIME = 180;
@@ -76,6 +88,8 @@ public:
     void renderScore(const int& score);
 
     void renderLevelInfo(const int& levelId);
+
+    void renderGameOver();
 
     void render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated);
 };
@@ -123,9 +137,11 @@ private:
 
     int score;
 
+    gameOverMenu mGameOverMenu;
+
 public:
     /// @brief Default constructor
-    playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, LTexture& __Spritesheet);
+    playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, const LTexture& __Spritesheet);
 
     ~playLevel();
 
@@ -156,8 +172,7 @@ public:
     bool checkBallIsInsideWater();
 
     /// @brief Render the game
-    /// @return 1 if the player successfully pass the level
-    bool playGame();
+    void playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus);
 };
 
 #endif

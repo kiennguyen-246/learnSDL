@@ -48,7 +48,17 @@ void statusArea::renderLevelInfo(const int& levelId)
     std::string levelInfo = "LEVEL " + std::to_string(levelId);
     renderText(mRenderer, curTextTexture, &levelInfo[0], LEVEL_INFO_TEXT_RENDER_POS_X, LEVEL_INFO_TEXT_RENDER_POS_Y, 
                 LEVEL_INFO_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+}
 
+void statusArea::renderGameOver()
+{
+    SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
+    SDL_RenderFillRect(mRenderer, &mContainer);
+
+    LTexture curTextTexture;
+    std::string gameOverText = "GAME OVER";
+    renderText(mRenderer, curTextTexture, &gameOverText[0], LEVEL_INFO_TEXT_RENDER_POS_X, LEVEL_INFO_TEXT_RENDER_POS_Y, 
+                LEVEL_INFO_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
 }
 
 void statusArea::render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated)
@@ -62,7 +72,7 @@ void statusArea::render(const int& livesLeft, const int& portalsLeft, const int&
     if (acceleratorActivated) mSpritesheet.render(mRenderer, EXTRA_RENDER_POS_X, EXTRA_RENDER_POS_Y, &mAcceleratorSpriteClip, 2);
 }
 
-playLevel::playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, LTexture& __Spritesheet)
+playLevel::playLevel(SDL_Window* __Window, SDL_Renderer* __Renderer, const LTexture& __Spritesheet)
 {
     mWindow = __Window;
     mRenderer = __Renderer;
@@ -395,13 +405,17 @@ bool playLevel::checkBallIsInsideWater()
     return 0;
 }
 
-bool playLevel::playGame()
+void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
 {
-    bool levelCleared = 0;
     frameCount = 0;
     
     bool quit = 0;
     SDL_Event curEvent;
+
+    bool levelEnded = 0;
+    mGameOverMenu.setVictory(0);
+    mGameOverMenu.setScore(0);
+    std::cout << "[playLevel.cpp] isVictory = " << mGameOverMenu.checkIsVictory() << "\n";
 
     mStatusArea.init(mRenderer, mSpritesheet);
 
@@ -441,6 +455,24 @@ bool playLevel::playGame()
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
+            else
+            {
+                if (levelEnded)
+                {
+                    GAME_OVER_MENU_EXIT_STATUS gameOverExit = GAME_OVER_EXIT_NULL;
+                    mGameOverMenu.handleEvent(&curEvent, gameOverExit);
+                    if (gameOverExit == GAME_OVER_EXIT_MAIN_MENU)
+                    {
+                        playLevelStatus = PLAY_LEVEL_EXIT_MAIN_MENU;
+                        quit = 1;
+                    }
+                    if (gameOverExit == GAME_OVER_EXIT_REPLAY)
+                    {
+                        playLevelStatus = PLAY_LEVEL_EXIT_REPLAY_LEVEL;
+                        quit = 1;
+                    }
+                }
+            }
         }
 
         frameCount ++;
@@ -498,6 +530,10 @@ bool playLevel::playGame()
         SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
         SDL_RenderClear(mRenderer);
 
+        //Render the status area
+        if (frameCount <= LEVEL_INFO_TEXT_RENDER_TIME) mStatusArea.renderLevelInfo(levelId);
+        else mStatusArea.render(livesLeft, portalsLeft, score, acceleratorActivated);
+
         mLevelMap.render(mRenderer, mSpritesheet);
 
         for (auto &curSpider: mSpiderList) 
@@ -527,7 +563,8 @@ bool playLevel::playGame()
 
         waterlogged = 0;
         if (checkBallIsInsideWater()) waterlogged = 1;
-        
+
+#if CODE787898 == 0
         //Hit a spider
         for (auto &curSpider: mSpiderList)
         {
@@ -541,7 +578,9 @@ bool playLevel::playGame()
                 break;
             }
         } 
+#endif
 
+#if CODE787898 == 0
         //Hit a spike
         for (auto &curSpike: mLevelMap.spikesList())
         {
@@ -556,6 +595,7 @@ bool playLevel::playGame()
             }
             
         }   
+#endif
 
         //Hit a pump
         if (mCurBlockObjectX == PUMP_TILE || mCurBlockObjectY == PUMP_TILE)
@@ -668,9 +708,20 @@ bool playLevel::playGame()
         {
             if (curFinishLine.checkIsOpen())
             {
-                score += FINISH_LINE_SCORE;
-                levelCleared = 1;
-                quit = 1;
+                if (!levelEnded) score += FINISH_LINE_SCORE;
+                if (levelId < 4)
+                {
+                    playLevelStatus = PLAY_LEVEL_EXIT_LEVEL_CLEARED;
+                    quit = 1;
+                }
+                else
+                {
+                    mGameOverMenu.set(mRenderer);
+                    mGameOverMenu.setVictory(1);
+                    mGameOverMenu.setScore(score);
+                    levelEnded = 1;
+                }
+                
             }
         }
          
@@ -681,13 +732,25 @@ bool playLevel::playGame()
 
         if (respawn)
         {
-            SDL_Delay(200);
-            mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
-                                checkpointsList[lastCheckpointIndex].getFramePosY());
-            checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
-            acceleratorActivated = 0;
-            acceleratorStartFrame = 0;
-            respawn = 0;
+            if (livesLeft >= MINIMUM_LIFE_COUNT)
+            {
+                SDL_Delay(200);
+                mLevelMap.setFramePos(checkpointsList[lastCheckpointIndex].getFramePosX(), 
+                                    checkpointsList[lastCheckpointIndex].getFramePosY());
+                checkpointsList[lastCheckpointIndex].spawnBall(mBall, mSpritesheet);
+                acceleratorActivated = 0;
+                acceleratorStartFrame = 0;
+                respawn = 0;
+            }
+            else
+            {
+                mGameOverMenu.set(mRenderer);
+                mGameOverMenu.setVictory(0);
+                mGameOverMenu.setScore(score);
+                
+                // std::cout << "[playLevel.cpp] Score: " << score << ".\n";
+                levelEnded = 1;
+            }
         }
 
         // SDL_Delay(100);
@@ -737,14 +800,19 @@ bool playLevel::playGame()
             mLevelMap.moveX(ballPosXBeforeMove - ballPosXAfterMove);
             mBall.scaleX(mLevelMap.getFramePosX());
         }
-
+        
         mBall.render(mRenderer, mSpritesheet);
 
-        //Render the status area
-        if (frameCount <= LEVEL_INFO_TEXT_RENDER_TIME) mStatusArea.renderLevelInfo(levelId);
-        else mStatusArea.render(livesLeft, portalsLeft, score, acceleratorActivated);
+        // mSpritesheet.render(mRenderer, 0, 0, NULL);
+
+        // std::cout << "[playLevel.cpp] " << levelEnded << "\n";
+        if (levelEnded)
+        {
+            // std::cout << "[playLevel.cpp] isVictory = " << mGameOverMenu.checkIsVictory() << "\n";
+            mGameOverMenu.render(mRenderer);
+            mStatusArea.renderGameOver();
+        }
 
         SDL_RenderPresent(mRenderer);
     }
-    return levelCleared;
 }

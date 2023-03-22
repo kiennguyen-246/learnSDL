@@ -120,22 +120,83 @@ void game::preset()
 
 void game::play()
 {
-    auto* curMainMenu = new mainMenu(mRenderer);
-    auto mainMenuStatus = curMainMenu->render();
-
-    if (mainMenuStatus == MAIN_MENU_EXIT_NEW_GAME)
+    int lastLevel = 0;
+    std::ifstream fi(LAST_LEVEL_DATA_PATH);
+    if (!fi.is_open())
     {
-        auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
-        curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
-        curLevel->setScore(0);
-        for (int i = 1; i < allLevelCharMap.size(); i ++)
-        {
-            curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
-            
-            if (!curLevel->playGame()) break;       //Only continue if cleared level
-        }
+        std::cout << "Cannot open level data file.\n";
     }
-    
+    fi >> lastLevel;
+    fi.close();
+
+    std::ofstream fo_lastLevel(LAST_LEVEL_DATA_PATH);
+    if (!fo_lastLevel.is_open())
+    {
+        std::cout << "Cannot open level data file.\n";
+    }
+
+    bool quitGame = 0;
+    while (!quitGame)
+    {
+        std::cout << "[game.cpp] Run here.\n";
+        
+        auto* curMainMenu = new mainMenu(mRenderer);
+        auto mainMenuStatus = curMainMenu->render();
+
+        if (mainMenuStatus == MAIN_MENU_EXIT_NULL) quitGame = 1;
+
+        if (mainMenuStatus == MAIN_MENU_EXIT_NEW_GAME || mainMenuStatus == MAIN_MENU_EXIT_CONTINUE)
+        {
+            bool exitPlay = 0;
+            
+            auto* curLevel = new playLevel(mWindow, mRenderer, mSpritesheet);
+            curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
+            curLevel->setScore(0);
+            int startLevel = 1;
+            if (mainMenuStatus == MAIN_MENU_EXIT_CONTINUE) startLevel = lastLevel;
+            for (int i = startLevel; i < allLevelCharMap.size(); i ++)
+            {
+                curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
+                // std::cout << "[game.cpp] Current level: " << i << "\n";
+                
+                PLAY_LEVEL_EXIT_STATUS playLevelStatus = PLAY_LEVEL_EXIT_NULL;
+                curLevel->playGame(playLevelStatus);
+                switch(playLevelStatus)
+                {
+                    case PLAY_LEVEL_EXIT_NULL:
+                        exitPlay = 1;
+                        quitGame = 1;
+                        break;
+
+                    case PLAY_LEVEL_EXIT_LEVEL_CLEARED:
+                        lastLevel = (i + 1 > lastLevel ? i + 1 : lastLevel);
+                        if (lastLevel > 4) lastLevel = 4;
+                        break;
+                    
+                    case PLAY_LEVEL_EXIT_REPLAY_LEVEL:
+                        i--;
+                        curLevel->setLivesLeft(LIVES_LEFT_DEFAULT);
+                        curLevel->setScore(0);
+                        break;
+                    
+                    case PLAY_LEVEL_EXIT_MAIN_MENU:
+                        exitPlay = 1;
+                        break;
+
+                    default:
+                        exitPlay = 1;
+                        break;
+                }
+                if (exitPlay) break;
+            }
+            // delete curLevel;
+            if (quitGame) break;
+        }
+        delete curMainMenu;
+    }
+
+    fo_lastLevel << lastLevel;
+    fo_lastLevel.close();
 }
 
 void game::clear()

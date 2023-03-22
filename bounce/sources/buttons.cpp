@@ -66,7 +66,30 @@ void LButton::render(SDL_Renderer* renderer)
         int textRenderPosY = mPos.y + (mHeight - mTextTexture.getHeight()) / 2; 
         mTextTexture.render(renderer, textRenderPosX, textRenderPosY);
     }
+}
+
+void LButton::handleEvent(SDL_Event* event, bool& isTriggered)
+{
+    SDL_Point pos = getPos();
+    int w = getWidth();
+    int h = getHeight();
+
     
+    if (event->type == SDL_MOUSEMOTION || event->type == SDL_MOUSEBUTTONUP || event->type == SDL_MOUSEBUTTONDOWN)
+    {
+        int x = 0, y = 0;
+        SDL_GetMouseState(&x, &y);
+
+        bool inside = 1;
+
+        if (x < pos.x || x > pos.x + w || y < pos.y || y > pos.y + h) inside = 0;
+
+        if (inside && event->type == SDL_MOUSEBUTTONDOWN) 
+        {
+            isTriggered = 1;
+        }
+        
+    }
 }
 
 redButton::redButton()

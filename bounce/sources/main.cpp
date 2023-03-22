@@ -9,5 +9,7 @@ int main(int argc, char* argv[])
     __game->preset();
 
     __game->play();
+
+    delete __game;
     
 }

@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <sdl.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -40,11 +41,14 @@ const SDL_Color SDL_COLOR_WHITE = {255, 255, 255};
 const SDL_Color SDL_COLOR_GREEN = {0, 255, 0};
 const SDL_Color SDL_COLOR_MALIBU = {81, 218, 254};
 
-const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
-const std::string CALIBRI_FONT_PATH = "./fonts/calibri.ttf";
-const std::string MAPCONFIG_PATH = "./data/mapConfig";
-
 const std::string BACKGROUND_PATH = "./img/background.png";
+const std::string SPRITESHEET_PATH = "./img/spritesheet.png";
+
+const std::string CALIBRI_FONT_PATH = "./fonts/calibri.ttf";
+const std::string CALIBRI_BOLD_FONT_PATH = "./fonts/calibrib.ttf";
+
+const std::string MAPCONFIG_PATH = "./data/mapConfig";
+const std::string LAST_LEVEL_DATA_PATH = "./data/lastLevel";
 
 const int LIVES_LEFT_DEFAULT = 3;
 
@@ -86,7 +90,7 @@ class LTexture
 
         /// @brief Render the texture on the window
         /// @param mRenderer SDL_Renderer
-        /// @param x,y 2 integers, represent the upper left position
+        /// @param x,y 2 integers, represent the upper left position. If a parameter <= -1e6, the texture is rendereed in the middle of the screen
         /// @param clip SDL_Rect, represent the part of the texture to be render. NULL means all.
         /// @param angle Rotation angle
         /// @param center Rotation center

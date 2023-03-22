@@ -23,7 +23,8 @@ enum MAIN_MENU_EXIT_STATUS
     MAIN_MENU_EXIT_NEW_GAME,
     MAIN_MENU_EXIT_CONTINUE,
     MAIN_MENU_EXIT_INSTRUCTION,
-    MAIN_MENU_EXIT_HIGH_SCORES
+    MAIN_MENU_EXIT_HIGH_SCORES,
+    MAIN_MENU_EXIT_QUIT
 };
 
 const std::string GAME_LOGO_PATH = "./img/menu_logo.png";
@@ -35,16 +36,9 @@ const std::string NEW_GAME_BUTTON_TEXT = "NEW GAME";
 const int NEW_GAME_BUTTON_RENDER_POS_X = 600;
 const int NEW_GAME_BUTTON_RENDER_POS_Y = 280;
 
-class newGameButton: public redButton
-{
-private:
-
-public: 
-    newGameButton();
-    ~newGameButton();
-
-    void handleEvent(SDL_Event* event, bool& isTriggered);
-};
+const std::string CONTINUE_BUTTON_TEXT = "CONTINUE";
+const int CONTINUE_BUTTON_RENDER_POS_X = 930;
+const int CONTINUE_BUTTON_RENDER_POS_Y = 280;
 
 class mainMenu
 {
@@ -55,7 +49,9 @@ private:
 
     LTexture mGameLogoTexture;  
 
-    newGameButton mNewGameButton;
+    redButton mNewGameButton;
+
+    redButton mContinueButton;
 
 public:
     mainMenu();

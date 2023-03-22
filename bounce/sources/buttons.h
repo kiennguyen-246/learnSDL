@@ -63,6 +63,8 @@ public:
 
     /// @brief Render the button
     void render(SDL_Renderer* renderer);
+
+    void handleEvent(SDL_Event* event, bool& isTriggered);
 };
 
 class redButton: public LButton

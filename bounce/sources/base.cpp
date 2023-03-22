@@ -94,13 +94,19 @@ void LTexture::render(SDL_Renderer* mRenderer, const int& x, const int& y, SDL_R
                      const double& angle, SDL_Point* center, SDL_RendererFlip flip)
 {
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
+
     if (clip != NULL)
     {
         renderQuad.h = clip->h;
         renderQuad.w = clip->w;
     }
+
     renderQuad.h *= stretchSize;
     renderQuad.w *= stretchSize;
+
+    if (x <= -1e6) renderQuad.x = (SCREEN_WIDTH - renderQuad.w) / 2;
+    if (y <= -1e6) renderQuad.y = (SCREEN_HEIGHT - renderQuad.h) / 2;
+
     SDL_RenderCopyEx(mRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
