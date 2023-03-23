@@ -118,28 +118,37 @@ void game::preset()
     mSpritesheet.loadTexture(mRenderer, &SPRITESHEET_PATH[0], SDL_COLOR_MALIBU);
 }
 
-void game::play()
+int game::getLastLevel() const
 {
-    int lastLevel = 0;
     std::ifstream fi(LAST_LEVEL_DATA_PATH);
     if (!fi.is_open())
     {
         std::cout << "Cannot open level data file.\n";
     }
+    int lastLevel = 0;
     fi >> lastLevel;
     fi.close();
+    return lastLevel;
+}
 
-    std::ofstream fo_lastLevel(LAST_LEVEL_DATA_PATH);
-    if (!fo_lastLevel.is_open())
+void game::updateLastLevel(const int& lastLevel)
+{
+    std::ofstream fo(LAST_LEVEL_DATA_PATH);
+    if (!fo.is_open())
     {
         std::cout << "Cannot open level data file.\n";
     }
+    fo << lastLevel;
+    fo.close();
+}
 
+void game::play()
+{
+    int lastLevel = getLastLevel();
+    
     bool quitGame = 0;
     while (!quitGame)
     {
-        std::cout << "[game.cpp] Run here.\n";
-        
         auto* curMainMenu = new mainMenu(mRenderer);
         auto mainMenuStatus = curMainMenu->render();
 
@@ -192,11 +201,12 @@ void game::play()
             // delete curLevel;
             if (quitGame) break;
         }
+        
+
         delete curMainMenu;
     }
 
-    fo_lastLevel << lastLevel;
-    fo_lastLevel.close();
+    updateLastLevel(lastLevel);
 }
 
 void game::clear()

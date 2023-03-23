@@ -49,6 +49,7 @@ const std::string CALIBRI_BOLD_FONT_PATH = "./fonts/calibrib.ttf";
 
 const std::string MAPCONFIG_PATH = "./data/mapConfig";
 const std::string LAST_LEVEL_DATA_PATH = "./data/lastLevel";
+const std::string HIGH_SCORE_DATA_PATH = "./data/highScore";
 
 const int LIVES_LEFT_DEFAULT = 3;
 

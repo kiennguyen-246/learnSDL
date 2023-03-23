@@ -56,6 +56,10 @@ class game
         /// @brief Settings before playing the game
         void preset();
 
+        int getLastLevel() const;
+
+        void updateLastLevel(const int& lastLevel);
+
         /// @brief The main gameplay
         void play();
 
