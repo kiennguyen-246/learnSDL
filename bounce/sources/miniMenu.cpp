@@ -60,6 +60,7 @@ void gameOverMenu::handleEvent(SDL_Event* event, GAME_OVER_MENU_EXIT_STATUS& exi
 {
     bool buttonTriggered = 0;
     mMainMenuButton.handleEvent(event, buttonTriggered);
+    if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE) buttonTriggered = 1;
     if (buttonTriggered) exitStatus = GAME_OVER_EXIT_MAIN_MENU;
 
     buttonTriggered = 0;
@@ -136,6 +137,7 @@ void highScoreMenu::handleEvent(SDL_Event* event, HIGH_SCORE_MENU_EXIT_STATUS& e
 {
     bool buttonTriggered = 0;
     mReturnButton.handleEvent(event, buttonTriggered);
+    if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE) buttonTriggered = 1;
     if (buttonTriggered) 
     {
         exitStatus = HIGH_SCORE_EXIT_RETURN;
@@ -159,4 +161,57 @@ void highScoreMenu::render(SDL_Renderer* renderer)
     curRenderPosY += mYellowSunglasses.getHeight() + 10;
 
     mReturnButton.render(renderer);
+}
+
+pauseMenu::pauseMenu()
+{
+
+}
+
+pauseMenu::~pauseMenu()
+{
+
+}
+
+void pauseMenu::set(SDL_Renderer* renderer)
+{
+    mResumeButton.set(renderer, RESUME_BUTTON_RENDER_POS_X, RESUME_BUTTON_RENDER_POS_Y, RESUME_BUTTON_TEXT);
+    mMainMenuButton.set(renderer, MAIN_MENU_2_BUTTON_RENDER_POS_X, MAIN_MENU_2_BUTTON_RENDER_POS_Y, MAIN_MENU_2_BUTTON_TEXT);
+
+    mYellowNerd.loadTexture(renderer, &YELLOW_NERD_EMOJI_PATH[0]);
+}
+
+void pauseMenu::handleEvent(SDL_Event* event, PAUSE_MENU_EXIT_STATUS& exitStatus)
+{
+    bool buttonTriggered = 0;
+    mResumeButton.handleEvent(event, buttonTriggered);
+    if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_ESCAPE) buttonTriggered = 1;
+    if (buttonTriggered) 
+    {
+        exitStatus = PAUSE_EXIT_RESUME;
+    }
+
+    buttonTriggered = 0;
+    mMainMenuButton.handleEvent(event, buttonTriggered);
+    if (buttonTriggered) 
+    {
+        exitStatus = PAUSE_EXIT_MAIN_MENU;
+    }
+}
+
+void pauseMenu::render(SDL_Renderer* renderer)
+{   
+    SDL_SetRenderDrawColor(renderer, SDL_COLOR_WHITE.r, SDL_COLOR_WHITE.g, SDL_COLOR_WHITE.b, 127);
+    SDL_RenderFillRect(renderer, &mContainer);
+    
+    int curRenderPosY = PAUSE_PROMPT_RENDER_POS_Y;
+    LTexture curTextTexture;
+    renderText(renderer, curTextTexture, "GAME PAUSED", PAUSE_PROMPT_RENDER_POS_X, curRenderPosY, PAUSE_PROMPT_FONT_SIZE, &CALIBRI_BOLD_FONT_PATH[0]);
+    curRenderPosY += curTextTexture.getHeight() + 10;
+
+    mYellowNerd.render(renderer, PAUSE_PROMPT_RENDER_POS_X, curRenderPosY);
+    curRenderPosY += mYellowNerd.getHeight() + 10;
+
+    mResumeButton.render(renderer);
+    mMainMenuButton.render(renderer);
 }

@@ -27,6 +27,7 @@ const std::string GAME_OVER_PROMPT[] =
 
 const std::string YELLOW_SAD_EMOJI_PATH = "./img/yellowSad.png";
 const std::string YELLOW_SUNGLASSES_EMOJI_PATH = "./img/yellowSunglasses.png";
+const std::string YELLOW_NERD_EMOJI_PATH = "./img/yellowNerd.png";
 
 enum GAME_OVER_MENU_EXIT_STATUS
 {
@@ -44,6 +45,23 @@ const int MAIN_MENU_BUTTON_RENDER_POS_Y = 480;
 const std::string REPLAY_BUTTON_TEXT = "REPLAY LEVEL";
 const int REPLAY_BUTTON_RENDER_POS_X = 740;
 const int REPLAY_BUTTON_RENDER_POS_Y = 480;
+
+enum PAUSE_MENU_EXIT_STATUS
+{
+    PAUSE_EXIT_NULL,
+    PAUSE_EXIT_RESUME,
+    PAUSE_EXIT_MAIN_MENU,
+    PAUSE_EXIT_ENTER_CHEAT_CODE
+};
+const int PAUSE_PROMPT_RENDER_POS_X = -1e6;
+const int PAUSE_PROMPT_RENDER_POS_Y = 70;
+const int PAUSE_PROMPT_FONT_SIZE = 72;
+const std::string RESUME_BUTTON_TEXT = "RESUME";
+const int RESUME_BUTTON_RENDER_POS_X = 317;
+const int RESUME_BUTTON_RENDER_POS_Y = 480;
+const std::string MAIN_MENU_2_BUTTON_TEXT = "MAIN MENU";
+const int MAIN_MENU_2_BUTTON_RENDER_POS_X = 740;
+const int MAIN_MENU_2_BUTTON_RENDER_POS_Y = 480;
 
 enum HIGH_SCORE_MENU_EXIT_STATUS
 {
@@ -119,4 +137,24 @@ public:
 
     void render(SDL_Renderer* renderer);
 };
+
+class pauseMenu: public miniMenu
+{
+private:    
+    redButton mResumeButton;
+    redButton mMainMenuButton;
+
+    LTexture mYellowNerd;
+
+public:
+    pauseMenu();
+    ~pauseMenu();
+
+    void set(SDL_Renderer* renderer);
+
+    void handleEvent(SDL_Event* event, PAUSE_MENU_EXIT_STATUS& exitStatus);
+
+    void render(SDL_Renderer* renderer);
+};
 #endif
+

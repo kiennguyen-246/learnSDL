@@ -17,6 +17,10 @@ const int RED_BUTTON_HEIGHT = 75;
 const int RED_BUTTON_STRETCH_SIZE = 1;
 const int RED_BUTTON_TEXT_FONT_SIZE = 30;
 
+const int BLUE_BUTTON_WIDTH = 75;
+const int BLUE_BUTTON_HEIGHT = 75;
+const int BLUE_BUTTON_STRETCH_SIZE = 1;
+
 /// @brief Button class
 class LButton
 {
@@ -76,6 +80,17 @@ public:
     ~redButton();
 
     void set(SDL_Renderer* renderer, const int& x, const int& y, const std::string& text);
+};
+
+class blueButton: public LButton
+{
+protected:
+
+public:
+    blueButton();
+    ~blueButton();
+
+    void set(SDL_Renderer* renderer, const int& x, const int& y, const std::string& texturePath);
 };
 
 #endif

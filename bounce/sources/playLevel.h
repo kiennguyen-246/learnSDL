@@ -49,6 +49,10 @@ const int LEVEL_INFO_TEXT_RENDER_POS_Y = 680;
 const int LEVEL_INFO_TEXT_FONT_SIZE = 90;
 const int LEVEL_INFO_TEXT_RENDER_TIME = 180;
 
+const std::string PAUSE_BUTTON_SPRITE_PATH = "./img/pauseButton.png";
+const int PAUSE_BUTTON_RENDER_POS_X = 1195;
+const int PAUSE_BUTTON_RENDER_POS_Y = 15;
+
 /// @brief Obejects that can block the move of the ball
 enum BLOCK_OBJECT
 {
@@ -136,6 +140,10 @@ private:
     int portalsLeft;
 
     int score;
+
+    blueButton mPauseButton;
+
+    pauseMenu mPauseMenu;
 
     gameOverMenu mGameOverMenu;
 

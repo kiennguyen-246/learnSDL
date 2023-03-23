@@ -108,3 +108,19 @@ void redButton::set(SDL_Renderer* renderer, const int& x, const int& y, const st
     LButton::set(x, y, RED_BUTTON_WIDTH, RED_BUTTON_HEIGHT);
     setText(renderer, text, RED_BUTTON_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
 }
+
+blueButton::blueButton()
+{
+
+}
+
+blueButton::~blueButton()
+{
+
+}
+
+void blueButton::set(SDL_Renderer* renderer, const int& x, const int& y, const std::string& texturePath)
+{
+    mButtonTexture.loadTexture(renderer, &texturePath[0]);
+    LButton::set(x, y, BLUE_BUTTON_WIDTH, BLUE_BUTTON_HEIGHT);
+}

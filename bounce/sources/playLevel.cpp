@@ -417,6 +417,10 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
     mGameOverMenu.setScore(0);
     std::cout << "[playLevel.cpp] isVictory = " << mGameOverMenu.checkIsVictory() << "\n";
 
+    bool gamePaused = 0;
+    mPauseButton.set(mRenderer, PAUSE_BUTTON_RENDER_POS_X, PAUSE_BUTTON_RENDER_POS_Y, PAUSE_BUTTON_SPRITE_PATH);
+    mPauseMenu.set(mRenderer);
+
     mStatusArea.init(mRenderer, mSpritesheet);
 
     bool respawn = 1;
@@ -472,6 +476,28 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
                         quit = 1;
                     }
                 }
+                if (gamePaused)
+                {
+                    PAUSE_MENU_EXIT_STATUS pauseExit = PAUSE_EXIT_NULL;
+                    mPauseMenu.handleEvent(&curEvent, pauseExit);
+                    if (pauseExit == PAUSE_EXIT_MAIN_MENU)
+                    {
+                        playLevelStatus = PLAY_LEVEL_EXIT_MAIN_MENU;
+                        quit = 1;
+                    }
+                    if (pauseExit == PAUSE_EXIT_RESUME)
+                    {
+                        // std::cout << "[playLevel.cpp] Run here.\n";
+                        gamePaused = 0;
+                    }
+                }
+                else if (!gamePaused)
+                {
+                    bool buttonTriggered = 0;
+                    mPauseButton.handleEvent(&curEvent, buttonTriggered);
+                    if (curEvent.type == SDL_KEYDOWN && curEvent.key.keysym.sym == SDLK_ESCAPE) buttonTriggered = 1;
+                    if (buttonTriggered) gamePaused = 1;
+                }
             }
         }
 
@@ -488,44 +514,49 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
 
         if (acceleratorActivated) velocityXVal = velocityXVal * (ACCELERATOR_SPEED_BOOST_LEVEL) / 100;
 
-        if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]) 
+        if (!gamePaused && !levelEnded)
         {
-            mBall.resetFramesPassedX();
-            mBall.setVelocityX(-velocityXVal);
-            mBall.setAccelerationX(-accelerationXVal);
-        }
-
-        if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
-        {
-            mBall.resetFramesPassedX();
-            mBall.setVelocityX(velocityXVal);
-            mBall.setAccelerationX(accelerationXVal);
-        }
-
-        if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
-        {
-            if (!checkBallIsAirborne())
+            if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]) 
             {
-                mBall.resetFramesPassedY();
-                
-                int charMapPosX = mBall.getRealPosX() / TILE_WIDTH;
-                int charMapPosY = (mBall.getRealPosY() + 10) / TILE_HEIGHT;
-                if (mLevelMap.getMap()[charMapPosY][charMapPosX] == TRAMPOLINE_CHAR_SYMBOL || mLevelMap.getMap()[charMapPosY][charMapPosX + 1] == TRAMPOLINE_CHAR_SYMBOL)
-                {
-                    if (abs(mBall.getVelocityY()) < 1e-7) mBall.setVelocityY(-velocityYVal * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
-                    else mBall.setVelocityY(lastTrampolineVelocity * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
-                    if (mBall.getVelocityY() < -BALL_MAX_VELOCITY_Y) mBall.setVelocityY(-BALL_MAX_VELOCITY_Y); 
-                    lastTrampolineVelocity = mBall.getVelocityY();
-                }
-                else 
-                {
-                    mBall.setVelocityY(-velocityYVal);
-                    lastTrampolineVelocity = mBall.getVelocityY();
-                }
-                mBall.setAccelerationY(accelerationYVal);
+                mBall.resetFramesPassedX();
+                mBall.setVelocityX(-velocityXVal);
+                mBall.setAccelerationX(-accelerationXVal);
             }
+
+            if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) 
+            {
+                mBall.resetFramesPassedX();
+                mBall.setVelocityX(velocityXVal);
+                mBall.setAccelerationX(accelerationXVal);
+            }
+
+            if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_SPACE])
+            {
+                if (!checkBallIsAirborne())
+                {
+                    mBall.resetFramesPassedY();
+                    
+                    int charMapPosX = mBall.getRealPosX() / TILE_WIDTH;
+                    int charMapPosY = (mBall.getRealPosY() + 10) / TILE_HEIGHT;
+                    if (mLevelMap.getMap()[charMapPosY][charMapPosX] == TRAMPOLINE_CHAR_SYMBOL || mLevelMap.getMap()[charMapPosY][charMapPosX + 1] == TRAMPOLINE_CHAR_SYMBOL)
+                    {
+                        if (abs(mBall.getVelocityY()) < 1e-7) mBall.setVelocityY(-velocityYVal * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
+                        else mBall.setVelocityY(lastTrampolineVelocity * (100 + TRAMPOLINE_SPEED_BOOST_LEVEL) / 100);
+                        if (mBall.getVelocityY() < -BALL_MAX_VELOCITY_Y) mBall.setVelocityY(-BALL_MAX_VELOCITY_Y); 
+                        lastTrampolineVelocity = mBall.getVelocityY();
+                    }
+                    else 
+                    {
+                        mBall.setVelocityY(-velocityYVal);
+                        lastTrampolineVelocity = mBall.getVelocityY();
+                    }
+                    mBall.setAccelerationY(accelerationYVal);
+                }
+            }
+            else lastTrampolineVelocity = -velocityYVal;
         }
-        else lastTrampolineVelocity = -velocityYVal;
+
+        
 
         SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_MALIBU.r, SDL_COLOR_MALIBU.g, SDL_COLOR_MALIBU.b, 255);
         SDL_RenderClear(mRenderer);
@@ -536,12 +567,16 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
 
         mLevelMap.render(mRenderer, mSpritesheet);
 
-        for (auto &curSpider: mSpiderList) 
+        if (!gamePaused && !levelEnded)
         {
-            curSpider.move();
-            curSpider.scaleX(mLevelMap.getFramePosX());
-            curSpider.scaleY(mLevelMap.getFramePosY());
+            for (auto &curSpider: mSpiderList) 
+            {
+                curSpider.move();
+                curSpider.scaleX(mLevelMap.getFramePosX());
+                curSpider.scaleY(mLevelMap.getFramePosY());
+            }
         }
+        
 
         for (auto &curSpider: mSpiderList)
         {
@@ -788,27 +823,33 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
             // mBall.setAccelerationY(mBall.getAccelerationY() / 2);
         }
         
-        //Try moving by X
-        tryMoveX(ballPosXBeforeMove, ballPosXAfterMove);
-        
-        //Try moving by Y
-        tryMoveY();
-
-        if (yFrameChanged && ballPosXBeforeMove != ballPosXAfterMove)
+        if (!gamePaused && !levelEnded)
         {
-            mBall.undoMoveX();
-            mLevelMap.moveX(ballPosXBeforeMove - ballPosXAfterMove);
-            mBall.scaleX(mLevelMap.getFramePosX());
+            //Try moving by X
+            tryMoveX(ballPosXBeforeMove, ballPosXAfterMove);
+            
+            //Try moving by Y
+            tryMoveY();
+
+            if (yFrameChanged && ballPosXBeforeMove != ballPosXAfterMove)
+            {
+                mBall.undoMoveX();
+                mLevelMap.moveX(ballPosXBeforeMove - ballPosXAfterMove);
+                mBall.scaleX(mLevelMap.getFramePosX());
+            }
         }
         
         mBall.render(mRenderer, mSpritesheet);
 
-        // mSpritesheet.render(mRenderer, 0, 0, NULL);
+        if (gamePaused)
+        {
+            mPauseMenu.render(mRenderer);
+        } 
 
-        // std::cout << "[playLevel.cpp] " << levelEnded << "\n";
+        if (!levelEnded && !gamePaused) mPauseButton.render(mRenderer);
+
         if (levelEnded)
         {
-            // std::cout << "[playLevel.cpp] isVictory = " << mGameOverMenu.checkIsVictory() << "\n";
             mGameOverMenu.render(mRenderer);
             mStatusArea.renderGameOver();
         }
