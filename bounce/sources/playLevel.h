@@ -93,6 +93,8 @@ public:
 
     void renderLevelInfo(const int& levelId);
 
+    void renderPaused();
+
     void renderGameOver();
 
     void render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated);

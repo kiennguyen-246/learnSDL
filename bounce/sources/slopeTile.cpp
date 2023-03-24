@@ -110,7 +110,7 @@ bool slopeTile::checkBallIsInsideSlope(const ball& __ball, bool& backToSlope) co
     {
         if (distanceFromCenter(__ball) - __ball.getRadius() < -1e-3)
         {
-            if ((cosOAB > 1e-3 && cosOBA > 1e-3)) 
+            if ((cosOAB > 0.09 && cosOBA > 0.09)) 
             {
                 backToSlope  = 1;
                 return 1;

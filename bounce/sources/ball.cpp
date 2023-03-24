@@ -128,7 +128,7 @@ void ball::undoMoveX()
 
 void ball::reflectX()
 {
-    mVelocityX = -mVelocityX * 0;
+    mVelocityX = -mVelocityX * 1 / 100;
     mAccelerationX = -mAccelerationX;
     framePassedX = 0;
 }

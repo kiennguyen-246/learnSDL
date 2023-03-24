@@ -61,6 +61,17 @@ void statusArea::renderGameOver()
                 LEVEL_INFO_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
 }
 
+void statusArea::renderPaused()
+{
+    SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
+    SDL_RenderFillRect(mRenderer, &mContainer);
+
+    LTexture curTextTexture;
+    std::string pausedText = "PAUSED";
+    renderText(mRenderer, curTextTexture, &pausedText[0], LEVEL_INFO_TEXT_RENDER_POS_X, LEVEL_INFO_TEXT_RENDER_POS_Y, 
+                LEVEL_INFO_TEXT_FONT_SIZE, &CALIBRI_FONT_PATH[0], SDL_COLOR_WHITE);
+}
+
 void statusArea::render(const int& livesLeft, const int& portalsLeft, const int& score, const bool& acceleratorActivated)
 {
     SDL_SetRenderDrawColor(mRenderer, SDL_COLOR_BLACK.r, SDL_COLOR_BLACK.g, SDL_COLOR_BLACK.b, 255);
@@ -178,6 +189,7 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
     auto slopeTilesList = mLevelMap.slopeTilesList();
 
     ballPosXBeforeMove = mBall.getRealPosX();
+
     mBall.moveX();
     mBall.scaleX(mLevelMap.getFramePosX());
     bool backToSlope = 0;
@@ -206,10 +218,18 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
                 mBall.scaleX(mLevelMap.getFramePosX());
                 if (abs(mBall.getVelocityX()) > 1e-3)
                 {
+                    while (curSlope.checkBallIsInsideSlope(mBall, backToSlope))
+                    {
+                        //Move the ball 1 px
+                        auto moveStep = mBall.getVelocityX() / abs(mBall.getVelocityX());
+                        mBall.setPosEx(mBall.getRealPosX() - moveStep, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                        mBall.scaleX(mLevelMap.getFramePosX());
+                    }
                     while (!curSlope.checkBallIsInsideSlope(mBall, backToSlope))
                     {
                         //Move the ball 1 px
-                        mBall.setPosEx(mBall.getRealPosX() + mBall.getVelocityX() / abs(mBall.getVelocityX()), mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                        auto moveStep = mBall.getVelocityX() / abs(mBall.getVelocityX());
+                        mBall.setPosEx(mBall.getRealPosX() + moveStep, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                         mBall.scaleX(mLevelMap.getFramePosX());
                     }
                     mBall.setPosEx(mBall.getRealPosX() - mBall.getVelocityX() / abs(mBall.getVelocityX()), mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
@@ -233,10 +253,18 @@ void playLevel::tryMoveX(double& ballPosXBeforeMove, double& ballPosXAfterMove)
             mBall.scaleX(mLevelMap.getFramePosX());
             if (mBall.getVelocityX() != 0)
             {
+                while (getBlockObject() != NOT_BLOCKED)
+                {
+                    //Move the ball 1 px
+                    auto moveStep = mBall.getVelocityX() / abs(mBall.getVelocityX());
+                    mBall.setPosEx(mBall.getRealPosX() - moveStep, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                    mBall.scaleX(mLevelMap.getFramePosX());
+                }
                 while (getBlockObject() == NOT_BLOCKED)
                 {
                     //Move the ball 1 px
-                    mBall.setPosEx(mBall.getRealPosX() + mBall.getVelocityX() / abs(mBall.getVelocityX()), mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                    auto moveStep = mBall.getVelocityX() / abs(mBall.getVelocityX());
+                    mBall.setPosEx(mBall.getRealPosX() + moveStep, mBall.getRealPosY(), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                     mBall.scaleX(mLevelMap.getFramePosX());
                 }
                 mCurBlockObjectX = getBlockObject();
@@ -259,6 +287,7 @@ void playLevel::tryMoveY()
 {
     double ballPosXBeforeMove = mBall.getRealPosX();
     double ballPosYBeforeMove = mBall.getRealPosY();
+    std::cout << "[playLevel.cpp] Ball position before move: " << ballPosYBeforeMove << "\n";
     mBall.moveY();
     mBall.scaleY(mLevelMap.getFramePosY());
 
@@ -291,9 +320,18 @@ void playLevel::tryMoveY()
                 mBall.scaleY(mLevelMap.getFramePosY());
                 if (mBall.getVelocityY() >= 0)
                 {
+                    while (curSlope.checkBallIsInsideSlope(mBall, backToSlope))
+                    {
+                        auto moveStep = mBall.getRealPosY() / abs(mBall.getRealPosY());
+                        std::cout << "[playLevel.cpp] Move step 1: " << moveStep << "\n";
+                        mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - moveStep, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                        mBall.scaleY(mLevelMap.getFramePosY());
+                    }
                     while (!curSlope.checkBallIsInsideSlope(mBall, backToSlope))
                     {
-                        mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + mBall.getRealPosY() / abs(mBall.getRealPosY()), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                        auto moveStep = mBall.getRealPosY() / abs(mBall.getRealPosY());
+                        std::cout << "[playLevel.cpp] Move step 2: " << moveStep << "\n";
+                        mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + moveStep, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                         mBall.scaleY(mLevelMap.getFramePosY());
                     }
                     mCurBlockObjectY = getBlockObject();
@@ -314,9 +352,20 @@ void playLevel::tryMoveY()
             mBall.scaleY(mLevelMap.getFramePosY());
             if (mBall.getVelocityY() >= 0)
             {
+                std::cout << "[playLevel.cpp] realPosY = " << mBall.getRealPosY() << "\n";
+                while (getBlockObject() != NOT_BLOCKED)
+                {
+                    auto moveStep = mBall.getRealPosY() / abs(mBall.getRealPosY());
+                    std::cout << "[playLevel.cpp] Move step 3: " << moveStep << "\n";
+                    mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() - moveStep, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                    mBall.scaleY(mLevelMap.getFramePosY());
+                }
+                std::cout << "[playLevel.cpp] realPosY = " << mBall.getRealPosY() << "\n";
                 while (getBlockObject() == NOT_BLOCKED)
                 {
-                    mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + mBall.getRealPosY() / abs(mBall.getRealPosY()), mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
+                    auto moveStep = mBall.getRealPosY() / abs(mBall.getRealPosY());
+                    std::cout << "[playLevel.cpp] Move step 4: " << moveStep << "\n";
+                    mBall.setPosEx(mBall.getRealPosX(), mBall.getRealPosY() + moveStep, mLevelMap.getFramePosX(), mLevelMap.getFramePosY());
                     mBall.scaleY(mLevelMap.getFramePosY());
                 }
                 mCurBlockObjectY = getBlockObject();
@@ -329,6 +378,7 @@ void playLevel::tryMoveY()
     
 
     double ballPosXAfterMove = mBall.getRealPosX();
+    double ballPosYAfterMove = mBall.getRealPosY();
     mLevelMap.moveX(ballPosXAfterMove - ballPosXBeforeMove);
 
     if (mBall.getPosY() < TILE_HEIGHT / 2)
@@ -345,6 +395,8 @@ void playLevel::tryMoveY()
         mBall.scaleY(mLevelMap.getFramePosY());
         yFrameChanged = 1;
     }
+
+    std::cout << "[playLevel.cpp] Ball position after move: " << ballPosYAfterMove << "\n";
     //Only move frame vertically when the ball is out of it
 }
 
@@ -415,7 +467,6 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
     bool levelEnded = 0;
     mGameOverMenu.setVictory(0);
     mGameOverMenu.setScore(0);
-    std::cout << "[playLevel.cpp] isVictory = " << mGameOverMenu.checkIsVictory() << "\n";
 
     bool gamePaused = 0;
     mPauseButton.set(mRenderer, PAUSE_BUTTON_RENDER_POS_X, PAUSE_BUTTON_RENDER_POS_Y, PAUSE_BUTTON_SPRITE_PATH);
@@ -456,6 +507,7 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
     while (!quit)
     {   
         // SDL_Delay(200);
+
         while (SDL_PollEvent(&curEvent) != 0)
         {
             if (curEvent.type == SDL_QUIT) quit = 1;
@@ -566,6 +618,8 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
         else mStatusArea.render(livesLeft, portalsLeft, score, acceleratorActivated);
 
         mLevelMap.render(mRenderer, mSpritesheet);
+
+        std::cout << "[playLevel.cpp] Run here.\n";
 
         if (!gamePaused && !levelEnded)
         {
@@ -822,12 +876,12 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
             // mBall.setAccelerationX(mBall.getAccelerationX() / 2);
             // mBall.setAccelerationY(mBall.getAccelerationY() / 2);
         }
-        
+
         if (!gamePaused && !levelEnded)
         {
             //Try moving by X
             tryMoveX(ballPosXBeforeMove, ballPosXAfterMove);
-            
+
             //Try moving by Y
             tryMoveY();
 
@@ -844,6 +898,7 @@ void playLevel::playGame(PLAY_LEVEL_EXIT_STATUS& playLevelStatus)
         if (gamePaused)
         {
             mPauseMenu.render(mRenderer);
+            mStatusArea.renderPaused();
         } 
 
         if (!levelEnded && !gamePaused) mPauseButton.render(mRenderer);
