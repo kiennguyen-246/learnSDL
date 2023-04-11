@@ -6,8 +6,7 @@ INCLUDE_PATHS = -IC:\MinGW32\include\SDL2
 
 LIBRARY_PATHS = -LC:\MinGW32\lib
 
-COMPILER_FLAG = -Wall -w
-# -Wl,-subsystem,windows
+COMPILER_FLAG = -Wall #-w -Wl,-subsystem,windows
 
 LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 

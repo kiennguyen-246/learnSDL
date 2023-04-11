@@ -22,7 +22,7 @@ bool game::initSDL()
         return 0;
     }
 
-    mWindow = SDL_CreateWindow("bounce", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    mWindow = SDL_CreateWindow("Bounce Classic Remake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (mWindow == NULL)
     {
         cout << "Failed to initialize SDL window. Error: " << SDL_GetError() << ".\n";
@@ -144,6 +144,8 @@ void game::updateLastLevel(const int& lastLevel)
 
 void game::play()
 {
+    // freopen("debug.log", "w", stdout);
+    
     int lastLevel = getLastLevel();
     
     bool quitGame = 0;

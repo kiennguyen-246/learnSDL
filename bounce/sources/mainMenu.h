@@ -46,6 +46,10 @@ const std::string CONTINUE_BUTTON_TEXT = "CONTINUE";
 const int CONTINUE_BUTTON_RENDER_POS_X = 930;
 const int CONTINUE_BUTTON_RENDER_POS_Y = 280;
 
+const std::string INSTRUCTION_BUTTON_TEXT = "INSTRUCTION";
+const int INSTRUCTION_BUTTON_RENDER_POS_X = 600;
+const int INSTRUCTION_BUTTON_RENDER_POS_Y = 400;
+
 const std::string HIGH_SCORE_BUTTON_TEXT = "HIGH SCORE";
 const int HIGH_SCORE_BUTTON_RENDER_POS_X = 930;
 const int HIGH_SCORE_BUTTON_RENDER_POS_Y = 400;
@@ -67,7 +71,11 @@ private:
 
     redButton mHighScoreButton;
 
+    redButton mInstructionButton;
+
     highScoreMenu mHighScoreMenu;
+
+    instructionMenu mInstructionMenu;
 
 public:
     mainMenu();

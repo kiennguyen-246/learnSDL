@@ -27,8 +27,10 @@ void mainMenu::init(SDL_Renderer* __Renderer)
 
     mNewGameButton.set(mRenderer, NEW_GAME_BUTTON_RENDER_POS_X, NEW_GAME_BUTTON_RENDER_POS_Y, NEW_GAME_BUTTON_TEXT);
     mContinueButton.set(mRenderer, CONTINUE_BUTTON_RENDER_POS_X, CONTINUE_BUTTON_RENDER_POS_Y, CONTINUE_BUTTON_TEXT);
+    mInstructionButton.set(mRenderer, INSTRUCTION_BUTTON_RENDER_POS_X, INSTRUCTION_BUTTON_RENDER_POS_Y, INSTRUCTION_BUTTON_TEXT);
     mHighScoreButton.set(mRenderer, HIGH_SCORE_BUTTON_RENDER_POS_X, HIGH_SCORE_BUTTON_RENDER_POS_Y, HIGH_SCORE_BUTTON_TEXT);
 
+    mInstructionMenu.loadInstructionText();
     mHighScoreMenu.set(mRenderer);
 }
 
@@ -39,6 +41,7 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
     MAIN_MENU_EXIT_STATUS exitStatus = MAIN_MENU_EXIT_NULL;
 
     bool highScoreOn = 0;
+    int instructionPageOn = 0;
 
     while (!quit)
     {
@@ -48,7 +51,7 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
 
             bool buttonTriggered = 0;
 
-            if (!highScoreOn)
+            if (!highScoreOn && !instructionPageOn)
             {
                 mNewGameButton.handleEvent(&curEvent, buttonTriggered);
                 if (buttonTriggered)
@@ -58,7 +61,7 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
                 }
             }
             
-            if (!highScoreOn)
+            if (!highScoreOn && !instructionPageOn)
             {
                 buttonTriggered = 0;
                 mContinueButton.handleEvent(&curEvent, buttonTriggered);
@@ -68,8 +71,19 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
                     exitStatus = MAIN_MENU_EXIT_CONTINUE;
                 }
             }
+
+            if (!highScoreOn && !instructionPageOn)
+            {
+                buttonTriggered = 0;
+                mInstructionButton.handleEvent(&curEvent, buttonTriggered);
+                if (buttonTriggered)
+                {
+                    instructionPageOn = 1;
+                    mInstructionMenu.set(mRenderer, 1);
+                }
+            }
             
-            if (!highScoreOn)
+            if (!highScoreOn && !instructionPageOn)
             {
                 buttonTriggered = 0;
                 mHighScoreButton.handleEvent(&curEvent, buttonTriggered);
@@ -79,13 +93,31 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
                 }
             }
 
-            if (highScoreOn)
+            if (highScoreOn && !instructionPageOn)
             {
                 HIGH_SCORE_MENU_EXIT_STATUS exitStatus = HIGH_SCORE_EXIT_NULL;
                 mHighScoreMenu.handleEvent(&curEvent, exitStatus);
                 if (exitStatus == HIGH_SCORE_EXIT_RETURN)
                 {
                     highScoreOn = 0;
+                }
+            }
+
+            if (!highScoreOn && instructionPageOn)
+            {
+                INSTRUCTION_MENU_EXIT_STATUS exitStatus = INSTRUCTION_EXIT_NULL;
+                mInstructionMenu.handleEvent(&curEvent, exitStatus);
+                if (exitStatus == INSTRUCTION_EXIT_RETURN)
+                {
+                    instructionPageOn = 0;
+                }
+                else if (exitStatus == INSTRUCTION_EXIT_NEXT)
+                {
+                    mInstructionMenu.nextPage(mRenderer);
+                }
+                else if (exitStatus == INSTRUCTION_EXIT_PREVIOUS)
+                {
+                    mInstructionMenu.previousPage(mRenderer);
                 }
             }
         }
@@ -101,9 +133,11 @@ MAIN_MENU_EXIT_STATUS mainMenu::render()
         
         mNewGameButton.render(mRenderer);
         mContinueButton.render(mRenderer);
+        mInstructionButton.render(mRenderer);
         mHighScoreButton.render(mRenderer);
 
         if (highScoreOn) mHighScoreMenu.render(mRenderer);
+        if (instructionPageOn) mInstructionMenu.render(mRenderer);
 
         SDL_RenderPresent(mRenderer);
     }

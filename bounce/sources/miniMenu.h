@@ -28,6 +28,17 @@ const std::string GAME_OVER_PROMPT[] =
 const std::string YELLOW_SAD_EMOJI_PATH = "./img/yellowSad.png";
 const std::string YELLOW_SUNGLASSES_EMOJI_PATH = "./img/yellowSunglasses.png";
 const std::string YELLOW_NERD_EMOJI_PATH = "./img/yellowNerd.png";
+const std::string INSTRUCTION_MENU_IMAGES_PATH[] =
+{
+    "",
+    "./img/instruction_moveLeftRight.png",
+    "./img/instruction_jump.png",
+    "./img/instruction_portal.png",
+    "./img/instruction_spike.png",
+    "./img/instruction_checkpoint.png",
+    "./img/instruction_largeBall.png",
+    "./img/instruction_special.png",
+};
 
 enum GAME_OVER_MENU_EXIT_STATUS
 {
@@ -74,7 +85,27 @@ const int HIGH_SCORE_PROMPT_FONT_SIZE = 60;
 const int HIGH_SCORE_PROMPT_FONT_SIZE_LARGE = 72;
 const std::string RETURN_BUTTON_TEXT = "RETURN";
 const int RETURN_BUTTON_RENDER_POS_X = 520;
-const int RETURN_BUTTON_RENDER_POS_Y = 480;
+const int RETURN_BUTTON_RENDER_POS_Y = 500;
+
+enum INSTRUCTION_MENU_EXIT_STATUS
+{
+    INSTRUCTION_EXIT_NULL,
+    INSTRUCTION_EXIT_RETURN,
+    INSTRUCTION_EXIT_PREVIOUS,
+    INSTRUCTION_EXIT_NEXT,
+};
+const int INSTRUCTION_TEXT_RENDER_POS_X = 200;
+const int INSTRUCTION_TITLE_RENDER_POS_X = -1e6;
+const int INSTRUCTION_TITLE_RENDER_POS_Y = 70;
+const int INSTRUCTION_TEXT_FONT_SIZE = 30;
+const int INSTRUCTION_TITLE_FONT_SIZE = 60;
+const std::string PREVIOUS_BUTTON_TEXT = "<< PREVIOUS";
+const int PREVIOUS_BUTTON_RENDER_POS_X = 186;
+const int PREVIOUS_BUTTON_RENDER_POS_Y = 500;
+const std::string NEXT_BUTTON_TEXT = "NEXT >>";
+const int NEXT_BUTTON_RENDER_POS_X = 838;
+const int NEXT_BUTTON_RENDER_POS_Y = 500;
+const int INSTRUCTION_MENU_PAGE_COUNT = 7;
 
 int getHighScore();
 
@@ -153,6 +184,36 @@ public:
     void set(SDL_Renderer* renderer);
 
     void handleEvent(SDL_Event* event, PAUSE_MENU_EXIT_STATUS& exitStatus);
+
+    void render(SDL_Renderer* renderer);
+};
+
+class instructionMenu: public miniMenu
+{
+private:
+    std::vector <std::vector <std::string> > mInstructionText;
+
+    int pageId;
+
+    redButton mReturnButton;
+    redButton mPreviousButton;
+    redButton mNextButton;
+
+    LTexture mImage;
+
+public:
+    instructionMenu();
+    ~instructionMenu();
+
+    void loadInstructionText();
+
+    void set(SDL_Renderer* renderer, const int& pageId);
+
+    void nextPage(SDL_Renderer* renderer);
+
+    void previousPage(SDL_Renderer* renderer);
+
+    void handleEvent(SDL_Event* event, INSTRUCTION_MENU_EXIT_STATUS& exitStatus);
 
     void render(SDL_Renderer* renderer);
 };
