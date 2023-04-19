@@ -165,7 +165,7 @@ void game::play()
             curLevel->setScore(0);
             int startLevel = 1;
             if (mainMenuStatus == MAIN_MENU_EXIT_CONTINUE) startLevel = lastLevel;
-            for (int i = startLevel; i < allLevelCharMap.size(); i ++)
+            for (int i = startLevel; i < int(allLevelCharMap.size()); i ++)
             {
                 curLevel->setLevelId(i, allLevelCharMap, allLevelSpidersInfo, allLevelBallSpawnSize);
                 // std::cout << "[game.cpp] Current level: " << i << "\n";

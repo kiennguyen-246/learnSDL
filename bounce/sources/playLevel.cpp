@@ -115,7 +115,7 @@ void playLevel::setLevelId(const int& id, const vector_2d_string& allLevelCharMa
 void playLevel::initSpiders(const std::vector <spiderInfo>& allLevelSpidersInfo)
 {
     mSpiderList.resize(allLevelSpidersInfo.size());
-    for (int i = 0; i < allLevelSpidersInfo.size(); i ++)
+    for (int i = 0; i < int(allLevelSpidersInfo.size()); i ++)
     {
         mSpiderList[i].init(allLevelSpidersInfo[i], mSpritesheet);
     }
